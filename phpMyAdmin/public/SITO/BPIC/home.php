@@ -182,6 +182,7 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
         <a href="/SITO/BPIC/home.php">Home</a>
         <a href="/SITO/BPIC/mockup_viste.php">Nuova busta paga</a>
         <a href="/SITO/BPIC/mockup_viste.php">Mockup viste</a>
+        <a href="/SITO/BPIC/user_manual.php">📖 Manuale Utente</a>
       </nav>
 
       <div class="menu-title">Area Abbonato</div>
@@ -222,6 +223,7 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
           <a class="btn secondary" href="/SITO/BPIC/Impostazioni_contratto.php">Aggiorna contratto</a>
           <a class="btn ghost" href="/SITO/BPIC/test_transazione_t14.php">Test transazione T14</a>
           <a class="btn ghost" href="/SITO/BPIC/dashboard.php">Dashboard marketing</a>
+          <a class="btn ghost" href="/SITO/BPIC/user_manual.php">📖 Manuale Utente</a>
         </div>
 
         <p class="note">Home temporanea: puo essere evoluta in una dashboard completa con widget e KPI.</p>
