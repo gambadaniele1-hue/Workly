@@ -228,5 +228,6 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
       </div>
     </section>
   </main>
+  <script src="/SITO/BPIC/auth/auto_logout_on_close.js"></script>
 </body>
 </html>

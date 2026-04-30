@@ -51,6 +51,11 @@ if ($isAuthenticated && $isTenant) {
     header('Location: /SITO/BPIC/tenant_dashboard.php');
     exit;
 }
+
+if ($isAuthenticated) {
+    header('Location: /SITO/BPIC/home.php');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="it">

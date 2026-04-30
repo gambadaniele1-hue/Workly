@@ -256,5 +256,6 @@ if (empty($_SESSION['user_id'])) {
 
     refreshState().catch((e) => log(String(e)));
   </script>
+  <script src="/SITO/BPIC/auth/auto_logout_on_close.js"></script>
 </body>
 </html>

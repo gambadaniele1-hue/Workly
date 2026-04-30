@@ -47,6 +47,31 @@
       border-radius: 15px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
+    /* Centra il contenuto della pagina e rende il diagramma responsive */
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      margin: 40px auto 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+    }
+    .diagram-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 0 30px 0;
+    }
+    .diagram-container img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
   </style>
 </head>
 <body>

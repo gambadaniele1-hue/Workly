@@ -2,6 +2,18 @@
 declare(strict_types=1);
 require_once __DIR__ . "/database.php";
 
+session_start();
+
+if (!empty($_SESSION['user_id'])) {
+  $roleNames = array_map(static fn(array $r): string => (string)($r['name'] ?? ''), $_SESSION['roles'] ?? []);
+  if (in_array('tenant', $roleNames, true)) {
+    header('Location: /SITO/BPIC/tenant_dashboard.php');
+    exit;
+  }
+  header('Location: /SITO/BPIC/home.php');
+  exit;
+}
+
 $errors = [];
 $ok = false;
 

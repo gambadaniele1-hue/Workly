@@ -291,5 +291,6 @@ if ($selectedContratto === '') {
       });
     });
   </script>
+  <script src="/SITO/BPIC/auth/auto_logout_on_close.js"></script>
 </body>
 </html>
