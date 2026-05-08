@@ -283,7 +283,7 @@ if ($useCase === '') {
         'error' => 'Parametro use_case mancante.',
         'example' => [
             'GET /SITO/BPIC/api/use_cases.php?use_case=generazione_busta_paga_list',
-            'POST /SITO/BPIC/api/use_cases.php {"use_case":"generazione_busta_paga_create","stipendio_lordo":1800,"stipendio_netto":1300,"tasse_totali":500}',
+            'POST /SITO/BPIC/api/use_cases.php {"use_case":"generazione_busta_paga_create","mese_riferimento":"2026-05","ore_lavorate":168,"paga_oraria":10,"ore_ferie":0,"ore_malattia":0,"ore_straordinari":0,"ore_festivi":0,"ore_prefestivi":0,"ore_notturne":0,"ore_reperibilita":0,"ore_trasferta":0}',
         ],
     ]);
 }
@@ -302,21 +302,36 @@ switch ($useCase) {
             send_json(405, ['error' => 'Metodo richiesto: POST']);
         }
 
-        $lordo = (float)($input['stipendio_lordo'] ?? 0);
-        $netto = (float)($input['stipendio_netto'] ?? 0);
-        $tasse = (float)($input['tasse_totali'] ?? 0);
+        $mese = trim((string)($input['mese_riferimento'] ?? $input['mese'] ?? ''));
+        $oreLavorate = (float)($input['ore_lavorate'] ?? 0);
+        $pagaOraria = (float)($input['paga_oraria'] ?? 0);
+        $oreFerie = (float)($input['ore_ferie'] ?? 0);
+        $oreMalattia = (float)($input['ore_malattia'] ?? 0);
+        $oreStraordinari = (float)($input['ore_straordinari'] ?? 0);
+        $oreFestivi = (float)($input['ore_festivi'] ?? 0);
+        $orePrefestivi = (float)($input['ore_prefestivi'] ?? 0);
+        $oreNotturne = (float)($input['ore_notturne'] ?? 0);
+        $oreReperibilita = (float)($input['ore_reperibilita'] ?? 0);
+        $oreTrasferta = (float)($input['ore_trasferta'] ?? 0);
 
-        if ($lordo <= 0 || $netto <= 0 || $tasse < 0) {
+        $lordo = array_key_exists('stipendio_lordo', $input)
+            ? (float)$input['stipendio_lordo']
+            : ($oreLavorate * $pagaOraria);
+        $netto = array_key_exists('stipendio_netto', $input)
+            ? (float)$input['stipendio_netto']
+            : $lordo;
+
+        if ($mese === '' || $lordo < 0 || $netto < 0 || $oreLavorate < 0 || $pagaOraria < 0) {
             send_json(422, ['error' => 'Valori busta paga non validi.']);
         }
 
         $mysqli->begin_transaction();
         try {
-            $stmt = $mysqli->prepare('INSERT INTO Busta_paga (Stipendio_lordo, Stipendio_netto, Tasse_totali) VALUES (?, ?, ?)');
+            $stmt = $mysqli->prepare('INSERT INTO Busta_paga (Mese_riferimento, Stipendio_lordo, Stipendio_netto, Ore_lavorate, Paga_oraria, Ore_ferie, Ore_malattia, Ore_straordinari, Ore_festivi, Ore_prefestivi, Ore_notturne, Ore_reperibilita, Ore_trasferta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
             if (!$stmt) {
                 throw new RuntimeException('Prepare insert busta fallita.');
             }
-            $stmt->bind_param('ddd', $lordo, $netto, $tasse);
+            $stmt->bind_param('sdddddddddddd', $mese, $lordo, $netto, $oreLavorate, $pagaOraria, $oreFerie, $oreMalattia, $oreStraordinari, $oreFestivi, $orePrefestivi, $oreNotturne, $oreReperibilita, $oreTrasferta);
             $stmt->execute();
             $idBusta = (int)$stmt->insert_id;
             $stmt->close();
