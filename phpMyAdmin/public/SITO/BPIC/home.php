@@ -219,7 +219,7 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
         <?php endif; ?>
 
         <div class="grid">
-          <a class="btn primary" href="/SITO/BPIC/mockup_viste.php">Vai alle viste operative</a>
+          <a class="btn primary" href="/SITO/BPIC/nuovabustapaga.php">Crea nuova busta paga</a>
           <a class="btn secondary" href="/SITO/BPIC/Impostazioni_contratto.php">Aggiorna contratto</a>
           <a class="btn ghost" href="/SITO/BPIC/test_transazione_t14.php">Test transazione T14</a>
           <a class="btn ghost" href="/SITO/BPIC/dashboard.php">Dashboard marketing</a>
