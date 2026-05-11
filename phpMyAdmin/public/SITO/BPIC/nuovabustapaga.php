@@ -50,6 +50,7 @@ $currentMonth = date('Y-m');
       <div class="menu">
         <a href="/SITO/BPIC/home.php">Home</a>
         <a class="active" href="/SITO/BPIC/nuovabustapaga.php">Crea nuova busta paga</a>
+        <a href="/SITO/BPIC/storico_buste_paga.php">Storico buste paga</a>
         <a href="/SITO/BPIC/mockup_viste.php">Mockup viste</a>
         <a href="/SITO/BPIC/user_manual.php">Manuale utente</a>
       </div>

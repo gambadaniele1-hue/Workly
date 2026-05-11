@@ -188,10 +188,10 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
       <div class="menu-title">Area Abbonato</div>
       <nav class="menu">
         <?php if ($isAbbonato): ?>
-          <a href="/SITO/BPIC/mockup_viste.php">Storico buste paga <span class="pill">Ruoli 1-2</span></a>
+          <a href="/SITO/BPIC/storico_buste_paga.php">Storico buste paga <span class="pill">Ruoli 1-2</span></a>
           <a href="/SITO/BPIC/mockup_viste.php">Confronto buste paga <span class="pill">Ruoli 1-2</span></a>
         <?php else: ?>
-          <a href="/SITO/BPIC/mockup_viste.php">Storico buste paga</a>
+          <a href="/SITO/BPIC/storico_buste_paga.php">Storico buste paga</a>
           <a href="/SITO/BPIC/mockup_viste.php">Confronto buste paga</a>
         <?php endif; ?>
       </nav>

@@ -1,7 +1,9 @@
 <?php
 declare(strict_types=1);
 
-session_start();
+if (session_status() !== PHP_SESSION_ACTIVE) {
+  session_start();
+}
 if (empty($_SESSION['user_id'])) {
   http_response_code(401);
   echo 'Unauthorized';
@@ -10,6 +12,8 @@ if (empty($_SESSION['user_id'])) {
 
 // Basic input retrieval and sanitation
 $month = filter_input(INPUT_POST, 'mese', FILTER_SANITIZE_STRING) ?: date('Y-m');
+$ore = (int)($_POST['ore_lavorate'] ?? 0);
+$paga = (float)($_POST['paga_oraria'] ?? 0.0);
 $ore = (int)($_POST['ore_lavorate'] ?? 0);
 $paga = (float)($_POST['paga_oraria'] ?? 0.0);
 
@@ -64,29 +68,7 @@ $ms = $settings['Maggiorazione_straordinaria'] / 100.0;
 $ind_reper = $settings['Indennita_reperibilita'];
 $ind_trasf = $settings['Indennita_trasferta'];
 
-$requestSignature = hash('sha256', json_encode([
-  $userId,
-  $month,
-  $ore,
-  $paga,
-  $ferie,
-  $malattia,
-  $stra,
-  $trasf,
-  $festivi,
-  $prefestivi,
-  $notturne,
-  $reperibilita,
-]));
-
-$alreadyGenerated = false;
-if (
-  isset($_SESSION['last_busta_signature'], $_SESSION['last_busta_at']) &&
-  $_SESSION['last_busta_signature'] === $requestSignature &&
-  (time() - (int)$_SESSION['last_busta_at']) < 10
-) {
-  $alreadyGenerated = true;
-}
+// Sempre consentiamo la generazione: ogni chiamata crea una nuova busta
 
 $lordo_stra = $stra * $paga * (1 + $ms);
 $lordo_trasf = $trasf * ($paga + $ind_trasf);
@@ -97,15 +79,66 @@ $lordo_reperibilita = $reperibilita * ($paga + $ind_reper);
 
 $lordo = $lordo_base + $lordo_stra + $lordo_trasf + $lordo_festivi + $lordo_prefestivi + $lordo_notturne + $lordo_reperibilita;
 
-// Netto: tolgo il 30%
-$netto = max(0.0, $lordo * 0.70);
+// Calcolo trattenute secondo legge italiana
+$inps = $lordo * 0.0919;           // 9,19% INPS
+$irpef = $lordo * 0.2090;          // 20,9% IRPEF
+$add_regionale = $lordo * 0.0160;  // 1,6% addizionale regionale
+$add_comunale = $lordo * 0.0070;   // 0,70% addizionale comunale
+
+$total_trattenute_percent = 0.0919 + 0.2090 + 0.0160 + 0.0070; // 32,39%
+$netto = max(0.0, $lordo - ($lordo * $total_trattenute_percent));
 $trattenute = $lordo - $netto;
 
-// Persist in DB
+// Calcolo ore di ferie maturate (8,3% del totale ore mensili)
+$ore_totali_mese = $ore + $ferie + $malattia + $stra + $trasf + $festivi + $prefestivi + $notturne + $reperibilita;
+$ferie_maturate = round($ore_totali_mese * 0.083, 2);
+
+// Helper function for error messages
+function errorMsg($msg) {
+  ?>
+  <div class="panel" style="background:#fee2e2;border-left:4px solid #dc2626;padding:16px">
+    <div style="color:#991b1b;font-weight:700">❌ Errore</div>
+    <div style="color:#7f1d1d;margin-top:8px"><?= htmlspecialchars($msg, ENT_QUOTES, 'UTF-8') ?></div>
+  </div>
+  <?php
+}
+
+// Persist in DB: inseriamo sempre una nuova busta (ogni generazione resta nello storico)
 try {
-  if (!$alreadyGenerated) {
-    $ins = $pdo->prepare('INSERT INTO Busta_paga (Mese_riferimento, Stipendio_lordo, Stipendio_netto, Ore_lavorate, Paga_oraria, Ore_ferie, Ore_malattia, Ore_straordinari, Ore_festivi, Ore_prefestivi, Ore_notturne, Ore_reperibilita, Ore_trasferta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-    if ($ins) {
+  // Try with ID_utente first (new schema)
+  try {
+    $ins = $pdo->prepare('INSERT INTO Busta_paga (ID_utente, Mese_riferimento, Stipendio_lordo, Stipendio_netto, Ore_lavorate, Paga_oraria, Ore_ferie, Ore_malattia, Ore_straordinari, Ore_festivi, Ore_prefestivi, Ore_notturne, Ore_reperibilita, Ore_trasferta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $ins->execute([
+      $userId,
+      $month,
+      round($lordo, 2),
+      round($netto, 2),
+      $ore,
+      $paga,
+      $ferie,
+      $malattia,
+      $stra,
+      $festivi,
+      $prefestivi,
+      $notturne,
+      $reperibilita,
+      $trasf,
+    ]);
+    $bustaId = (int)$pdo->lastInsertId();
+
+    // registra la busta nello storico (Confronta)
+    try {
+      $insArch = $pdo->prepare('INSERT INTO Confronta (ID_utente, ID_busta) VALUES (?, ?)');
+      if ($insArch) {
+        $insArch->execute([$userId, $bustaId]);
+      }
+    } catch (Exception $ex) {
+      // Non blocchiamo il flusso se la tabella non esiste o l'insert fallisce
+    }
+  } catch (PDOException $e) {
+    // If ID_utente column doesn't exist yet, try without it (old schema)
+    if (strpos($e->getMessage(), 'Unknown column') !== false) {
+      $ins = $pdo->prepare('INSERT INTO Busta_paga (Mese_riferimento, Stipendio_lordo, Stipendio_netto, Ore_lavorate, Paga_oraria, Ore_ferie, Ore_malattia, Ore_straordinari, Ore_festivi, Ore_prefestivi, Ore_notturne, Ore_reperibilita, Ore_trasferta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
       $ins->execute([
         $month,
         round($lordo, 2),
@@ -122,13 +155,52 @@ try {
         $trasf,
       ]);
       $bustaId = (int)$pdo->lastInsertId();
-      $_SESSION['last_busta_signature'] = $requestSignature;
-      $_SESSION['last_busta_at'] = time();
+
+      try {
+        $insArch = $pdo->prepare('INSERT INTO Confronta (ID_utente, ID_busta) VALUES (?, ?)');
+        if ($insArch) {
+          $insArch->execute([$userId, $bustaId]);
+        }
+      } catch (Exception $ex) {
+        // Non bloccare il flusso in fallback schema.
+      }
     } else {
-      $bustaId = 0;
+      // If it's a duplicate entry (unique index in DB not removed), insert without ID_utente
+      if (strpos($e->getMessage(), '1062') !== false || strpos($e->getMessage(), 'Duplicate entry') !== false) {
+        try {
+          $ins = $pdo->prepare('INSERT INTO Busta_paga (Mese_riferimento, Stipendio_lordo, Stipendio_netto, Ore_lavorate, Paga_oraria, Ore_ferie, Ore_malattia, Ore_straordinari, Ore_festivi, Ore_prefestivi, Ore_notturne, Ore_reperibilita, Ore_trasferta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+          $ins->execute([
+            $month,
+            round($lordo, 2),
+            round($netto, 2),
+            $ore,
+            $paga,
+            $ferie,
+            $malattia,
+            $stra,
+            $festivi,
+            $prefestivi,
+            $notturne,
+            $reperibilita,
+            $trasf,
+          ]);
+          $bustaId = (int)$pdo->lastInsertId();
+          try {
+            $insArch = $pdo->prepare('INSERT INTO Confronta (ID_utente, ID_busta) VALUES (?, ?)');
+            if ($insArch) {
+              $insArch->execute([$userId, $bustaId]);
+            }
+          } catch (Exception $ex) {
+            // Non bloccare il flusso
+          }
+        } catch (Exception $ex) {
+          $bustaId = 0;
+        }
+      } else {
+        // errore imprevisto
+        $bustaId = 0;
+      }
     }
-  } else {
-    $bustaId = 0;
   }
 } catch (Exception $e) {
   $bustaId = 0;

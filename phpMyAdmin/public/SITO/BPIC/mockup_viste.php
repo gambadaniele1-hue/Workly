@@ -1048,31 +1048,65 @@ $routePermissions = [
                         Nessun dato disponibile in questa vista. Il mockup evidenzia uno stato vuoto che può essere usato per CTA o onboarding.
                     </div>
                 <?php else: ?>
-                    <div class="table-wrap">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <?php foreach ($result['columns'] as $column): ?>
-                                        <th><?= htmlspecialchars($column); ?></th>
-                                    <?php endforeach; ?>
-                                </tr>
-                            </thead>
-                            <tbody>
+                        <?php if ($result['name'] === 'v_archivio_buste_paga'): ?>
+                            <div class="cards-grid" style="display:grid;gap:12px">
                                 <?php foreach ($result['rows'] as $row): ?>
-                                    <tr>
-                                        <?php foreach ($result['columns'] as $column): ?>
-                                            <td>
-                                                <?php
-                                                $value = $row[$column] ?? null;
-                                                echo $value === null || $value === '' ? '<em>NULL</em>' : htmlspecialchars((string)$value);
-                                                ?>
-                                            </td>
-                                        <?php endforeach; ?>
-                                    </tr>
+                                    <div style="background:#fff;padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(12,36,80,0.04);display:flex;flex-direction:column;gap:8px">
+                                        <div style="display:flex;justify-content:space-between;align-items:center">
+                                            <div style="font-weight:800"><?php echo htmlspecialchars($row['Mese_riferimento'] ?? ($row['Mese'] ?? '')); ?></div>
+                                            <div style="color:#64748b;font-size:13px"><?= htmlspecialchars($row['Data_archiviazione'] ?? ($row['Data'] ?? '')) ?></div>
+                                        </div>
+                                        <div style="display:flex;gap:12px">
+                                            <div style="flex:1;background:#ecfeff;padding:10px;border-radius:8px">
+                                                <div style="font-size:12px;color:#065f46">Netto</div>
+                                                <div style="font-weight:800">€ <?= htmlspecialchars(number_format((float)($row['Netto'] ?? $row['Stipendio_netto'] ?? 0), 2, ',', '.')) ?></div>
+                                            </div>
+                                            <div style="flex:1;background:#f1f5f9;padding:10px;border-radius:8px">
+                                                <div style="font-size:12px;color:#0f172a">Lordo</div>
+                                                <div style="font-weight:800">€ <?= htmlspecialchars(number_format((float)($row['Lordo'] ?? $row['Stipendio_lordo'] ?? 0), 2, ',', '.')) ?></div>
+                                            </div>
+                                            <div style="flex:1;background:#fff1f2;padding:10px;border-radius:8px">
+                                                <div style="font-size:12px;color:#9f1239">Tasse</div>
+                                                <div style="font-weight:800;color:#b91c1c">€ <?= htmlspecialchars(number_format((float)($row['Tasse'] ?? (($row['Stipendio_lordo'] ?? 0) - ($row['Stipendio_netto'] ?? 0))), 2, ',', '.')) ?></div>
+                                            </div>
+                                        </div>
+                                        <div style="display:flex;gap:8px;align-items:center">
+                                            <a class="btn" href="#" style="border:1px solid #e6eefc;padding:8px 12px;border-radius:8px">Scarica PDF</a>
+                                            <form method="post" action="/SITO/BPIC/api/use_cases.php?use_case=archivio_buste_paga_delete" style="margin:0">
+                                                <input type="hidden" name="id_busta" value="<?= htmlspecialchars($row['ID_busta']) ?>">
+                                                <button class="btn" style="background:#fee2e2;border-radius:8px;padding:8px 12px;border:0;color:#b91c1c">Elimina</button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
+                            </div>
+                        <?php else: ?>
+                            <div class="table-wrap">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <?php foreach ($result['columns'] as $column): ?>
+                                                <th><?= htmlspecialchars($column); ?></th>
+                                            <?php endforeach; ?>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($result['rows'] as $row): ?>
+                                            <tr>
+                                                <?php foreach ($result['columns'] as $column): ?>
+                                                    <td>
+                                                        <?php
+                                                        $value = $row[$column] ?? null;
+                                                        echo $value === null || $value === '' ? '<em>NULL</em>' : htmlspecialchars((string)$value);
+                                                        ?>
+                                                    </td>
+                                                <?php endforeach; ?>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php endif; ?>
                 <?php endif; ?>
             </article>
         <?php endforeach; ?>

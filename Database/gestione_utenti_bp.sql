@@ -34,6 +34,7 @@ SET FOREIGN_KEY_CHECKS = 0;
  
 CREATE TABLE IF NOT EXISTS `Busta_paga` (
   `ID_busta`         int(11)       NOT NULL AUTO_INCREMENT,
+  `ID_utente`        int(11)       NOT NULL,
   `Mese_riferimento` varchar(7)    NOT NULL,
   `Stipendio_lordo`  decimal(10,2) NOT NULL,
   `Stipendio_netto`  decimal(10,2) NOT NULL,
@@ -47,7 +48,11 @@ CREATE TABLE IF NOT EXISTS `Busta_paga` (
   `Ore_notturne`     decimal(10,2) NOT NULL DEFAULT 0.00,
   `Ore_reperibilita` decimal(10,2) NOT NULL DEFAULT 0.00,
   `Ore_trasferta`    decimal(10,2) NOT NULL DEFAULT 0.00,
-  PRIMARY KEY (`ID_busta`)
+  `Data_creazione`   timestamp      NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`ID_busta`),
+  KEY `idx_utente` (`ID_utente`),
+  KEY `idx_mese` (`Mese_riferimento`),
+  CONSTRAINT `fk_busta_utente` FOREIGN KEY (`ID_utente`) REFERENCES `Utenti` (`ID_utente`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
  
 -- --------------------------------------------------------
@@ -442,18 +447,9 @@ SELECT
   c.`ID_busta`,
   c.`Data_confronto`  AS `Data_archiviazione`,
   bp.`Mese_riferimento`,
-  bp.`Stipendio_lordo`,
-  bp.`Stipendio_netto`,
-  bp.`Ore_lavorate`,
-  bp.`Paga_oraria`,
-  bp.`Ore_ferie`,
-  bp.`Ore_malattia`,
-  bp.`Ore_straordinari`,
-  bp.`Ore_festivi`,
-  bp.`Ore_prefestivi`,
-  bp.`Ore_notturne`,
-  bp.`Ore_reperibilita`,
-  bp.`Ore_trasferta`
+  bp.`Stipendio_lordo` AS `Lordo`,
+  bp.`Stipendio_netto` AS `Netto`,
+  (bp.`Stipendio_lordo` - bp.`Stipendio_netto`) AS `Tasse`
 FROM `Confronta` c
 JOIN `Utenti`     u  ON u.`ID_utente` = c.`ID_utente`
 JOIN `Busta_paga` bp ON bp.`ID_busta` = c.`ID_busta`
