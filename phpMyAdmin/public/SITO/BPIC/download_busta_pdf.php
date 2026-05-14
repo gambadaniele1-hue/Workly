@@ -1,9 +1,19 @@
 <?php
+/**
+ * File: download_busta_pdf.php
+ * Description: Main functionality for this module.
+ * Features: Data processing, Database interaction, User interface.
+ * Usage: Accessed via web browser or API endpoint.
+ */
+
+// ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
+// INLINE COMMENT: Conditional logic or loop processing
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
+// INLINE COMMENT: Conditional logic or loop processing
 if (empty($_SESSION['user_id'])) {
     http_response_code(401);
     echo 'Unauthorized';
@@ -16,8 +26,11 @@ require_once __DIR__ . '/../../../../vendor/autoload.php';
 $userId = (int)($_SESSION['user_id'] ?? 0);
 $idBusta = (int)($_GET['id_busta'] ?? 0);
 
+// INLINE COMMENT: Conditional logic or loop processing
 if ($idBusta <= 0) {
     http_response_code(422);
+
+// ===== SEZIONE 2: LOGICA DI PROCESSO =====
     echo 'id_busta non valido';
     exit;
 }
@@ -39,18 +52,35 @@ try {
     exit;
 }
 
+// ===== SEZIONE 3: LOGICA DI PROCESSO =====
+
+// INLINE COMMENT: Conditional logic or loop processing
 if (!$busta) {
     http_response_code(404);
     echo 'Busta paga non trovata';
     exit;
 }
 
+
+/**
+ * Function: toPdfText
+ * Parameters: string $text
+ * Return: mixed
+ * Description: Executes business logic for toPdfText.
+ */
 function toPdfText(string $text): string
 {
     $converted = @iconv('UTF-8', 'windows-1252//TRANSLIT', $text);
     return $converted !== false ? $converted : $text;
 }
 
+
+/**
+ * Function: eur
+ * Parameters: float $v
+ * Return: mixed
+ * Description: Executes business logic for eur.
+ */
 function eur(float $v): string
 {
     return number_format($v, 2, ',', '.') . ' EUR';
@@ -58,6 +88,8 @@ function eur(float $v): string
 
 $lordo = (float)($busta['Stipendio_lordo'] ?? 0);
 $netto = (float)($busta['Stipendio_netto'] ?? 0);
+
+// ===== SEZIONE 4: LOGICA DI PROCESSO =====
 
 $inps = round($lordo * 0.0919, 2);
 $irpef = round($lordo * 0.2090, 2);
@@ -79,6 +111,8 @@ $oreTrasferta = (float)($busta['Ore_trasferta'] ?? 0);
 $oreTotali = $oreLavorate + $oreFerie + $oreMalattia + $oreStra + $oreFestivi + $orePrefestivi + $oreNotturne + $oreReperibilita + $oreTrasferta;
 $ferieMaturate = round($oreTotali * 0.083, 2);
 
+// ===== SEZIONE 5: LOGICA DI PROCESSO =====
+
 $stipendioBase = round(($oreLavorate + $oreFerie + $oreMalattia) * $pagaOraria, 2);
 $periodo = (string)($busta['Mese_riferimento'] ?? '');
 $livello = trim((string)($busta['Livello_dipendente'] ?? ''));
@@ -98,6 +132,8 @@ $caratteristiche = [
     'Ore trasferta' => $oreTrasferta > 0 ? number_format($oreTrasferta, 2, ',', '.') . ' h' : null,
 ];
 
+
+// ===== SEZIONE 6: LOGICA DI PROCESSO =====
 $pdf = new FPDF();
 $pdf->AddPage();
 $pdf->SetAutoPageBreak(true, 20);
@@ -118,6 +154,8 @@ $pdf->SetFont('Arial', 'B', 12);
 $pdf->Cell(0, 8, toPdfText('Voci Retributive'), 0, 1, 'L');
 $pdf->SetFont('Arial', '', 11);
 $pdf->Cell(130, 7, toPdfText('Stipendio Base'), 0, 0, 'L');
+
+// ===== SEZIONE 7: LOGICA DI PROCESSO =====
 $pdf->Cell(0, 7, toPdfText(eur($stipendioBase)), 0, 1, 'R');
 $pdf->Cell(130, 7, toPdfText('TOTALE LORDO'), 0, 0, 'L');
 $pdf->Cell(0, 7, toPdfText(eur($lordo)), 0, 1, 'R');
@@ -138,13 +176,17 @@ $pdf->SetFont('Arial', 'B', 11);
 $pdf->Cell(130, 7, toPdfText('TOTALE TRATTENUTE'), 0, 0, 'L');
 $pdf->Cell(0, 7, toPdfText('-' . eur($totTrattenute)), 0, 1, 'R');
 $pdf->Cell(130, 8, toPdfText('STIPENDIO NETTO'), 0, 0, 'L');
+
+// ===== SEZIONE 8: LOGICA DI PROCESSO =====
 $pdf->Cell(0, 8, toPdfText(eur($netto)), 0, 1, 'R');
 $pdf->Ln(2);
 
 $pdf->SetFont('Arial', 'B', 12);
 $pdf->Cell(0, 8, toPdfText('Dettaglio voci valorizzate'), 0, 1, 'L');
 $pdf->SetFont('Arial', '', 11);
+// INLINE COMMENT: Conditional logic or loop processing
 foreach ($caratteristiche as $label => $val) {
+// INLINE COMMENT: Conditional logic or loop processing
     if ($val === null) {
         continue;
     }
@@ -158,6 +200,8 @@ $pdf->Ln(2);
 $pdf->SetFont('Arial', 'I', 9);
 $pdf->MultiCell(0, 6, toPdfText('Documento generato il ' . $dataDocumento . ' da BPIC.'));
 
+
+// ===== SEZIONE 9: LOGICA DI PROCESSO =====
 $fileName = 'cedolino_bpic_' . $idBusta . '_' . preg_replace('/[^0-9\-]/', '', $periodo) . '.pdf';
 
 header('Content-Type: application/pdf');

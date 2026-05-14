@@ -1,11 +1,21 @@
 <?php
+/**
+ * File: login.php
+ * Description: Main functionality for this module.
+ * Features: Data processing, Database interaction, User interface.
+ * Usage: Accessed via web browser or API endpoint.
+ */
+
+// ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 require_once __DIR__ . "/database.php";
 
 session_start();
 
+// INLINE COMMENT: Conditional logic or loop processing
 if (!empty($_SESSION['user_id'])) {
   $roleNames = array_map(static fn(array $r): string => (string)($r['name'] ?? ''), $_SESSION['roles'] ?? []);
+// INLINE COMMENT: Conditional logic or loop processing
   if (in_array('tenant', $roleNames, true)) {
     header('Location: /SITO/BPIC/tenant_dashboard.php');
     exit;
@@ -17,10 +27,14 @@ if (!empty($_SESSION['user_id'])) {
 $errors = [];
 $generatedToken = '';
 
+// INLINE COMMENT: Conditional logic or loop processing
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+// ===== SEZIONE 2: LOGICA DI PROCESSO =====
     $email = trim($_POST["email"] ?? "");
     $password = (string)($_POST["password"] ?? "");
 
+// INLINE COMMENT: Conditional logic or loop processing
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = "Email non valida.";
     } else {
@@ -38,8 +52,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $user = null;
       }
 
+
+// ===== SEZIONE 3: LOGICA DI PROCESSO =====
+// INLINE COMMENT: Conditional logic or loop processing
       if (!$user) {
         $errors[] = "Email non trovata nel sistema.";
+// INLINE COMMENT: Conditional logic or loop processing
       } elseif (!password_verify($password, $user["Password_hash"])) {
         $errors[] = "❌ Password errata. Riprova.";
       } else {
@@ -58,6 +76,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <html lang="it">
 <head>
   <meta charset="utf-8">
+
+// ===== SEZIONE 4: LOGICA DI PROCESSO =====
   <title>Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
@@ -78,6 +98,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       font-size: 24px;
       cursor: pointer;
       text-decoration: none;
+
+// ===== SEZIONE 5: LOGICA DI PROCESSO =====
       display: flex;
       align-items: center;
       justify-content: center;
@@ -98,6 +120,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
+
+// ===== SEZIONE 6: LOGICA DI PROCESSO =====
     h1 {
       color: #2c3e50;
       text-align: center;
@@ -118,6 +142,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       box-sizing: border-box;
     }
     button {
+
+// ===== SEZIONE 7: LOGICA DI PROCESSO =====
       margin-top: 20px;
       padding: 12px 20px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -138,6 +164,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       padding: 10px;
       border-radius: 8px;
       margin: 12px 0;
+
+// ===== SEZIONE 8: LOGICA DI PROCESSO =====
     }
     a {
       display: inline-block;
@@ -158,6 +186,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
     .token-actions {
       display: flex;
+
+// ===== SEZIONE 9: LOGICA DI PROCESSO =====
       gap: 10px;
       margin-top: 10px;
       align-items: center;
@@ -178,6 +208,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
   </style>
 </head>
+
+// ===== SEZIONE 10: LOGICA DI PROCESSO =====
 <body>
 
 <a href="../index.php" class="home-btn" title="Home">🏠</a>
@@ -185,9 +217,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <div class="container">
   <h1>Login</h1>
 
+// INLINE COMMENT: Conditional logic or loop processing
   <?php if ($errors): ?>
     <div class="err">
       <ul>
+// INLINE COMMENT: Conditional logic or loop processing
         <?php foreach ($errors as $e): ?>
           <li><?= htmlspecialchars($e, ENT_QUOTES, "UTF-8") ?></li>
         <?php endforeach; ?>
@@ -199,12 +233,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <label>Email</label>
     <input type="email" name="email" required value="<?= htmlspecialchars($_POST["email"] ?? "", ENT_QUOTES, "UTF-8") ?>">
 
+// ===== SEZIONE 11: LOGICA DI PROCESSO =====
+
     <label>Password</label>
     <input type="password" name="password" required>
 
     <button type="submit">Entra</button>
   </form>
 
+// INLINE COMMENT: Conditional logic or loop processing
   <?php if (!empty($generatedToken)): ?>
     <hr>
     <h2 style="text-align:center;">Token generato</h2>
@@ -219,6 +256,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <hr>
   <?php endif; ?>
 
+// ===== SEZIONE 12: LOGICA DI PROCESSO =====
+
   <h2 style="text-align:center;">Hai un token?</h2>
   <form method="post" action="/SITO/BPIC/validate_token.php" style="max-width:500px;margin:0 auto;">
     <label>Inserisci qui il token (JWT)</label>
@@ -231,13 +270,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <script>
   const copyBtn = document.getElementById('copy-token');
+// INLINE COMMENT: Conditional logic or loop processing
   if (copyBtn) {
     copyBtn.addEventListener('click', async () => {
       const tokenField = document.getElementById('generated-token');
       const status = document.getElementById('copy-status');
+// INLINE COMMENT: Conditional logic or loop processing
       if (!tokenField || !status) {
         return;
       }
+
+// ===== SEZIONE 13: LOGICA DI PROCESSO =====
       try {
         await navigator.clipboard.writeText(tokenField.value);
         status.textContent = 'Token copiato.';

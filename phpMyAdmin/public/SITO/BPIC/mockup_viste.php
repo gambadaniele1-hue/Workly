@@ -1,6 +1,15 @@
 <?php
+/**
+ * File: mockup_viste.php
+ * Description: Main functionality for this module.
+ * Features: Data processing, Database interaction, User interface.
+ * Usage: Accessed via web browser or API endpoint.
+ */
+
+// ===== SEZIONE 1: LOGICA DI PROCESSO =====
 session_start();
 
+// INLINE COMMENT: Conditional logic or loop processing
 if (!isset($_SESSION['user_id'])) {
     header('Location: /SITO/BPIC/login.php');
     exit;
@@ -18,6 +27,8 @@ require_once __DIR__ . '/database.php';
  * GET|POST  /SITO/BPIC/register.php             Registrazione nuovo utente
  * GET       /SITO/BPIC/logout.php               Distrugge sessione → redirect login
  * POST      /SITO/BPIC/validate_token.php       Valida JWT da form e avvia sessione
+
+// ===== SEZIONE 2: LOGICA DI PROCESSO =====
  *
  * APP PROTETTA  (/SITO/BPIC/) — richiede sessione PHP autenticata
  * ─────────────────────────────────────────────────────────────────────
@@ -37,15 +48,22 @@ require_once __DIR__ . '/database.php';
 $roles = $_SESSION['roles'] ?? null;
 $permissions = $_SESSION['permissions'] ?? null;
 
+// INLINE COMMENT: Conditional logic or loop processing
 if (!$roles || !$permissions) {
+
+// ===== SEZIONE 3: LOGICA DI PROCESSO =====
     $email = $_SESSION['email'] ?? null;
+// INLINE COMMENT: Conditional logic or loop processing
     if (is_string($email) && $email !== '') {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
         $stmt = $mysqli->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
             FROM Utente_Ruolo ur
             JOIN Ruoli r ON r.ID_ruolo = ur.ID_ruolo
             JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
             JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
             WHERE ur.email_utente = ?');
+// INLINE COMMENT: Conditional logic or loop processing
         if ($stmt) {
             $stmt->bind_param('s', $email);
             $stmt->execute();
@@ -56,14 +74,19 @@ if (!$roles || !$permissions) {
             $roleMap = [];
             $permMap = [];
 
+// INLINE COMMENT: Conditional logic or loop processing
             while ($row = $result->fetch_assoc()) {
                 $roleId = (int)$row['ID_ruolo'];
+
+// ===== SEZIONE 4: LOGICA DI PROCESSO =====
+// INLINE COMMENT: Conditional logic or loop processing
                 if (!isset($roleMap[$roleId])) {
                     $roleMap[$roleId] = true;
                     $roles[] = ['id' => $roleId, 'name' => $row['Nome_ruolo']];
                 }
 
                 $permId = (int)$row['ID_privilegio'];
+// INLINE COMMENT: Conditional logic or loop processing
                 if (!isset($permMap[$permId])) {
                     $permMap[$permId] = true;
                     $permissions[] = [
@@ -78,6 +101,8 @@ if (!$roles || !$permissions) {
             $stmt->close();
             $_SESSION['roles'] = $roles;
             $_SESSION['permissions'] = $permissions;
+
+// ===== SEZIONE 5: LOGICA DI PROCESSO =====
         }
     }
 }
@@ -90,15 +115,27 @@ $roleNames = array_values(array_filter(array_map(static function ($role): string
 $isAdmin = in_array('admin', $roleNames, true);
 $currentUserId = (int)($_SESSION['user_id'] ?? 0);
 
+
+/**
+ * Function: hasPermission
+ * Parameters: array $roleNames, array $permissions, string $resource, string $action
+ * Return: mixed
+ * Description: Executes business logic for hasPermission.
+ */
 function hasPermission(array $roleNames, array $permissions, string $resource, string $action): bool
 {
+// INLINE COMMENT: Conditional logic or loop processing
     if (in_array('admin', $roleNames, true)) {
         return true;
     }
 
+// INLINE COMMENT: Conditional logic or loop processing
     foreach ($permissions as $perm) {
         $permResource = (string)($perm['resource'] ?? '');
+
+// ===== SEZIONE 6: LOGICA DI PROCESSO =====
         $permAction = (string)($perm['action'] ?? '');
+// INLINE COMMENT: Conditional logic or loop processing
         if ($permResource === $resource && ($permAction === $action || $permAction === 'ALL')) {
             return true;
         }
@@ -107,8 +144,16 @@ function hasPermission(array $roleNames, array $permissions, string $resource, s
     return false;
 }
 
+
+/**
+ * Function: canSeeRouteByAccess
+ * Parameters: string $accessTag, array $roleNames, array $permissions
+ * Return: mixed
+ * Description: Executes business logic for canSeeRouteByAccess.
+ */
 function canSeeRouteByAccess(string $accessTag, array $roleNames, array $permissions): bool
 {
+// INLINE COMMENT: Conditional logic or loop processing
     if (in_array('admin', $roleNames, true)) {
         return true;
     }
@@ -118,6 +163,8 @@ function canSeeRouteByAccess(string $accessTag, array $roleNames, array $permiss
             return hasPermission($roleNames, $permissions, 'utenti', 'ALL')
                 || hasPermission($roleNames, $permissions, 'ruoli', 'ALL')
                 || hasPermission($roleNames, $permissions, 'privilegi', 'ALL');
+
+// ===== SEZIONE 7: LOGICA DI PROCESSO =====
 
         case 'non_abbonato+':
             return hasPermission($roleNames, $permissions, 'buste_paga', 'INSERT');
@@ -138,6 +185,8 @@ $views = [
         'name' => 'v_generazione_busta_paga',
         'title' => 'Generazione busta paga',
         'group' => 'Operativo',
+
+// ===== SEZIONE 8: LOGICA DI PROCESSO =====
         'resource' => 'buste_paga',
         'action' => 'INSERT',
         'self_scope' => true,
@@ -158,6 +207,8 @@ $views = [
         'action' => 'INSERT',
         'self_scope' => true,
     ],
+
+// ===== SEZIONE 9: LOGICA DI PROCESSO =====
     [
         'name' => 'v_archivio_buste_paga',
         'title' => 'Archivio buste paga',
@@ -178,6 +229,8 @@ $views = [
         'name' => 'v_gestione_utenti',
         'title' => 'Gestione utenti',
         'group' => 'Admin',
+
+// ===== SEZIONE 10: LOGICA DI PROCESSO =====
         'resource' => 'utenti',
         'action' => 'ALL',
         'self_scope' => false,
@@ -198,6 +251,8 @@ $views = [
         'action' => 'ALL',
         'self_scope' => false,
     ],
+
+// ===== SEZIONE 11: LOGICA DI PROCESSO =====
 ];
 
 $views = array_values(array_filter($views, static function (array $view) use ($roleNames, $permissions): bool {
@@ -208,6 +263,7 @@ $results = [];
 $totalRows = 0;
 $nonEmptyViews = 0;
 
+// INLINE COMMENT: Conditional logic or loop processing
 foreach ($views as $view) {
     $viewName = $view['name'];
     $viewTitle = $view['title'];
@@ -218,16 +274,23 @@ foreach ($views as $view) {
     $count = 0;
     $rows = [];
     $columns = [];
+
+// ===== SEZIONE 12: LOGICA DI PROCESSO =====
     $error = null;
 
+// INLINE COMMENT: Conditional logic or loop processing
     if ($isRestrictedToUser) {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
         $countStmt = $mysqli->prepare("SELECT COUNT(*) AS total FROM {$viewName} WHERE ID_utente = ?");
+// INLINE COMMENT: Conditional logic or loop processing
         if ($countStmt) {
             $countStmt->bind_param('i', $currentUserId);
             $countStmt->execute();
             $countResult = $countStmt->get_result();
             $countRow = $countResult ? $countResult->fetch_assoc() : null;
             $count = (int)($countRow['total'] ?? 0);
+// INLINE COMMENT: Conditional logic or loop processing
             if ($countResult) {
                 $countResult->free();
             }
@@ -236,34 +299,49 @@ foreach ($views as $view) {
             $error = $mysqli->error;
         }
 
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
         $rowsStmt = $mysqli->prepare("SELECT * FROM {$viewName} WHERE ID_utente = ? ORDER BY 1 DESC LIMIT 5");
+// INLINE COMMENT: Conditional logic or loop processing
         if ($rowsStmt) {
+
+// ===== SEZIONE 13: LOGICA DI PROCESSO =====
             $rowsStmt->bind_param('i', $currentUserId);
             $rowsStmt->execute();
             $rowsResult = $rowsStmt->get_result();
 
+// INLINE COMMENT: Conditional logic or loop processing
             if ($rowsResult) {
                 $fieldInfo = $rowsResult->fetch_fields();
+// INLINE COMMENT: Conditional logic or loop processing
                 foreach ($fieldInfo as $field) {
                     $columns[] = $field->name;
                 }
 
+// INLINE COMMENT: Conditional logic or loop processing
                 while ($row = $rowsResult->fetch_assoc()) {
                     $rows[] = $row;
                 }
                 $rowsResult->free();
+// INLINE COMMENT: Conditional logic or loop processing
             } elseif ($error === null) {
                 $error = $mysqli->error;
             }
 
             $rowsStmt->close();
+// INLINE COMMENT: Conditional logic or loop processing
         } elseif ($error === null) {
+
+// ===== SEZIONE 14: LOGICA DI PROCESSO =====
             $error = $mysqli->error;
         }
     } else {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
         $countQuery = "SELECT COUNT(*) AS total FROM {$viewName}";
         $countResult = $mysqli->query($countQuery);
 
+// INLINE COMMENT: Conditional logic or loop processing
         if ($countResult) {
             $countRow = $countResult->fetch_assoc();
             $count = (int)($countRow['total'] ?? 0);
@@ -272,24 +350,33 @@ foreach ($views as $view) {
             $error = $mysqli->error;
         }
 
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
         $rowsQuery = "SELECT * FROM {$viewName} ORDER BY 1 DESC LIMIT 5";
         $rowsResult = $mysqli->query($rowsQuery);
 
+// INLINE COMMENT: Conditional logic or loop processing
         if ($rowsResult) {
             $fieldInfo = $rowsResult->fetch_fields();
+// INLINE COMMENT: Conditional logic or loop processing
             foreach ($fieldInfo as $field) {
+
+// ===== SEZIONE 15: LOGICA DI PROCESSO =====
                 $columns[] = $field->name;
             }
 
+// INLINE COMMENT: Conditional logic or loop processing
             while ($row = $rowsResult->fetch_assoc()) {
                 $rows[] = $row;
             }
             $rowsResult->free();
+// INLINE COMMENT: Conditional logic or loop processing
         } elseif ($error === null) {
             $error = $mysqli->error;
         }
     }
 
+// INLINE COMMENT: Conditional logic or loop processing
     if ($count > 0) {
         $nonEmptyViews++;
     }
@@ -298,6 +385,8 @@ foreach ($views as $view) {
     $results[] = [
         'name' => $viewName,
         'title' => $viewTitle,
+
+// ===== SEZIONE 16: LOGICA DI PROCESSO =====
         'group' => $viewGroup,
         'count' => $count,
         'columns' => $columns,
@@ -306,6 +395,13 @@ foreach ($views as $view) {
     ];
 }
 
+
+/**
+ * Function: badgeClass
+ * Parameters: string $group
+ * Return: mixed
+ * Description: Executes business logic for badgeClass.
+ */
 function badgeClass(string $group): string
 {
     return $group === 'Admin' ? 'badge-admin' : 'badge-operativo';
@@ -318,6 +414,8 @@ $rolesLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
  * Struttura: [metodo, path, descrizione, ospite, registrato, abbonato, admin, accesso, privilegio]
  * Valori accesso: 'pubblica' | 'sessione' | 'JWT'
  * ===================================================================== */
+
+// ===== SEZIONE 17: LOGICA DI PROCESSO =====
 $routePermissions = [
     // --- Auth ---
     [
@@ -338,6 +436,8 @@ $routePermissions = [
         'group_bg'    => '#fef2f2',
         'group_bdr'   => '#fca5a5',
         'group_dot'   => '#d04040',
+
+// ===== SEZIONE 18: LOGICA DI PROCESSO =====
         'routes'      => [
             ['GET|POST', 'dashboard.php',                 'Dashboard principale',         false, true,  true,  true,  'sessione', 'login'],
             ['GET|POST', 'Impostazioni_contratto.php',    'Imposta contratto utente',     false, true,  true,  true,  'sessione', 'buste_paga · INSERT'],
@@ -358,6 +458,8 @@ $routePermissions = [
             ['GET',      'api/generate_token.php',  'Genera JWT da sessione attiva',  false, true,  true,  true,  'sessione', 'sessione attiva'],
         ],
     ],
+
+// ===== SEZIONE 19: LOGICA DI PROCESSO =====
 ];
 ?>
 <!doctype html>
@@ -378,6 +480,8 @@ $routePermissions = [
             --card: #fff9ef;
             --line: #e7decd;
             --accent: #0b8f77;
+
+// ===== SEZIONE 20: LOGICA DI PROCESSO =====
             --accent-soft: #d6f4ec;
             --admin: #c06a2a;
             --admin-soft: #ffe7d5;
@@ -398,6 +502,8 @@ $routePermissions = [
         }
 
         .wrap {
+
+// ===== SEZIONE 21: LOGICA DI PROCESSO =====
             max-width: 1180px;
             margin: 0 auto;
             padding: 28px 20px 72px;
@@ -418,6 +524,8 @@ $routePermissions = [
         .hero::after {
             content: '';
             position: absolute;
+
+// ===== SEZIONE 22: LOGICA DI PROCESSO =====
             width: 220px;
             height: 220px;
             border-radius: 50%;
@@ -438,6 +546,8 @@ $routePermissions = [
             max-width: 760px;
         }
 
+
+// ===== SEZIONE 23: LOGICA DI PROCESSO =====
         .session-note {
             margin-top: 10px;
             font-size: 14px;
@@ -458,6 +568,8 @@ $routePermissions = [
             padding: 12px;
         }
 
+
+// ===== SEZIONE 24: LOGICA DI PROCESSO =====
         .kpi label {
             display: block;
             font-size: 12px;
@@ -479,6 +591,8 @@ $routePermissions = [
             border-bottom: 1px solid currentColor;
         }
 
+// ===== SEZIONE 25: LOGICA DI PROCESSO =====
+
         /* ── Generic panel ── */
         .sections {
             margin-top: 22px;
@@ -498,6 +612,8 @@ $routePermissions = [
         .panel-head {
             display: flex;
             justify-content: space-between;
+
+// ===== SEZIONE 26: LOGICA DI PROCESSO =====
             gap: 12px;
             align-items: flex-start;
             flex-wrap: wrap;
@@ -518,6 +634,8 @@ $routePermissions = [
             flex-wrap: wrap;
         }
 
+
+// ===== SEZIONE 27: LOGICA DI PROCESSO =====
         .badge {
             border-radius: 999px;
             font-size: 12px;
@@ -538,6 +656,8 @@ $routePermissions = [
             background: var(--admin-soft);
             color: #8f4b1b;
             border-color: #f0c39d;
+
+// ===== SEZIONE 28: LOGICA DI PROCESSO =====
         }
 
         .badge-count {
@@ -558,6 +678,8 @@ $routePermissions = [
         .table-wrap {
             margin-top: 12px;
             overflow-x: auto;
+
+// ===== SEZIONE 29: LOGICA DI PROCESSO =====
             border: 1px solid var(--line);
             border-radius: 12px;
             background: #fff;
@@ -578,6 +700,8 @@ $routePermissions = [
         }
 
         th {
+
+// ===== SEZIONE 30: LOGICA DI PROCESSO =====
             background: #f6efe3;
             color: #5c513f;
             position: sticky;
@@ -598,6 +722,8 @@ $routePermissions = [
             color: #5c513f;
             padding: 2px 6px;
             border-radius: 6px;
+
+// ===== SEZIONE 31: LOGICA DI PROCESSO =====
         }
 
         .error {
@@ -618,6 +744,8 @@ $routePermissions = [
             overflow: hidden;
         }
 
+
+// ===== SEZIONE 32: LOGICA DI PROCESSO =====
         .perm-section-head {
             display: flex;
             align-items: center;
@@ -638,6 +766,8 @@ $routePermissions = [
             flex-shrink: 0;
         }
 
+
+// ===== SEZIONE 33: LOGICA DI PROCESSO =====
         .perm-table-wrap {
             overflow-x: auto;
             background: #fffcf7;
@@ -658,6 +788,8 @@ $routePermissions = [
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
+
+// ===== SEZIONE 34: LOGICA DI PROCESSO =====
             letter-spacing: 0.05em;
             border-bottom: 1px solid var(--line);
             white-space: nowrap;
@@ -678,6 +810,8 @@ $routePermissions = [
         .perm-table .col-role { text-align: center; width: 80px; }
 
         /* Method pills */
+
+// ===== SEZIONE 35: LOGICA DI PROCESSO =====
         .m-pill {
             display: inline-block;
             border-radius: 999px;
@@ -698,6 +832,8 @@ $routePermissions = [
             border-radius: 6px;
             font-size: 11px;
             font-weight: 600;
+
+// ===== SEZIONE 36: LOGICA DI PROCESSO =====
             padding: 3px 9px;
             white-space: nowrap;
         }
@@ -718,6 +854,8 @@ $routePermissions = [
 
         /* Privilege cell */
         .priv-cell {
+
+// ===== SEZIONE 37: LOGICA DI PROCESSO =====
             font-family: 'IBM Plex Mono', monospace;
             font-size: 11px;
             color: #5c513f;
@@ -738,6 +876,8 @@ $routePermissions = [
             gap: 16px;
             flex-wrap: wrap;
             padding: 10px 4px 2px;
+
+// ===== SEZIONE 38: LOGICA DI PROCESSO =====
             font-size: 12px;
             color: var(--muted);
         }
@@ -758,6 +898,8 @@ $routePermissions = [
             .hero  { padding: 18px; border-radius: 18px; }
             .panel { padding: 12px; }
         }
+
+// ===== SEZIONE 39: LOGICA DI PROCESSO =====
     </style>
 </head>
 <body>
@@ -778,6 +920,8 @@ $routePermissions = [
 
         <div class="kpi-grid">
             <article class="kpi">
+
+// ===== SEZIONE 40: LOGICA DI PROCESSO =====
                 <label>Viste monitorate</label>
                 <strong><?= count($results); ?></strong>
             </article>
@@ -798,6 +942,8 @@ $routePermissions = [
         <a class="top-link" href="/SITO/BPIC/dashboard.php">Torna alla dashboard</a>
     </section>
 
+
+// ===== SEZIONE 41: LOGICA DI PROCESSO =====
     <!-- =========================================================
          RIEPILOGO PERMESSI PER ROTTA
          ========================================================= -->
@@ -811,14 +957,19 @@ $routePermissions = [
                 <span class="badge badge-count">tutte le rotte</span>
             </header>
 
+// INLINE COMMENT: Conditional logic or loop processing
             <?php foreach ($routePermissions as $rg): ?>
                 <div class="perm-section">
                     <div class="perm-section-head" style="background:<?= $rg['group_bg']; ?>; border-bottom-color:<?= $rg['group_bdr']; ?>;">
                         <span class="perm-dot" style="background:<?= $rg['group_dot']; ?>;"></span>
                         <?= htmlspecialchars($rg['group']); ?>
                         &nbsp;—&nbsp;/SITO/BPIC/
+// INLINE COMMENT: Conditional logic or loop processing
                         <?php if ($rg['group'] === 'App protetta'): ?>
+
+// ===== SEZIONE 42: LOGICA DI PROCESSO =====
                             <span style="font-weight:400;opacity:.65;">(sessione PHP richiesta)</span>
+// INLINE COMMENT: Conditional logic or loop processing
                         <?php elseif ($rg['group'] === 'REST API JWT'): ?>
                             <span style="font-weight:400;opacity:.65;">(Bearer JWT richiesto)</span>
                         <?php endif; ?>
@@ -838,6 +989,9 @@ $routePermissions = [
                                 </tr>
                             </thead>
                             <tbody>
+
+// ===== SEZIONE 43: LOGICA DI PROCESSO =====
+// INLINE COMMENT: Conditional logic or loop processing
                                 <?php foreach ($rg['routes'] as $r):
                                     [$method, $path, $desc, $ospite, $registrato, $abbonato, $admin, $accesso, $privilegio] = $r;
 
@@ -858,6 +1012,8 @@ $routePermissions = [
                                 ?>
                                 <tr>
                                     <td>
+
+// ===== SEZIONE 44: LOGICA DI PROCESSO =====
                                         <code class="route"><?= htmlspecialchars($path); ?></code><br>
                                         <span style="font-size:12px;color:var(--muted);"><?= htmlspecialchars($desc); ?></span>
                                     </td>
@@ -868,6 +1024,7 @@ $routePermissions = [
                                     <td class="col-role"><?= $ico($admin); ?></td>
                                     <td><span class="a-badge <?= $accessClass; ?>"><?= htmlspecialchars($accesso); ?></span></td>
                                     <td>
+// INLINE COMMENT: Conditional logic or loop processing
                                         <?php if ($privilegio === '—'): ?>
                                             <span class="priv-none">—</span>
                                         <?php else: ?>
@@ -878,6 +1035,8 @@ $routePermissions = [
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
+
+// ===== SEZIONE 45: LOGICA DI PROCESSO =====
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -898,6 +1057,8 @@ $routePermissions = [
          ========================================================= -->
     <section class="sections" aria-label="Mappa rotte">
         <article class="panel" style="animation-delay:35ms;">
+
+// ===== SEZIONE 46: LOGICA DI PROCESSO =====
             <header class="panel-head">
                 <div>
                     <h2 class="panel-title">Mappa rotte BPIC</h2>
@@ -918,6 +1079,8 @@ $routePermissions = [
                         ['GET',      '/SITO/BPIC/logout.php',         'Logout → redirect login',          'sessione'],
                         ['POST',     '/SITO/BPIC/validate_token.php', 'Valida JWT da form → sessione',    'pubblica'],
                     ],
+
+// ===== SEZIONE 47: LOGICA DI PROCESSO =====
                 ],
                 [
                     'label' => 'App protetta &nbsp;/SITO/BPIC/ (sessione PHP richiesta)',
@@ -938,6 +1101,8 @@ $routePermissions = [
                         ['POST',     '/SITO/BPIC/api/token.php',          'Ottieni JWT (email+password)',    'pubblica'],
                         ['POST',     '/SITO/BPIC/api/verify_token.php',   'Verifica JWT → ruoli/permessi',   'JWT'],
                         ['GET|POST', '/SITO/BPIC/api/permissions.php',    'Permessi utente autenticato',     'JWT'],
+
+// ===== SEZIONE 48: LOGICA DI PROCESSO =====
                         ['GET',      '/SITO/BPIC/api/generate_token.php', 'Genera JWT da sessione attiva',   'sessione'],
                     ],
                 ],
@@ -958,16 +1123,22 @@ $routePermissions = [
                 'abbonato+'      => ['bg' => '#ffedd5', 'col' => '#9a3412'],
                 'admin'          => ['bg' => '#fee2e2', 'col' => '#991b1b'],
                 'nessuna auth'   => ['bg' => '#f1f5f9', 'col' => '#475569'],
+
+// ===== SEZIONE 49: LOGICA DI PROCESSO =====
             ];
 
             $filteredRouteGroups = [];
+// INLINE COMMENT: Conditional logic or loop processing
             foreach ($routeGroups as $group) {
                 $visibleRoutes = [];
+// INLINE COMMENT: Conditional logic or loop processing
                 foreach ($group['routes'] as $route) {
+// INLINE COMMENT: Conditional logic or loop processing
                     if (canSeeRouteByAccess((string)$route[3], $roleNames, $permissions)) {
                         $visibleRoutes[] = $route;
                     }
                 }
+// INLINE COMMENT: Conditional logic or loop processing
                 if (!empty($visibleRoutes)) {
                     $group['routes'] = $visibleRoutes;
                     $filteredRouteGroups[] = $group;
@@ -975,9 +1146,12 @@ $routePermissions = [
             }
             ?>
 
+// INLINE COMMENT: Conditional logic or loop processing
             <?php foreach ($filteredRouteGroups as $gi => $group): ?>
                 <div style="margin-top:<?= $gi === 0 ? '16' : '14'; ?>px; border:1px solid <?= $group['border']; ?>; border-radius:12px; overflow:hidden;">
                     <div style="background:<?= $group['color']; ?>; padding:8px 14px; font-size:13px; font-weight:700; font-family:'IBM Plex Mono',monospace; color:#1c1a15;">
+
+// ===== SEZIONE 50: LOGICA DI PROCESSO =====
                         <?= $group['label']; ?>
                     </div>
                     <div style="overflow-x:auto; background:#fff;">
@@ -991,6 +1165,7 @@ $routePermissions = [
                                 </tr>
                             </thead>
                             <tbody>
+// INLINE COMMENT: Conditional logic or loop processing
                                 <?php foreach ($group['routes'] as $r): ?>
                                     <?php
                                     $mc = $methodColor[$r[0]] ?? ['bg' => '#f1f5f9', 'col' => '#475569'];
@@ -998,6 +1173,8 @@ $routePermissions = [
                                     ?>
                                     <tr>
                                         <td>
+
+// ===== SEZIONE 51: LOGICA DI PROCESSO =====
                                             <span style="display:inline-block;background:<?= $mc['bg']; ?>;color:<?= $mc['col']; ?>;border-radius:6px;padding:2px 8px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;white-space:nowrap;">
                                                 <?= htmlspecialchars($r[0]); ?>
                                             </span>
@@ -1018,12 +1195,15 @@ $routePermissions = [
             <?php endforeach; ?>
 
         </article>
+
+// ===== SEZIONE 52: LOGICA DI PROCESSO =====
     </section>
 
     <!-- =========================================================
          VISTE DATABASE
          ========================================================= -->
     <section class="sections" aria-label="Viste database">
+// INLINE COMMENT: Conditional logic or loop processing
         <?php foreach ($results as $index => $result): ?>
             <article class="panel" style="animation-delay: <?= ($index * 35); ?>ms;">
                 <header class="panel-head">
@@ -1039,17 +1219,23 @@ $routePermissions = [
                     </div>
                 </header>
 
+// ===== SEZIONE 53: LOGICA DI PROCESSO =====
+
+// INLINE COMMENT: Conditional logic or loop processing
                 <?php if ($result['error'] !== null): ?>
                     <div class="error">
                         Errore query: <?= htmlspecialchars($result['error']); ?>
                     </div>
+// INLINE COMMENT: Conditional logic or loop processing
                 <?php elseif ($result['count'] === 0): ?>
                     <div class="empty">
                         Nessun dato disponibile in questa vista. Il mockup evidenzia uno stato vuoto che può essere usato per CTA o onboarding.
                     </div>
                 <?php else: ?>
+// INLINE COMMENT: Conditional logic or loop processing
                         <?php if ($result['name'] === 'v_archivio_buste_paga'): ?>
                             <div class="cards-grid" style="display:grid;gap:12px">
+// INLINE COMMENT: Conditional logic or loop processing
                                 <?php foreach ($result['rows'] as $row): ?>
                                     <div style="background:#fff;padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(12,36,80,0.04);display:flex;flex-direction:column;gap:8px">
                                         <div style="display:flex;justify-content:space-between;align-items:center">
@@ -1058,6 +1244,8 @@ $routePermissions = [
                                         </div>
                                         <div style="display:flex;gap:12px">
                                             <div style="flex:1;background:#ecfeff;padding:10px;border-radius:8px">
+
+// ===== SEZIONE 54: LOGICA DI PROCESSO =====
                                                 <div style="font-size:12px;color:#065f46">Netto</div>
                                                 <div style="font-weight:800">€ <?= htmlspecialchars(number_format((float)($row['Netto'] ?? $row['Stipendio_netto'] ?? 0), 2, ',', '.')) ?></div>
                                             </div>
@@ -1078,6 +1266,8 @@ $routePermissions = [
                                             </form>
                                         </div>
                                     </div>
+
+// ===== SEZIONE 55: LOGICA DI PROCESSO =====
                                 <?php endforeach; ?>
                             </div>
                         <?php else: ?>
@@ -1085,19 +1275,24 @@ $routePermissions = [
                                 <table>
                                     <thead>
                                         <tr>
+// INLINE COMMENT: Conditional logic or loop processing
                                             <?php foreach ($result['columns'] as $column): ?>
                                                 <th><?= htmlspecialchars($column); ?></th>
                                             <?php endforeach; ?>
                                         </tr>
                                     </thead>
                                     <tbody>
+// INLINE COMMENT: Conditional logic or loop processing
                                         <?php foreach ($result['rows'] as $row): ?>
                                             <tr>
+// INLINE COMMENT: Conditional logic or loop processing
                                                 <?php foreach ($result['columns'] as $column): ?>
                                                     <td>
                                                         <?php
                                                         $value = $row[$column] ?? null;
                                                         echo $value === null || $value === '' ? '<em>NULL</em>' : htmlspecialchars((string)$value);
+
+// ===== SEZIONE 56: LOGICA DI PROCESSO =====
                                                         ?>
                                                     </td>
                                                 <?php endforeach; ?>

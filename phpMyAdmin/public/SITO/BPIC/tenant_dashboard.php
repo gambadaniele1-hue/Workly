@@ -1,14 +1,30 @@
 <?php
+/**
+ * File: tenant_dashboard.php
+ * Description: Main functionality for this module.
+ * Features: Data processing, Database interaction, User interface.
+ * Usage: Accessed via web browser or API endpoint.
+ */
+
+// ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
 require_once __DIR__ . '/database.php';
 session_start();
 
+// INLINE COMMENT: Conditional logic or loop processing
 if (empty($_SESSION['user_id'])) {
     header('Location: /SITO/BPIC/login.php');
     exit;
 }
 
+
+/**
+ * Function: ensureTenantTables
+ * Parameters: PDO $pdo
+ * Return: mixed
+ * Description: Executes business logic for ensureTenantTables.
+ */
 function ensureTenantTables(PDO $pdo): void
 {
     $pdo->exec("CREATE TABLE IF NOT EXISTS Aziende_tenant (
@@ -18,6 +34,8 @@ function ensureTenantTables(PDO $pdo): void
         Settore VARCHAR(80) DEFAULT NULL,
         Email_commerciale VARCHAR(120) DEFAULT NULL,
         Stato_relazione ENUM('prospect','in_negoziazione','attiva','chiusa') NOT NULL DEFAULT 'prospect',
+
+// ===== SEZIONE 2: LOGICA DI PROCESSO =====
         Data_creazione TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (ID_azienda),
         KEY idx_aziende_tenant (ID_tenant),
@@ -38,26 +56,41 @@ function ensureTenantTables(PDO $pdo): void
         KEY idx_vendite_tenant (ID_tenant),
         KEY idx_vendite_azienda (ID_azienda),
         KEY idx_vendite_stato (Stato)
+
+// ===== SEZIONE 3: LOGICA DI PROCESSO =====
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 }
 
+
+/**
+ * Function: fetchSessionAuth
+ * Parameters: PDO $pdo
+ * Return: mixed
+ * Description: Executes business logic for fetchSessionAuth.
+ */
 function fetchSessionAuth(PDO $pdo): array
 {
     $roles = $_SESSION['roles'] ?? null;
     $permissions = $_SESSION['permissions'] ?? null;
 
+// INLINE COMMENT: Conditional logic or loop processing
     if ($roles && $permissions) {
         return [is_array($roles) ? $roles : [], is_array($permissions) ? $permissions : []];
     }
 
     $email = (string)($_SESSION['email'] ?? '');
+// INLINE COMMENT: Conditional logic or loop processing
     if ($email === '') {
         return [[], []];
     }
 
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
     $stmt = $pdo->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
         FROM Utente_Ruolo ur
         JOIN Ruoli r ON r.ID_ruolo = ur.ID_ruolo
+
+// ===== SEZIONE 4: LOGICA DI PROCESSO =====
         JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
         JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
         WHERE ur.email_utente = ?');
@@ -69,15 +102,20 @@ function fetchSessionAuth(PDO $pdo): array
     $roleMap = [];
     $permMap = [];
 
+// INLINE COMMENT: Conditional logic or loop processing
     foreach ($rows as $row) {
         $roleId = (int)$row['ID_ruolo'];
+// INLINE COMMENT: Conditional logic or loop processing
         if (!isset($roleMap[$roleId])) {
             $roleMap[$roleId] = true;
             $roles[] = ['id' => $roleId, 'name' => $row['Nome_ruolo']];
         }
 
         $permId = (int)$row['ID_privilegio'];
+// INLINE COMMENT: Conditional logic or loop processing
         if (!isset($permMap[$permId])) {
+
+// ===== SEZIONE 5: LOGICA DI PROCESSO =====
             $permMap[$permId] = true;
             $permissions[] = [
                 'id' => $permId,
@@ -94,15 +132,27 @@ function fetchSessionAuth(PDO $pdo): array
     return [$roles, $permissions];
 }
 
+
+/**
+ * Function: hasTenantPermission
+ * Parameters: array $roleNames, array $permissions
+ * Return: mixed
+ * Description: Executes business logic for hasTenantPermission.
+ */
 function hasTenantPermission(array $roleNames, array $permissions): bool
 {
+// INLINE COMMENT: Conditional logic or loop processing
     if (in_array('admin', $roleNames, true)) {
         return true;
+
+// ===== SEZIONE 6: LOGICA DI PROCESSO =====
     }
 
+// INLINE COMMENT: Conditional logic or loop processing
     foreach ($permissions as $permission) {
         $resource = (string)($permission['resource'] ?? '');
         $action = (string)($permission['action'] ?? '');
+// INLINE COMMENT: Conditional logic or loop processing
         if ($resource === 'vendite_tenant' && ($action === 'ALL' || $action === 'INSERT' || $action === 'UPDATE' || $action === 'SELECT')) {
             return true;
         }
@@ -119,6 +169,9 @@ $isAdmin = in_array('admin', $roleNames, true);
 $isTenant = in_array('tenant', $roleNames, true);
 $canManageTenant = $isTenant || hasTenantPermission($roleNames, $permissions);
 
+// ===== SEZIONE 7: LOGICA DI PROCESSO =====
+
+// INLINE COMMENT: Conditional logic or loop processing
 if (!$canManageTenant) {
     http_response_code(403);
     echo '<p>Accesso negato: questa dashboard e riservata al ruolo tenant.</p>';
@@ -130,27 +183,37 @@ $currentUserId = (int)$_SESSION['user_id'];
 $errors = [];
 $messages = [];
 
+// INLINE COMMENT: Conditional logic or loop processing
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = (string)($_POST['action'] ?? '');
 
+// INLINE COMMENT: Conditional logic or loop processing
     if ($action === 'create_company') {
         $ragioneSociale = trim((string)($_POST['ragione_sociale'] ?? ''));
         $settore = trim((string)($_POST['settore'] ?? ''));
         $emailCommerciale = trim((string)($_POST['email_commerciale'] ?? ''));
         $statoRelazione = (string)($_POST['stato_relazione'] ?? 'prospect');
 
+// ===== SEZIONE 8: LOGICA DI PROCESSO =====
+
         $validStati = ['prospect', 'in_negoziazione', 'attiva', 'chiusa'];
+// INLINE COMMENT: Conditional logic or loop processing
         if ($ragioneSociale === '') {
             $errors[] = 'La ragione sociale e obbligatoria.';
         }
+// INLINE COMMENT: Conditional logic or loop processing
         if ($emailCommerciale !== '' && !filter_var($emailCommerciale, FILTER_VALIDATE_EMAIL)) {
             $errors[] = 'Email commerciale non valida.';
         }
+// INLINE COMMENT: Conditional logic or loop processing
         if (!in_array($statoRelazione, $validStati, true)) {
             $errors[] = 'Stato relazione non valido.';
         }
 
+// INLINE COMMENT: Conditional logic or loop processing
         if (!$errors) {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
             $stmt = $pdo->prepare('INSERT INTO Aziende_tenant (ID_tenant, Ragione_sociale, Settore, Email_commerciale, Stato_relazione)
                 VALUES (?, ?, ?, ?, ?)');
             $stmt->execute([
@@ -158,12 +221,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $ragioneSociale,
                 $settore !== '' ? $settore : null,
                 $emailCommerciale !== '' ? $emailCommerciale : null,
+
+// ===== SEZIONE 9: LOGICA DI PROCESSO =====
                 $statoRelazione,
             ]);
             $messages[] = 'Azienda creata correttamente.';
         }
     }
 
+// INLINE COMMENT: Conditional logic or loop processing
     if ($action === 'create_sale') {
         $aziendaId = (int)($_POST['id_azienda'] ?? 0);
         $nomeDeal = trim((string)($_POST['nome_deal'] ?? ''));
@@ -173,31 +239,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $note = trim((string)($_POST['note'] ?? ''));
 
         $validStatiVendita = ['bozza', 'trattativa', 'vinta', 'persa'];
+// INLINE COMMENT: Conditional logic or loop processing
         if ($aziendaId <= 0) {
             $errors[] = 'Seleziona un azienda valida.';
         }
+// INLINE COMMENT: Conditional logic or loop processing
         if ($nomeDeal === '') {
             $errors[] = 'Il nome della trattativa e obbligatorio.';
+
+// ===== SEZIONE 10: LOGICA DI PROCESSO =====
         }
+// INLINE COMMENT: Conditional logic or loop processing
         if ($valorePrevisto <= 0) {
             $errors[] = 'Il valore previsto deve essere maggiore di 0.';
         }
+// INLINE COMMENT: Conditional logic or loop processing
         if (!in_array($stato, $validStatiVendita, true)) {
             $errors[] = 'Stato vendita non valido.';
         }
 
+// INLINE COMMENT: Conditional logic or loop processing
         if (!$errors) {
+// INLINE COMMENT: Conditional logic or loop processing
             if ($isAdmin) {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $check = $pdo->prepare('SELECT ID_azienda FROM Aziende_tenant WHERE ID_azienda = ? LIMIT 1');
                 $check->execute([$aziendaId]);
             } else {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $check = $pdo->prepare('SELECT ID_azienda FROM Aziende_tenant WHERE ID_azienda = ? AND ID_tenant = ? LIMIT 1');
                 $check->execute([$aziendaId, $currentUserId]);
             }
 
+// INLINE COMMENT: Conditional logic or loop processing
             if (!$check->fetch()) {
                 $errors[] = 'Azienda non trovata o non autorizzata.';
             } else {
+
+// ===== SEZIONE 11: LOGICA DI PROCESSO =====
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $pdo->prepare('INSERT INTO Vendite_tenant
                     (ID_tenant, ID_azienda, Nome_deal, Valore_previsto, Stato, Data_chiusura_prevista, Note)
                     VALUES (?, ?, ?, ?, ?, ?, ?)');
@@ -215,22 +298,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
+// INLINE COMMENT: Conditional logic or loop processing
     if ($action === 'update_sale_status') {
         $venditaId = (int)($_POST['id_vendita'] ?? 0);
         $stato = (string)($_POST['stato'] ?? 'bozza');
+
+// ===== SEZIONE 12: LOGICA DI PROCESSO =====
         $validStatiVendita = ['bozza', 'trattativa', 'vinta', 'persa'];
 
+// INLINE COMMENT: Conditional logic or loop processing
         if ($venditaId <= 0 || !in_array($stato, $validStatiVendita, true)) {
             $errors[] = 'Aggiornamento stato non valido.';
         } else {
+// INLINE COMMENT: Conditional logic or loop processing
             if ($isAdmin) {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $pdo->prepare('UPDATE Vendite_tenant SET Stato = ? WHERE ID_vendita = ?');
                 $stmt->execute([$stato, $venditaId]);
             } else {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $pdo->prepare('UPDATE Vendite_tenant SET Stato = ? WHERE ID_vendita = ? AND ID_tenant = ?');
                 $stmt->execute([$stato, $venditaId, $currentUserId]);
             }
 
+// INLINE COMMENT: Conditional logic or loop processing
             if ($stmt->rowCount() > 0) {
                 $messages[] = 'Stato trattativa aggiornato.';
             } else {
@@ -238,6 +331,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+
+// ===== SEZIONE 13: LOGICA DI PROCESSO =====
 }
 
 $where = $isAdmin ? '' : ' WHERE ID_tenant = :tenant_id ';
@@ -249,6 +344,7 @@ $kpiSql = 'SELECT
     COALESCE(SUM(CASE WHEN Stato = "trattativa" THEN 1 ELSE 0 END), 0) AS trattative_aperte
 FROM Vendite_tenant' . $where;
 $kpiStmt = $pdo->prepare($kpiSql);
+// INLINE COMMENT: Conditional logic or loop processing
 if (!$isAdmin) {
     $kpiStmt->bindValue(':tenant_id', $currentUserId, PDO::PARAM_INT);
 }
@@ -258,17 +354,24 @@ $kpi = $kpiStmt->fetch() ?: [
     'pipeline_totale' => 0,
     'valore_vinto' => 0,
     'trattative_aperte' => 0,
+
+// ===== SEZIONE 14: LOGICA DI PROCESSO =====
 ];
 
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
 $aziendeSql = 'SELECT ID_azienda, Ragione_sociale, Settore, Stato_relazione, Email_commerciale
 FROM Aziende_tenant' . $where . ' ORDER BY Data_creazione DESC';
 $aziendeStmt = $pdo->prepare($aziendeSql);
+// INLINE COMMENT: Conditional logic or loop processing
 if (!$isAdmin) {
     $aziendeStmt->bindValue(':tenant_id', $currentUserId, PDO::PARAM_INT);
 }
 $aziendeStmt->execute();
 $aziende = $aziendeStmt->fetchAll();
 
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
 $venditeSql = 'SELECT vt.ID_vendita, vt.Nome_deal, vt.Valore_previsto, vt.Stato, vt.Data_chiusura_prevista,
     a.Ragione_sociale
 FROM Vendite_tenant vt
@@ -276,8 +379,11 @@ JOIN Aziende_tenant a ON a.ID_azienda = vt.ID_azienda'
 . ($isAdmin ? '' : ' WHERE vt.ID_tenant = :tenant_id')
 . ' ORDER BY vt.Data_creazione DESC';
 $venditeStmt = $pdo->prepare($venditeSql);
+// INLINE COMMENT: Conditional logic or loop processing
 if (!$isAdmin) {
     $venditeStmt->bindValue(':tenant_id', $currentUserId, PDO::PARAM_INT);
+
+// ===== SEZIONE 15: LOGICA DI PROCESSO =====
 }
 $venditeStmt->execute();
 $vendite = $venditeStmt->fetchAll();
@@ -298,6 +404,8 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
             --ink: #0f172a;
             --muted: #516173;
             --brand: #136f63;
+
+// ===== SEZIONE 16: LOGICA DI PROCESSO =====
             --brand-soft: #d8f0eb;
             --warn: #b45309;
             --danger: #b91c1c;
@@ -318,6 +426,8 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
             display: flex;
             justify-content: space-between;
             gap: 14px;
+
+// ===== SEZIONE 17: LOGICA DI PROCESSO =====
             flex-wrap: wrap;
             align-items: center;
             margin-bottom: 18px;
@@ -338,6 +448,8 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
         .btn {
             border: 1px solid transparent;
             border-radius: 10px;
+
+// ===== SEZIONE 18: LOGICA DI PROCESSO =====
             padding: 10px 14px;
             text-decoration: none;
             font-weight: 700;
@@ -358,6 +470,8 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+
+// ===== SEZIONE 19: LOGICA DI PROCESSO =====
             gap: 12px;
             margin: 16px 0 20px;
         }
@@ -378,6 +492,8 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
         }
         .card {
             background: var(--card);
+
+// ===== SEZIONE 20: LOGICA DI PROCESSO =====
             border: 1px solid var(--line);
             border-radius: 14px;
             padding: 16px;
@@ -398,6 +514,8 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
             border: 1px solid #cfd8cf;
             border-radius: 8px;
             font-family: inherit;
+
+// ===== SEZIONE 21: LOGICA DI PROCESSO =====
             background: #fff;
         }
         textarea { min-height: 80px; resize: vertical; }
@@ -418,6 +536,8 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
             font-size: 14px;
         }
         th, td {
+
+// ===== SEZIONE 22: LOGICA DI PROCESSO =====
             border-bottom: 1px solid #e6ece6;
             padding: 10px 8px;
             text-align: left;
@@ -438,6 +558,8 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
             gap: 6px;
             align-items: center;
             flex-wrap: wrap;
+
+// ===== SEZIONE 23: LOGICA DI PROCESSO =====
         }
         .small-form select {
             max-width: 150px;
@@ -458,6 +580,8 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
             margin-top: 14px;
             color: var(--muted);
             font-size: 13px;
+
+// ===== SEZIONE 24: LOGICA DI PROCESSO =====
         }
 
         @media (max-width: 900px) {
@@ -478,14 +602,18 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
         <div class="actions">
             <a class="btn btn-ghost" href="/SITO/BPIC/home.php">Home</a>
             <a class="btn btn-ghost" href="/SITO/BPIC/mockup_viste.php">Viste</a>
+
+// ===== SEZIONE 25: LOGICA DI PROCESSO =====
             <a class="btn btn-main" href="/SITO/BPIC/logout.php">Logout</a>
         </div>
     </div>
 
+// INLINE COMMENT: Conditional logic or loop processing
     <?php foreach ($messages as $message): ?>
         <div class="msg"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></div>
     <?php endforeach; ?>
 
+// INLINE COMMENT: Conditional logic or loop processing
     <?php foreach ($errors as $error): ?>
         <div class="err"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div>
     <?php endforeach; ?>
@@ -498,6 +626,8 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
         <article class="kpi">
             <div class="label">Pipeline totale prevista</div>
             <div class="value">€ <?= number_format((float)$kpi['pipeline_totale'], 2, ',', '.') ?></div>
+
+// ===== SEZIONE 26: LOGICA DI PROCESSO =====
         </article>
         <article class="kpi">
             <div class="label">Valore vinto</div>
@@ -519,6 +649,8 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
                 <label>Ragione sociale</label>
                 <input type="text" name="ragione_sociale" required>
 
+// ===== SEZIONE 27: LOGICA DI PROCESSO =====
+
                 <label>Settore</label>
                 <input type="text" name="settore" placeholder="Es. e-commerce, retail, food, tecnologia">
 
@@ -526,6 +658,8 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
                 <input type="email" name="email_commerciale" placeholder="sales@azienda.it">
 
                 <label>Stato relazione</label>
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
                 <select name="stato_relazione">
                     <option value="prospect">prospect</option>
                     <option value="in_negoziazione">in_negoziazione</option>
@@ -538,14 +672,19 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
         </article>
 
         <article class="card">
+
+// ===== SEZIONE 28: LOGICA DI PROCESSO =====
             <h2>Nuova trattativa</h2>
             <p class="sub">Aggiungi deal e popola la pipeline commerciale.</p>
             <form method="post">
                 <input type="hidden" name="action" value="create_sale">
 
                 <label>Azienda</label>
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
                 <select name="id_azienda" required>
                     <option value="">Seleziona...</option>
+// INLINE COMMENT: Conditional logic or loop processing
                     <?php foreach ($aziende as $azienda): ?>
                         <option value="<?= (int)$azienda['ID_azienda'] ?>">
                             <?= htmlspecialchars((string)$azienda['Ragione_sociale'], ENT_QUOTES, 'UTF-8') ?>
@@ -559,7 +698,11 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
                 <label>Valore previsto (EUR)</label>
                 <input type="number" name="valore_previsto" min="1" step="0.01" required>
 
+// ===== SEZIONE 29: LOGICA DI PROCESSO =====
+
                 <label>Stato</label>
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
                 <select name="stato">
                     <option value="bozza">bozza</option>
                     <option value="trattativa">trattativa</option>
@@ -578,6 +721,8 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
         </article>
     </section>
 
+
+// ===== SEZIONE 30: LOGICA DI PROCESSO =====
     <section class="card" style="margin-bottom: 14px;">
         <h2>Aziende gestite</h2>
         <table>
@@ -590,14 +735,18 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
             </tr>
             </thead>
             <tbody>
+// INLINE COMMENT: Conditional logic or loop processing
             <?php if (!$aziende): ?>
                 <tr><td colspan="4">Nessuna azienda registrata.</td></tr>
             <?php else: ?>
+// INLINE COMMENT: Conditional logic or loop processing
                 <?php foreach ($aziende as $azienda): ?>
                     <tr>
                         <td><?= htmlspecialchars((string)$azienda['Ragione_sociale'], ENT_QUOTES, 'UTF-8') ?></td>
                         <td><?= htmlspecialchars((string)($azienda['Settore'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
                         <td><?= htmlspecialchars((string)($azienda['Email_commerciale'] ?? '-'), ENT_QUOTES, 'UTF-8') ?></td>
+
+// ===== SEZIONE 31: LOGICA DI PROCESSO =====
                         <td><span class="stato"><?= htmlspecialchars((string)$azienda['Stato_relazione'], ENT_QUOTES, 'UTF-8') ?></span></td>
                     </tr>
                 <?php endforeach; ?>
@@ -618,11 +767,15 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
                 <th>Chiusura prevista</th>
                 <th>Azione rapida</th>
             </tr>
+
+// ===== SEZIONE 32: LOGICA DI PROCESSO =====
             </thead>
             <tbody>
+// INLINE COMMENT: Conditional logic or loop processing
             <?php if (!$vendite): ?>
                 <tr><td colspan="6">Nessuna trattativa disponibile.</td></tr>
             <?php else: ?>
+// INLINE COMMENT: Conditional logic or loop processing
                 <?php foreach ($vendite as $vendita): ?>
                     <tr>
                         <td><?= htmlspecialchars((string)$vendita['Nome_deal'], ENT_QUOTES, 'UTF-8') ?></td>
@@ -634,10 +787,14 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
                             <form class="small-form" method="post">
                                 <input type="hidden" name="action" value="update_sale_status">
                                 <input type="hidden" name="id_vendita" value="<?= (int)$vendita['ID_vendita'] ?>">
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
                                 <select name="stato">
                                     <option value="bozza">bozza</option>
                                     <option value="trattativa">trattativa</option>
                                     <option value="vinta">vinta</option>
+
+// ===== SEZIONE 33: LOGICA DI PROCESSO =====
                                     <option value="persa">persa</option>
                                 </select>
                                 <button type="submit">Aggiorna</button>

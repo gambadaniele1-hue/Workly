@@ -1,11 +1,21 @@
 <?php
+/**
+ * File: register.php
+ * Description: Main functionality for this module.
+ * Features: Data processing, Database interaction, User interface.
+ * Usage: Accessed via web browser or API endpoint.
+ */
+
+// ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 require_once __DIR__ . "/database.php";
 
 session_start();
 
+// INLINE COMMENT: Conditional logic or loop processing
 if (!empty($_SESSION['user_id'])) {
   $roleNames = array_map(static fn(array $r): string => (string)($r['name'] ?? ''), $_SESSION['roles'] ?? []);
+// INLINE COMMENT: Conditional logic or loop processing
   if (in_array('tenant', $roleNames, true)) {
     header('Location: /SITO/BPIC/tenant_dashboard.php');
     exit;
@@ -17,35 +27,50 @@ if (!empty($_SESSION['user_id'])) {
 $errors = [];
 $ok = false;
 
+// INLINE COMMENT: Conditional logic or loop processing
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+// ===== SEZIONE 2: LOGICA DI PROCESSO =====
     $email    = trim($_POST["email"] ?? "");
     $telefono = trim($_POST["telefono"] ?? "");
     $password = (string)($_POST["password"] ?? "");
 
+// INLINE COMMENT: Conditional logic or loop processing
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = "Email non valida.";
     }
+// INLINE COMMENT: Conditional logic or loop processing
     if (strlen($password) < 8) {
         $errors[] = "Password troppo corta (minimo 8 caratteri).";
     }
 
+// INLINE COMMENT: Conditional logic or loop processing
     if (!$errors) {
       try {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
         $stmt = $pdo->prepare("SELECT ID_utente FROM Utenti WHERE Email = ? LIMIT 1");
         $stmt->execute([$email]);
         $exists = $stmt->fetch();
 
+// INLINE COMMENT: Conditional logic or loop processing
         if ($exists) {
           $errors[] = "Email già registrata.";
         } else {
+
+// ===== SEZIONE 3: LOGICA DI PROCESSO =====
           $passwordHash = password_hash($password, PASSWORD_BCRYPT);
           $telefonoParam = ($telefono !== "") ? $telefono : null;
 
           $pdo->beginTransaction();
 
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
           $stmt = $pdo->prepare("INSERT INTO Utenti (N_Telefono, Email, ID_busta, Password_hash) VALUES (?, ?, ?, ?)");
           $stmt->execute([$telefonoParam, $email, null, $passwordHash]);
 
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
           $stmt2 = $pdo->prepare("INSERT INTO Utente_Ruolo (email_utente, ID_ruolo) VALUES (?, 3)");
           $stmt2->execute([$email]);
 
@@ -53,11 +78,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
           $ok = true;
         }
       } catch (PDOException $e) {
+// INLINE COMMENT: Conditional logic or loop processing
         if ($pdo->inTransaction()) {
           $pdo->rollBack();
         }
         $errors[] = "Errore durante la registrazione.";
       }
+
+// ===== SEZIONE 4: LOGICA DI PROCESSO =====
     }
 }
 ?>
@@ -78,6 +106,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       top: 20px;
       left: 20px;
       background: #667eea;
+
+// ===== SEZIONE 5: LOGICA DI PROCESSO =====
       color: white;
       border: none;
       padding: 12px 16px;
@@ -98,6 +128,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       transform: scale(1.1);
     }
     .container {
+
+// ===== SEZIONE 6: LOGICA DI PROCESSO =====
       max-width: 500px;
       margin: 0 auto;
       background: #fff;
@@ -118,6 +150,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
     input {
       width: 100%;
+
+// ===== SEZIONE 7: LOGICA DI PROCESSO =====
       padding: 12px;
       margin-top: 8px;
       border: 1px solid #ddd;
@@ -138,6 +172,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
     button:hover {
       transform: translateY(-2px);
+
+// ===== SEZIONE 8: LOGICA DI PROCESSO =====
     }
     .err {
       background: #ffecec;
@@ -158,6 +194,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       margin-top: 15px;
       color: #667eea;
       text-decoration: none;
+
+// ===== SEZIONE 9: LOGICA DI PROCESSO =====
     }
     a:hover {
       text-decoration: underline;
@@ -171,13 +209,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <div class="container">
   <h1>Registrazione</h1>
 
+// INLINE COMMENT: Conditional logic or loop processing
   <?php if ($ok): ?>
     <div class="ok">Registrazione completata! Ora puoi fare il login.</div>
   <?php endif; ?>
 
+// INLINE COMMENT: Conditional logic or loop processing
   <?php if ($errors): ?>
     <div class="err">
       <ul>
+
+// ===== SEZIONE 10: LOGICA DI PROCESSO =====
+// INLINE COMMENT: Conditional logic or loop processing
         <?php foreach ($errors as $e): ?>
           <li><?= htmlspecialchars($e, ENT_QUOTES, "UTF-8") ?></li>
         <?php endforeach; ?>
@@ -198,6 +241,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <button type="submit">Registrati</button>
   </form>
 
+
+// ===== SEZIONE 11: LOGICA DI PROCESSO =====
   <a href="/SITO/BPIC/login.php">Vai al login</a>
 </div>
 

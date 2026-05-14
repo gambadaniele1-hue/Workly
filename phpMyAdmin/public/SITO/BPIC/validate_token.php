@@ -1,16 +1,26 @@
 <?php
+/**
+ * File: validate_token.php
+ * Description: Main functionality for this module.
+ * Features: Data processing, Database interaction, User interface.
+ * Usage: Accessed via web browser or API endpoint.
+ */
+
+// ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 require_once __DIR__ . "/database.php";
 require_once __DIR__ . "/api/jwt.php";
 
 session_start();
 
+// INLINE COMMENT: Conditional logic or loop processing
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: /SITO/BPIC/login.php');
     exit;
 }
 
 $token = trim($_POST['token'] ?? '');
+// INLINE COMMENT: Conditional logic or loop processing
 if ($token === '') {
     $error = 'Token mancante.';
     echo "<p>$error</p><p><a href=\"/SITO/BPIC/login.php\">Torna al login</a></p>";
@@ -18,6 +28,9 @@ if ($token === '') {
 }
 
 $payload = verify_jwt($token, JWT_SECRET);
+
+// ===== SEZIONE 2: LOGICA DI PROCESSO =====
+// INLINE COMMENT: Conditional logic or loop processing
 if (!$payload || empty($payload['user_id'])) {
     $error = 'Token non valido o scaduto.';
     echo "<p>$error</p><p><a href=\"/SITO/BPIC/login.php\">Torna al login</a></p>";
@@ -27,6 +40,8 @@ if (!$payload || empty($payload['user_id'])) {
 $userId = (int)$payload['user_id'];
 
 try {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
     $stmt = $pdo->prepare('SELECT ID_utente, Email FROM Utenti WHERE ID_utente = ? LIMIT 1');
     $stmt->execute([$userId]);
     $user = $stmt->fetch();
@@ -35,9 +50,12 @@ try {
     exit;
 }
 
+// INLINE COMMENT: Conditional logic or loop processing
 if (!$user) {
     echo "<p>Utente non trovato.</p><p><a href=\"/SITO/BPIC/login.php\">Torna al login</a></p>";
     exit;
+
+// ===== SEZIONE 3: LOGICA DI PROCESSO =====
 }
 
 // Imposta la sessione come se l'utente avesse fatto login
@@ -47,6 +65,8 @@ $_SESSION['email'] = $user['Email'];
 $_SESSION['tipo_utente'] = $user['Tipo_utente'] ?? null;
 
 // Recupera ruoli e privilegi per mostrare nella dashboard
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
 $stmt = $pdo->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
     FROM Utente_Ruolo ur
     JOIN Ruoli r ON r.ID_ruolo = ur.ID_ruolo
@@ -58,18 +78,23 @@ $stmt->execute([$email]);
 $result = $stmt->fetchAll();
 
 $roles = [];
+
+// ===== SEZIONE 4: LOGICA DI PROCESSO =====
 $permissions = [];
 $roleMap = [];
 $permMap = [];
 
+// INLINE COMMENT: Conditional logic or loop processing
 foreach ($result as $row) {
     $roleId = (int)$row['ID_ruolo'];
+// INLINE COMMENT: Conditional logic or loop processing
     if (!isset($roleMap[$roleId])) {
         $roleMap[$roleId] = true;
         $roles[] = ['id' => $roleId, 'name' => $row['Nome_ruolo']];
     }
 
     $permId = (int)$row['ID_privilegio'];
+// INLINE COMMENT: Conditional logic or loop processing
     if (!isset($permMap[$permId])) {
         $permMap[$permId] = true;
         $permissions[] = ['id' => $permId, 'name' => $row['Nome_privilegio'], 'resource' => $row['Risorsa'], 'action' => $row['Azione']];
@@ -79,9 +104,12 @@ foreach ($result as $row) {
 $_SESSION['roles'] = $roles;
 $_SESSION['permissions'] = $permissions;
 
+// ===== SEZIONE 5: LOGICA DI PROCESSO =====
+
 $roleNames = array_map(static fn(array $r): string => (string)($r['name'] ?? ''), $roles);
 $isTenant = in_array('tenant', $roleNames, true);
 
+// INLINE COMMENT: Conditional logic or loop processing
 if ($isTenant) {
     header('Location: /SITO/BPIC/tenant_dashboard.php');
     exit;
@@ -90,6 +118,8 @@ if ($isTenant) {
 // Se l'utente ha gia impostato il contratto, evita il setup e porta alla home provvisoria.
 $hasContractSettings = false;
 try {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
     $stmt = $pdo->prepare('SELECT ID_utente FROM Impostazioni_contratto WHERE ID_utente = ? AND tipologia_dipendente <> "" LIMIT 1');
     $stmt->execute([$userId]);
     $hasContractSettings = (bool)$stmt->fetch();
@@ -97,7 +127,10 @@ try {
     $hasContractSettings = false;
 }
 
+// INLINE COMMENT: Conditional logic or loop processing
 if ($hasContractSettings) {
+
+// ===== SEZIONE 6: LOGICA DI PROCESSO =====
     header('Location: /SITO/BPIC/home.php');
     exit;
 }

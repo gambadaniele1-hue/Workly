@@ -1,7 +1,16 @@
 <?php
+/**
+ * File: test_transazione_t14.php
+ * Description: Main functionality for this module.
+ * Features: Data processing, Database interaction, User interface.
+ * Usage: Accessed via web browser or API endpoint.
+ */
+
+// ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
 session_start();
+// INLINE COMMENT: Conditional logic or loop processing
 if (empty($_SESSION['user_id'])) {
     header('Location: /SITO/BPIC/login.php');
     exit;
@@ -18,6 +27,8 @@ if (empty($_SESSION['user_id'])) {
       --bg: #f6f9ff;
       --card: #ffffff;
       --text: #0f172a;
+
+// ===== SEZIONE 2: LOGICA DI PROCESSO =====
       --muted: #64748b;
       --primary: #2563eb;
       --danger: #dc2626;
@@ -38,6 +49,8 @@ if (empty($_SESSION['user_id'])) {
     }
     .card {
       background: var(--card);
+
+// ===== SEZIONE 3: LOGICA DI PROCESSO =====
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 20px;
@@ -58,6 +71,8 @@ if (empty($_SESSION['user_id'])) {
       padding: 12px 14px;
       font-weight: 700;
       cursor: pointer;
+
+// ===== SEZIONE 4: LOGICA DI PROCESSO =====
       text-decoration: none;
       display: inline-block;
       text-align: center;
@@ -78,6 +93,8 @@ if (empty($_SESSION['user_id'])) {
     pre {
       background: #0b1220;
       color: #e5edf9;
+
+// ===== SEZIONE 5: LOGICA DI PROCESSO =====
       border-radius: 12px;
       padding: 14px;
       overflow: auto;
@@ -98,6 +115,8 @@ if (empty($_SESSION['user_id'])) {
 </head>
 <body>
   <div class="wrap">
+
+// ===== SEZIONE 6: LOGICA DI PROCESSO =====
     <div class="card">
       <h1>Test T14 - Generazione busta paga</h1>
       <p>Workflow testato: BEGIN TRANSACTION, SELECT Contratto, SELECT DatiMensili, CALCOLO, INSERT BustaPaga, COMMIT.</p>
@@ -119,6 +138,8 @@ if (empty($_SESSION['user_id'])) {
       <pre id="log">Pronto.</pre>
     </div>
 
+// ===== SEZIONE 7: LOGICA DI PROCESSO =====
+
     <div class="card">
       <h2>Stato tabella T14_Test_BustaPaga (ultime 30 righe)</h2>
       <table>
@@ -138,6 +159,8 @@ if (empty($_SESSION['user_id'])) {
         <tbody id="rows"></tbody>
       </table>
     </div>
+
+// ===== SEZIONE 8: LOGICA DI PROCESSO =====
   </div>
 
   <script>
@@ -145,19 +168,30 @@ if (empty($_SESSION['user_id'])) {
     const rowsEl = document.getElementById('rows');
     let bearerToken = '';
 
+
+/**
+ * Function: log
+ * Parameters: data
+ * Return: mixed
+ * Description: Executes business logic for log.
+ */
     function log(data) {
       const text = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
       logEl.textContent = text;
     }
 
     async function ensureToken() {
+// INLINE COMMENT: Conditional logic or loop processing
       if (bearerToken) return bearerToken;
       const res = await fetch('/SITO/BPIC/api/generate_token.php', { method: 'GET' });
       const json = await res.json();
+// INLINE COMMENT: Conditional logic or loop processing
       if (!res.ok || !json.token) {
         throw new Error('Impossibile ottenere token API.');
       }
       bearerToken = json.token;
+
+// ===== SEZIONE 9: LOGICA DI PROCESSO =====
       return bearerToken;
     }
 
@@ -170,6 +204,7 @@ if (empty($_SESSION['user_id'])) {
           'Content-Type': 'application/json'
         }
       };
+// INLINE COMMENT: Conditional logic or loop processing
       if (method !== 'GET') {
         opts.body = JSON.stringify({ use_case: useCase });
       }
@@ -178,13 +213,23 @@ if (empty($_SESSION['user_id'])) {
         ? '/SITO/BPIC/api/use_cases.php?use_case=' + encodeURIComponent(useCase)
         : '/SITO/BPIC/api/use_cases.php';
 
+
+// ===== SEZIONE 10: LOGICA DI PROCESSO =====
       const res = await fetch(url, opts);
       const json = await res.json();
       return { status: res.status, data: json };
     }
 
+
+/**
+ * Function: renderRows
+ * Parameters: rows
+ * Return: mixed
+ * Description: Executes business logic for renderRows.
+ */
     function renderRows(rows) {
       rowsEl.innerHTML = '';
+// INLINE COMMENT: Conditional logic or loop processing
       if (!rows || !rows.length) {
         rowsEl.innerHTML = '<tr><td colspan="9">Nessun dato.</td></tr>';
         return;
@@ -198,6 +243,8 @@ if (empty($_SESSION['user_id'])) {
           <td>${r.step_code ?? ''}</td>
           <td>${r.contratto_tipo ?? ''}</td>
           <td>${r.lordo ?? ''}</td>
+
+// ===== SEZIONE 11: LOGICA DI PROCESSO =====
           <td>${r.netto ?? ''}</td>
           <td>${r.tasse ?? ''}</td>
           <td>${r.batch_uuid ?? ''}</td>
@@ -209,6 +256,7 @@ if (empty($_SESSION['user_id'])) {
 
     async function refreshState() {
       const out = await callUseCase('t14_test_state', 'GET');
+// INLINE COMMENT: Conditional logic or loop processing
       if (out.status >= 400) {
         log(out.data);
         return;
@@ -218,6 +266,8 @@ if (empty($_SESSION['user_id'])) {
 
     document.getElementById('setupBtn').addEventListener('click', async () => {
       try {
+
+// ===== SEZIONE 12: LOGICA DI PROCESSO =====
         const out = await callUseCase('t14_test_setup', 'POST');
         log(out);
         await refreshState();
@@ -238,6 +288,8 @@ if (empty($_SESSION['user_id'])) {
 
     document.getElementById('nonAtomicBtn').addEventListener('click', async () => {
       try {
+
+// ===== SEZIONE 13: LOGICA DI PROCESSO =====
         const out = await callUseCase('t14_generazione_busta_paga_non_atomic', 'POST');
         log(out);
         await refreshState();
@@ -258,4 +310,6 @@ if (empty($_SESSION['user_id'])) {
   </script>
   <script src="/SITO/BPIC/auth/auto_logout_on_close.js"></script>
 </body>
+
+// ===== SEZIONE 14: LOGICA DI PROCESSO =====
 </html>

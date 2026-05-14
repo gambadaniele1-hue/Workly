@@ -1,7 +1,16 @@
 <?php
+/**
+ * File: storico_buste_paga.php
+ * Description: Main functionality for this module.
+ * Features: Data processing, Database interaction, User interface.
+ * Usage: Accessed via web browser or API endpoint.
+ */
+
+// ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
 session_start();
+// INLINE COMMENT: Conditional logic or loop processing
 if (empty($_SESSION['user_id'])) {
   header('Location: /SITO/BPIC/login.php');
   exit;
@@ -18,6 +27,8 @@ $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 // Carica impostazioni contratto per calcolare le voci (maggiorazioni e indennità)
 $settings = [
   'Maggiorazione_festiva' => 0.0,
+
+// ===== SEZIONE 2: LOGICA DI PROCESSO =====
   'Maggiorazione_prefestiva' => 0.0,
   'Maggiorazione_notturna' => 0.0,
   'Maggiorazione_straordinaria' => 0.0,
@@ -25,12 +36,18 @@ $settings = [
   'Indennita_trasferta' => 0.0,
 ];
 try {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
   $stmt = $pdo->prepare('SELECT Maggiorazione_festiva, Maggiorazione_prefestiva, Maggiorazione_notturna, Maggiorazione_straordinaria, Indennita_reperibilita, Indennita_trasferta FROM Impostazioni_contratto WHERE ID_utente = ? LIMIT 1');
+// INLINE COMMENT: Conditional logic or loop processing
   if ($stmt) {
     $stmt->execute([$userId]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
+// INLINE COMMENT: Conditional logic or loop processing
     if ($row) {
+// INLINE COMMENT: Conditional logic or loop processing
       foreach ($settings as $k => $_) {
+// INLINE COMMENT: Conditional logic or loop processing
         if (array_key_exists($k, $row)) {
           $settings[$k] = (float)$row[$k];
         }
@@ -38,15 +55,22 @@ try {
     }
   }
 } catch (Exception $e) {
+
+// ===== SEZIONE 3: LOGICA DI PROCESSO =====
   // fallback usa valori di default
 }
 
+// INLINE COMMENT: Conditional logic or loop processing
 if ($requestMethod === 'POST' && isset($_POST['delete_id_busta'])) {
   $idBusta = (int)($_POST['delete_id_busta'] ?? 0);
+// INLINE COMMENT: Conditional logic or loop processing
   if ($idBusta > 0) {
     try {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
       $del = $pdo->prepare('DELETE FROM Confronta WHERE ID_utente = ? AND ID_busta = ?');
       $del->execute([$userId, $idBusta]);
+// INLINE COMMENT: Conditional logic or loop processing
       if ($del->rowCount() > 0) {
         $message = 'Busta rimossa dallo storico.';
       } else {
@@ -58,9 +82,13 @@ if ($requestMethod === 'POST' && isset($_POST['delete_id_busta'])) {
   }
 }
 
+
+// ===== SEZIONE 4: LOGICA DI PROCESSO =====
 $rows = [];
 
 try {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
   $q = $pdo->prepare('SELECT c.ID_busta, c.Data_confronto AS data_storico, bp.Mese_riferimento, bp.Stipendio_lordo, bp.Stipendio_netto,
     bp.Ore_lavorate, bp.Paga_oraria, bp.Ore_ferie, bp.Ore_malattia, bp.Ore_straordinari, bp.Ore_festivi, bp.Ore_prefestivi, bp.Ore_notturne, bp.Ore_reperibilita, bp.Ore_trasferta
     FROM Confronta c
@@ -71,19 +99,31 @@ try {
   $rows = $q->fetchAll(PDO::FETCH_ASSOC);
 
   // Fallback: se lo storico e vuoto, mostra direttamente le buste dell'utente.
+// INLINE COMMENT: Conditional logic or loop processing
   if (empty($rows)) {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
     $f = $pdo->prepare('SELECT bp.ID_busta, bp.Data_creazione AS data_storico, bp.Mese_riferimento, bp.Stipendio_lordo, bp.Stipendio_netto,
       bp.Ore_lavorate, bp.Paga_oraria, bp.Ore_ferie, bp.Ore_malattia, bp.Ore_straordinari, bp.Ore_festivi, bp.Ore_prefestivi, bp.Ore_notturne, bp.Ore_reperibilita, bp.Ore_trasferta
       FROM Busta_paga bp
       WHERE bp.ID_utente = ?
       ORDER BY bp.ID_busta DESC');
     $f->execute([$userId]);
+
+// ===== SEZIONE 5: LOGICA DI PROCESSO =====
     $rows = $f->fetchAll(PDO::FETCH_ASSOC);
   }
 } catch (Exception $e) {
   $error = 'Errore nel caricamento dello storico buste paga.';
 }
 
+
+/**
+ * Function: eur
+ * Parameters: float $value
+ * Return: mixed
+ * Description: Executes business logic for eur.
+ */
 function eur(float $value): string {
   return number_format($value, 2, ',', '.') . ' EUR';
 }
@@ -98,6 +138,8 @@ function eur(float $value): string {
     :root {
       --bg: #f6f8fc;
       --card: #ffffff;
+
+// ===== SEZIONE 6: LOGICA DI PROCESSO =====
       --line: #e5e7eb;
       --txt: #0f172a;
       --muted: #64748b;
@@ -119,6 +161,8 @@ function eur(float $value): string {
       font-family: "Segoe UI", system-ui, sans-serif;
     }
 
+// ===== SEZIONE 7: LOGICA DI PROCESSO =====
+
     .layout {
       min-height: 100vh;
       display: grid;
@@ -138,6 +182,8 @@ function eur(float $value): string {
     }
 
     .user {
+
+// ===== SEZIONE 8: LOGICA DI PROCESSO =====
       font-size: 13px;
       color: #cbd5e1;
       margin-bottom: 18px;
@@ -158,6 +204,8 @@ function eur(float $value): string {
       border: 1px solid rgba(148, 163, 184, 0.3);
     }
 
+
+// ===== SEZIONE 9: LOGICA DI PROCESSO =====
     .menu a:hover,
     .menu a.active {
       background: var(--sidebar-soft);
@@ -178,6 +226,8 @@ function eur(float $value): string {
       line-height: 1.1;
     }
 
+
+// ===== SEZIONE 10: LOGICA DI PROCESSO =====
     .head p {
       margin: 8px 0 0;
       color: var(--muted);
@@ -198,6 +248,8 @@ function eur(float $value): string {
       border: 1px solid #86efac;
     }
 
+
+// ===== SEZIONE 11: LOGICA DI PROCESSO =====
     .notice.err {
       background: #fee2e2;
       color: #991b1b;
@@ -218,6 +270,8 @@ function eur(float $value): string {
     }
 
     .card-top {
+
+// ===== SEZIONE 12: LOGICA DI PROCESSO =====
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -238,6 +292,8 @@ function eur(float $value): string {
 
     .metrics {
       display: grid;
+
+// ===== SEZIONE 13: LOGICA DI PROCESSO =====
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
       margin-bottom: 12px;
@@ -258,6 +314,8 @@ function eur(float $value): string {
     .box strong {
       font-size: 30px;
       line-height: 1;
+
+// ===== SEZIONE 14: LOGICA DI PROCESSO =====
     }
 
     .box.netto { background: var(--green-bg); }
@@ -278,6 +336,8 @@ function eur(float $value): string {
       background: #eff6ff;
       color: #1d4ed8;
       font-weight: 700;
+
+// ===== SEZIONE 15: LOGICA DI PROCESSO =====
       padding: 8px 12px;
       text-decoration: none;
       cursor: pointer;
@@ -298,6 +358,8 @@ function eur(float $value): string {
       font-weight: 700;
     }
 
+
+// ===== SEZIONE 16: LOGICA DI PROCESSO =====
     @media (max-width: 1024px) {
       .layout { grid-template-columns: 1fr; }
       .metrics { grid-template-columns: 1fr; }
@@ -318,6 +380,8 @@ function eur(float $value): string {
         <a class="active" href="/SITO/BPIC/storico_buste_paga.php">Storico buste paga</a>
         <a href="/SITO/BPIC/mockup_viste.php">Mockup viste</a>
         <a href="/SITO/BPIC/Impostazioni_contratto.php">Impostazioni contratto</a>
+
+// ===== SEZIONE 17: LOGICA DI PROCESSO =====
         <a href="/SITO/BPIC/logout.php">Logout</a>
       </nav>
     </aside>
@@ -328,17 +392,23 @@ function eur(float $value): string {
         <p>Visualizza e gestisci le buste generate con riepilogo Netto, Lordo e Tasse.</p>
       </header>
 
+// INLINE COMMENT: Conditional logic or loop processing
       <?php if ($message !== ''): ?>
         <div class="notice ok"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></div>
       <?php endif; ?>
+// INLINE COMMENT: Conditional logic or loop processing
       <?php if ($error !== ''): ?>
         <div class="notice err"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div>
       <?php endif; ?>
 
+// INLINE COMMENT: Conditional logic or loop processing
       <?php if (empty($rows)): ?>
         <div class="empty">Nessuna busta paga presente nello storico.</div>
       <?php else: ?>
+
+// ===== SEZIONE 18: LOGICA DI PROCESSO =====
         <section class="stack">
+// INLINE COMMENT: Conditional logic or loop processing
           <?php foreach ($rows as $row): ?>
             <?php
               $lordo = (float)($row['Stipendio_lordo'] ?? 0);
@@ -359,6 +429,8 @@ function eur(float $value): string {
               $ore_notturne = (float)($row['Ore_notturne'] ?? 0);
               $ore_reper = (float)($row['Ore_reperibilita'] ?? 0);
 
+// ===== SEZIONE 19: LOGICA DI PROCESSO =====
+
               $mf = $settings['Maggiorazione_festiva'] / 100.0;
               $mp = $settings['Maggiorazione_prefestiva'] / 100.0;
               $mn = $settings['Maggiorazione_notturna'] / 100.0;
@@ -378,6 +450,8 @@ function eur(float $value): string {
             <article class="card">
               <div class="card-top">
                 <div>
+
+// ===== SEZIONE 20: LOGICA DI PROCESSO =====
                   <div class="month"><?= htmlspecialchars($mese, ENT_QUOTES, 'UTF-8') ?></div>
                   <div class="date">Generata il <?= htmlspecialchars($data, ENT_QUOTES, 'UTF-8') ?></div>
                 </div>
@@ -398,6 +472,8 @@ function eur(float $value): string {
                     Trasferte: <?= htmlspecialchars(eur($lordo_trasf), ENT_QUOTES, 'UTF-8') ?><br>
                     Festivi: <?= htmlspecialchars(eur($lordo_festivi), ENT_QUOTES, 'UTF-8') ?><br>
                     Prefestivi: <?= htmlspecialchars(eur($lordo_prefestivi), ENT_QUOTES, 'UTF-8') ?><br>
+
+// ===== SEZIONE 21: LOGICA DI PROCESSO =====
                     Notturne: <?= htmlspecialchars(eur($lordo_notturne), ENT_QUOTES, 'UTF-8') ?><br>
                   </div>
                 </div>
@@ -418,6 +494,8 @@ function eur(float $value): string {
           <?php endforeach; ?>
         </section>
       <?php endif; ?>
+
+// ===== SEZIONE 22: LOGICA DI PROCESSO =====
     </main>
   </div>
   <script src="/SITO/BPIC/auth/auto_logout_on_close.js"></script>

@@ -1,9 +1,19 @@
 <?php
+/**
+ * File: api/generate_busta.php
+ * Description: Main functionality for this module.
+ * Features: Data processing, Database interaction, User interface.
+ * Usage: Accessed via web browser or API endpoint.
+ */
+
+// ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
+// INLINE COMMENT: Conditional logic or loop processing
 if (session_status() !== PHP_SESSION_ACTIVE) {
   session_start();
 }
+// INLINE COMMENT: Conditional logic or loop processing
 if (empty($_SESSION['user_id'])) {
   http_response_code(401);
   echo 'Unauthorized';
@@ -18,6 +28,8 @@ $ore = (int)($_POST['ore_lavorate'] ?? 0);
 $paga = (float)($_POST['paga_oraria'] ?? 0.0);
 
 $ferie = (int)($_POST['ore_ferie'] ?? 0);
+
+// ===== SEZIONE 2: LOGICA DI PROCESSO =====
 $malattia = (int)($_POST['ore_malattia'] ?? 0);
 $stra = (int)($_POST['ore_straordinari'] ?? 0);
 $trasf = (int)($_POST['ore_trasferta'] ?? 0);
@@ -38,14 +50,22 @@ $settings = [
   'Maggiorazione_straordinaria' => 0.0,
   'Indennita_reperibilita' => 0.0,
   'Indennita_trasferta' => 0.0,
+
+// ===== SEZIONE 3: LOGICA DI PROCESSO =====
 ];
 try {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
   $stmt = $pdo->prepare('SELECT Maggiorazione_festiva, Maggiorazione_prefestiva, Maggiorazione_notturna, Maggiorazione_straordinaria, Indennita_reperibilita, Indennita_trasferta FROM Impostazioni_contratto WHERE ID_utente = ? LIMIT 1');
+// INLINE COMMENT: Conditional logic or loop processing
   if ($stmt) {
     $stmt->execute([$userId]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
+// INLINE COMMENT: Conditional logic or loop processing
     if ($row) {
+// INLINE COMMENT: Conditional logic or loop processing
       foreach ($settings as $k => $_) {
+// INLINE COMMENT: Conditional logic or loop processing
         if (array_key_exists($k, $row)) {
           $settings[$k] = (float)$row[$k];
         }
@@ -58,6 +78,8 @@ try {
 
 // Simple payroll calculation (placeholder logic)
 $ore_normali = $ore + $ferie + $malattia;
+
+// ===== SEZIONE 4: LOGICA DI PROCESSO =====
 $lordo_base = $ore_normali * $paga;
 
 // use percentages from settings (stored as percent, e.g. 100 => 100%)
@@ -79,6 +101,8 @@ $lordo_reperibilita = $reperibilita * ($paga + $ind_reper);
 
 $lordo = $lordo_base + $lordo_stra + $lordo_trasf + $lordo_festivi + $lordo_prefestivi + $lordo_notturne + $lordo_reperibilita;
 
+// ===== SEZIONE 5: LOGICA DI PROCESSO =====
+
 // Calcolo trattenute secondo legge italiana
 $inps = $lordo * 0.0919;           // 9,19% INPS
 $irpef = $lordo * 0.2090;          // 20,9% IRPEF
@@ -94,10 +118,19 @@ $ore_totali_mese = $ore + $ferie + $malattia + $stra + $trasf + $festivi + $pref
 $ferie_maturate = round($ore_totali_mese * 0.083, 2);
 
 // Helper function for error messages
+
+/**
+ * Function: errorMsg
+ * Parameters: $msg
+ * Return: mixed
+ * Description: Executes business logic for errorMsg.
+ */
 function errorMsg($msg) {
   ?>
   <div class="panel" style="background:#fee2e2;border-left:4px solid #dc2626;padding:16px">
     <div style="color:#991b1b;font-weight:700">❌ Errore</div>
+
+// ===== SEZIONE 6: LOGICA DI PROCESSO =====
     <div style="color:#7f1d1d;margin-top:8px"><?= htmlspecialchars($msg, ENT_QUOTES, 'UTF-8') ?></div>
   </div>
   <?php
@@ -107,6 +140,8 @@ function errorMsg($msg) {
 try {
   // Try with ID_utente first (new schema)
   try {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
     $ins = $pdo->prepare('INSERT INTO Busta_paga (ID_utente, Mese_riferimento, Stipendio_lordo, Stipendio_netto, Ore_lavorate, Paga_oraria, Ore_ferie, Ore_malattia, Ore_straordinari, Ore_festivi, Ore_prefestivi, Ore_notturne, Ore_reperibilita, Ore_trasferta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
     $ins->execute([
       $userId,
@@ -118,6 +153,8 @@ try {
       $ferie,
       $malattia,
       $stra,
+
+// ===== SEZIONE 7: LOGICA DI PROCESSO =====
       $festivi,
       $prefestivi,
       $notturne,
@@ -128,7 +165,10 @@ try {
 
     // registra la busta nello storico (Confronta)
     try {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
       $insArch = $pdo->prepare('INSERT INTO Confronta (ID_utente, ID_busta) VALUES (?, ?)');
+// INLINE COMMENT: Conditional logic or loop processing
       if ($insArch) {
         $insArch->execute([$userId, $bustaId]);
       }
@@ -137,7 +177,12 @@ try {
     }
   } catch (PDOException $e) {
     // If ID_utente column doesn't exist yet, try without it (old schema)
+// INLINE COMMENT: Conditional logic or loop processing
     if (strpos($e->getMessage(), 'Unknown column') !== false) {
+
+// ===== SEZIONE 8: LOGICA DI PROCESSO =====
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
       $ins = $pdo->prepare('INSERT INTO Busta_paga (Mese_riferimento, Stipendio_lordo, Stipendio_netto, Ore_lavorate, Paga_oraria, Ore_ferie, Ore_malattia, Ore_straordinari, Ore_festivi, Ore_prefestivi, Ore_notturne, Ore_reperibilita, Ore_trasferta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
       $ins->execute([
         $month,
@@ -157,7 +202,12 @@ try {
       $bustaId = (int)$pdo->lastInsertId();
 
       try {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
         $insArch = $pdo->prepare('INSERT INTO Confronta (ID_utente, ID_busta) VALUES (?, ?)');
+
+// ===== SEZIONE 9: LOGICA DI PROCESSO =====
+// INLINE COMMENT: Conditional logic or loop processing
         if ($insArch) {
           $insArch->execute([$userId, $bustaId]);
         }
@@ -166,8 +216,11 @@ try {
       }
     } else {
       // If it's a duplicate entry (unique index in DB not removed), insert without ID_utente
+// INLINE COMMENT: Conditional logic or loop processing
       if (strpos($e->getMessage(), '1062') !== false || strpos($e->getMessage(), 'Duplicate entry') !== false) {
         try {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
           $ins = $pdo->prepare('INSERT INTO Busta_paga (Mese_riferimento, Stipendio_lordo, Stipendio_netto, Ore_lavorate, Paga_oraria, Ore_ferie, Ore_malattia, Ore_straordinari, Ore_festivi, Ore_prefestivi, Ore_notturne, Ore_reperibilita, Ore_trasferta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
           $ins->execute([
             $month,
@@ -178,6 +231,8 @@ try {
             $ferie,
             $malattia,
             $stra,
+
+// ===== SEZIONE 10: LOGICA DI PROCESSO =====
             $festivi,
             $prefestivi,
             $notturne,
@@ -186,7 +241,10 @@ try {
           ]);
           $bustaId = (int)$pdo->lastInsertId();
           try {
+
+/* BLOCK COMMENT: SQL Query execution to interact with database records */
             $insArch = $pdo->prepare('INSERT INTO Confronta (ID_utente, ID_busta) VALUES (?, ?)');
+// INLINE COMMENT: Conditional logic or loop processing
             if ($insArch) {
               $insArch->execute([$userId, $bustaId]);
             }
@@ -198,6 +256,8 @@ try {
         }
       } else {
         // errore imprevisto
+
+// ===== SEZIONE 11: LOGICA DI PROCESSO =====
         $bustaId = 0;
       }
     }
@@ -207,6 +267,13 @@ try {
 }
 
 // Format
+
+/**
+ * Function: fm
+ * Parameters: $n){return number_format((float)$n, 2, ',', '.'
+ * Return: mixed
+ * Description: Executes business logic for fm.
+ */
 function fm($n){return number_format((float)$n, 2, ',', '.');}
 
 // Return HTML fragment
@@ -218,8 +285,11 @@ function fm($n){return number_format((float)$n, 2, ',', '.');}
       <p style="margin:6px 0;color:#64748b">Valori calcolati dalla simulazione rapida</p>
     </div>
     <div style="text-align:right">
+
+// ===== SEZIONE 12: LOGICA DI PROCESSO =====
       <small style="color:#94a3b8">Lordo</small>
       <div style="font-weight:800;font-size:20px">€ <?= fm($lordo) ?></div>
+// INLINE COMMENT: Conditional logic or loop processing
       <?php if (!empty($bustaId)): ?>
         <div style="font-size:12px;color:#0f766e">Salvato (ID <?= $bustaId ?>)</div>
       <?php endif; ?>
@@ -238,6 +308,8 @@ function fm($n){return number_format((float)$n, 2, ',', '.');}
       <div>Notturne: € <?= fm($lordo_notturne) ?></div>
       <div>Reperibilità: € <?= fm($lordo_reperibilita) ?></div>
     </div>
+
+// ===== SEZIONE 13: LOGICA DI PROCESSO =====
     <div style="background:#fff7ed;padding:12px;border-radius:8px">
       <strong>Netto pagato</strong>
       <div style="font-size:18px;margin-top:6px">€ <?= fm($netto) ?></div>

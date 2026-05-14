@@ -1,7 +1,16 @@
 <?php
+/**
+ * File: home.php
+ * Description: Main functionality for this module.
+ * Features: Data processing, Database interaction, User interface.
+ * Usage: Accessed via web browser or API endpoint.
+ */
+
+// ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
 session_start();
+// INLINE COMMENT: Conditional logic or loop processing
 if (empty($_SESSION['user_id'])) {
   header('Location: /SITO/BPIC/login.php');
   exit;
@@ -10,14 +19,19 @@ if (empty($_SESSION['user_id'])) {
 $email = (string)($_SESSION['email'] ?? 'utente');
 $roles = $_SESSION['roles'] ?? [];
 $roleIds = [];
+// INLINE COMMENT: Conditional logic or loop processing
 if (is_array($roles)) {
+// INLINE COMMENT: Conditional logic or loop processing
   foreach ($roles as $role) {
+// INLINE COMMENT: Conditional logic or loop processing
     if (isset($role['id'])) {
       $roleIds[] = (int)$role['id'];
     }
   }
 }
 $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
+
+// ===== SEZIONE 2: LOGICA DI PROCESSO =====
 ?>
 <!doctype html>
 <html lang="it">
@@ -38,6 +52,8 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
       --sidebar-soft: #172a55;
       --sidebar-text: #e6eeff;
     }
+
+// ===== SEZIONE 3: LOGICA DI PROCESSO =====
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -58,6 +74,8 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
     }
     .brand {
       font-size: 22px;
+
+// ===== SEZIONE 4: LOGICA DI PROCESSO =====
       font-weight: 800;
       letter-spacing: 0.5px;
       margin-bottom: 16px;
@@ -78,6 +96,8 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
     .menu {
       display: grid;
       gap: 8px;
+
+// ===== SEZIONE 5: LOGICA DI PROCESSO =====
     }
     .menu a {
       text-decoration: none;
@@ -98,6 +118,8 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
       display: inline-block;
       margin-left: 8px;
       font-size: 11px;
+
+// ===== SEZIONE 6: LOGICA DI PROCESSO =====
       padding: 2px 8px;
       border-radius: 999px;
       background: #264c9b;
@@ -118,6 +140,8 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
       font-size: 32px;
     }
     .subtitle {
+
+// ===== SEZIONE 7: LOGICA DI PROCESSO =====
       margin: 0;
       color: var(--muted);
     }
@@ -138,6 +162,8 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
       text-align: center;
       font-weight: 700;
       padding: 12px 14px;
+
+// ===== SEZIONE 8: LOGICA DI PROCESSO =====
       border-radius: 12px;
       border: 1px solid transparent;
     }
@@ -158,6 +184,8 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
       border-radius: 10px;
       padding: 8px 10px;
       font-size: 13px;
+
+// ===== SEZIONE 9: LOGICA DI PROCESSO =====
       font-weight: 700;
     }
     @media (max-width: 980px) {
@@ -178,6 +206,8 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
       <div class="user">Utente: <?= htmlspecialchars($email, ENT_QUOTES, 'UTF-8') ?></div>
 
       <div class="menu-title">Navigazione</div>
+
+// ===== SEZIONE 10: LOGICA DI PROCESSO =====
       <nav class="menu">
         <a href="/SITO/BPIC/home.php">Home</a>
         <a href="/SITO/BPIC/mockup_viste.php">Nuova busta paga</a>
@@ -187,6 +217,7 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
 
       <div class="menu-title">Area Abbonato</div>
       <nav class="menu">
+// INLINE COMMENT: Conditional logic or loop processing
         <?php if ($isAbbonato): ?>
           <a href="/SITO/BPIC/storico_buste_paga.php">Storico buste paga <span class="pill">Ruoli 1-2</span></a>
           <a href="/SITO/BPIC/mockup_viste.php">Confronto buste paga <span class="pill">Ruoli 1-2</span></a>
@@ -198,6 +229,8 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
 
       <div class="menu-title">Contratto</div>
       <nav class="menu">
+
+// ===== SEZIONE 11: LOGICA DI PROCESSO =====
         <a href="/SITO/BPIC/Impostazioni_contratto.php">Modifica impostazioni contratto</a>
       </nav>
 
@@ -214,10 +247,13 @@ $isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
         <p class="subtitle">Da questa pagina puoi navigare le funzioni principali dalla sidebar a sinistra.</p>
         <p class="mail">Accesso completato. Le impostazioni contratto risultano gia salvate.</p>
 
+// INLINE COMMENT: Conditional logic or loop processing
         <?php if (!$isAbbonato): ?>
           <div class="warn">Le funzioni Storico e Confronto sono disponibili in modo completo per ruoli abbonato (ID ruolo 1 o 2).</div>
         <?php endif; ?>
 
+
+// ===== SEZIONE 12: LOGICA DI PROCESSO =====
         <div class="grid">
           <a class="btn primary" href="/SITO/BPIC/nuovabustapaga.php">Crea nuova busta paga</a>
           <a class="btn secondary" href="/SITO/BPIC/Impostazioni_contratto.php">Aggiorna contratto</a>

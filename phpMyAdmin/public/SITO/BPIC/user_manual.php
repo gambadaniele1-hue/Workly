@@ -1,7 +1,16 @@
 <?php
+/**
+ * File: user_manual.php
+ * Description: Main functionality for this module.
+ * Features: Data processing, Database interaction, User interface.
+ * Usage: Accessed via web browser or API endpoint.
+ */
+
+// ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
 session_start();
+// INLINE COMMENT: Conditional logic or loop processing
 if (empty($_SESSION['user_id'])) {
   header('Location: /SITO/BPIC/login.php');
   exit;
@@ -10,17 +19,25 @@ if (empty($_SESSION['user_id'])) {
 $email = (string)($_SESSION['email'] ?? 'utente');
 $roles = $_SESSION['roles'] ?? [];
 $roleNames = [];
+// INLINE COMMENT: Conditional logic or loop processing
 if (is_array($roles)) {
+// INLINE COMMENT: Conditional logic or loop processing
   foreach ($roles as $role) {
+// INLINE COMMENT: Conditional logic or loop processing
     if (isset($role['name'])) {
       $roleNames[] = $role['name'];
     }
   }
 }
 $roleDisplay = !empty($roleNames) ? implode(', ', $roleNames) : 'Utente standard';
+
+// ===== SEZIONE 2: LOGICA DI PROCESSO =====
 $roleIds = [];
+// INLINE COMMENT: Conditional logic or loop processing
 if (is_array($roles)) {
+// INLINE COMMENT: Conditional logic or loop processing
   foreach ($roles as $role) {
+// INLINE COMMENT: Conditional logic or loop processing
     if (isset($role['id'])) {
       $roleIds[] = (int)$role['id'];
     }
@@ -38,6 +55,8 @@ $isTenant = in_array('tenant', $roleNames, true);
   <style>
     :root {
       --bg: #f1f5ff;
+
+// ===== SEZIONE 3: LOGICA DI PROCESSO =====
       --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
@@ -58,6 +77,8 @@ $isTenant = in_array('tenant', $roleNames, true);
     .layout {
       min-height: 100vh;
       display: grid;
+
+// ===== SEZIONE 4: LOGICA DI PROCESSO =====
       grid-template-columns: 300px 1fr;
     }
     .sidebar {
@@ -78,6 +99,8 @@ $isTenant = in_array('tenant', $roleNames, true);
       margin-bottom: 18px;
       word-break: break-word;
     }
+
+// ===== SEZIONE 5: LOGICA DI PROCESSO =====
     .menu-title {
       font-size: 12px;
       text-transform: uppercase;
@@ -98,6 +121,8 @@ $isTenant = in_array('tenant', $roleNames, true);
       background: transparent;
       border: 1px solid rgba(174, 197, 255, 0.18);
       transition: all 0.2s ease;
+
+// ===== SEZIONE 6: LOGICA DI PROCESSO =====
     }
     .menu a:hover {
       background: var(--sidebar-soft);
@@ -118,6 +143,8 @@ $isTenant = in_array('tenant', $roleNames, true);
       margin-bottom: 24px;
     }
     h1 {
+
+// ===== SEZIONE 7: LOGICA DI PROCESSO =====
       margin: 0 0 8px;
       font-size: 32px;
     }
@@ -138,6 +165,8 @@ $isTenant = in_array('tenant', $roleNames, true);
       color: white;
       padding: 6px 12px;
       border-radius: 8px;
+
+// ===== SEZIONE 8: LOGICA DI PROCESSO =====
       font-weight: 700;
       font-size: 13px;
       margin-top: 8px;
@@ -158,6 +187,8 @@ $isTenant = in_array('tenant', $roleNames, true);
       color: var(--primary);
     }
     .section-card p, .section-card li {
+
+// ===== SEZIONE 9: LOGICA DI PROCESSO =====
       margin: 6px 0;
       line-height: 1.6;
       color: #334155;
@@ -178,6 +209,8 @@ $isTenant = in_array('tenant', $roleNames, true);
     }
     .step strong {
       color: var(--primary);
+
+// ===== SEZIONE 10: LOGICA DI PROCESSO =====
     }
     .tip {
       background: #f0ffd4;
@@ -198,6 +231,8 @@ $isTenant = in_array('tenant', $roleNames, true);
     .back-btn {
       display: inline-block;
       text-decoration: none;
+
+// ===== SEZIONE 11: LOGICA DI PROCESSO =====
       background: var(--secondary);
       color: white;
       padding: 10px 16px;
@@ -218,6 +253,8 @@ $isTenant = in_array('tenant', $roleNames, true);
         border-right: none;
         border-bottom: 1px solid rgba(255, 255, 255, 0.14);
       }
+
+// ===== SEZIONE 12: LOGICA DI PROCESSO =====
     }
   </style>
 </head>
@@ -239,6 +276,8 @@ $isTenant = in_array('tenant', $roleNames, true);
       </nav>
     </aside>
 
+// ===== SEZIONE 13: LOGICA DI PROCESSO =====
+
     <section class="content">
       <a href="/SITO/BPIC/home.php" class="back-btn">← Torna alla Home</a>
 
@@ -258,16 +297,20 @@ $isTenant = in_array('tenant', $roleNames, true);
         </div>
       </div>
 
+
+// ===== SEZIONE 14: LOGICA DI PROCESSO =====
       <div class="section-card">
         <h3>👥 Il Tuo Ruolo</h3>
         <p>
           Sei loggato come: <strong><?= htmlspecialchars($roleDisplay, ENT_QUOTES, 'UTF-8') ?></strong>
         </p>
+// INLINE COMMENT: Conditional logic or loop processing
         <?php if ($isTenant): ?>
           <div class="step">
             <strong>🏢 Tenant Admin</strong>
             <p>Hai accesso all'area tenant per gestire aziende, trattative e pipeline commerciale. Puoi visualizzare e modificare i record della tua area.</p>
           </div>
+// INLINE COMMENT: Conditional logic or loop processing
         <?php elseif ($isAbbonato): ?>
           <div class="step">
             <strong>⭐ Utente Abbonato</strong>
@@ -278,6 +321,8 @@ $isTenant = in_array('tenant', $roleNames, true);
             <strong>👤 Utente Standard</strong>
             <p>Hai accesso alle funzioni base del sistema. Alcune funzioni avanzate sono disponibili solo per utenti abbonati.</p>
           </div>
+
+// ===== SEZIONE 15: LOGICA DI PROCESSO =====
         <?php endif; ?>
       </div>
 
@@ -298,6 +343,8 @@ $isTenant = in_array('tenant', $roleNames, true);
         </div>
         <div class="step">
           <strong>Passo 3: Aggiorna le Impostazioni</strong>
+
+// ===== SEZIONE 16: LOGICA DI PROCESSO =====
           <p>Puoi tornare in qualsiasi momento a <em>Impostazioni Contratto</em> per modificare i parametri, come indennità, mensilità aggiuntive e altre configurazioni.</p>
         </div>
       </div>
@@ -308,6 +355,7 @@ $isTenant = in_array('tenant', $roleNames, true);
           <li><strong>Viste Operative:</strong> Visualizza e gestisci i dati operativi relativi ai contratti.</li>
           <li><strong>Impostazioni Contratto:</strong> Configura i parametri del contratto (indennità, tredicesima, ecc.).</li>
           <li><strong>Dashboard Marketing:</strong> Accedi alla dashboard di marketing per visualizzare KPI e metriche.</li>
+// INLINE COMMENT: Conditional logic or loop processing
           <?php if (!$isAbbonato): ?>
             <li><em>(Funzioni Storico e Confronto disponibili per utenti abbonati)</em></li>
           <?php endif; ?>
@@ -318,6 +366,8 @@ $isTenant = in_array('tenant', $roleNames, true);
         <h3>🔐 Sicurezza e Sessione</h3>
         <p>
           La tua sessione è protetta e si chiude automaticamente quando:
+
+// ===== SEZIONE 17: LOGICA DI PROCESSO =====
         </p>
         <ul>
           <li>Chiudi la pagina/tab del browser</li>
@@ -338,6 +388,8 @@ $isTenant = in_array('tenant', $roleNames, true);
         <p>Sì, tutte le modifiche vengono salvate nel database. Puoi controllare lo stato dalla home.</p>
         
         <p><strong>Posso accedere da più dispositivi contemporaneamente?</strong></p>
+
+// ===== SEZIONE 18: LOGICA DI PROCESSO =====
         <p>Sì, puoi avere più sessioni contemporaneamente su dispositivi diversi.</p>
       </div>
 
