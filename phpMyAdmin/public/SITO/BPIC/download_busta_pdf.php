@@ -209,4 +209,17 @@ header('Content-Disposition: attachment; filename="' . $fileName . '"');
 header('Cache-Control: private, max-age=0, must-revalidate');
 
 $pdf->Output('I', $fileName);
+
+/* ===== TODO: CASO D'USO NON IMPLEMENTATO =====
+ * Use Case: "Invio PDF via email"
+ * Description: Invio della busta paga in formato PDF al dipendente tramite email
+ * Implementation Note: Aggiungere integrazione con libreria PHPMailer o mail() nativa
+ * Required: Email template, SMTP configuration, retry logic, bounce handling
+ * Expected Flow: 
+ *   1. Dopo generazione PDF, salvare file temporaneamente
+ *   2. Preparare messaggio email con allegato PDF
+ *   3. Inviare tramite SMTP a $userEmail
+ *   4. Registrare invio in database (Storico_PDF_inviati o tabella equivalente)
+ * Status: PENDING
+ */
 exit;

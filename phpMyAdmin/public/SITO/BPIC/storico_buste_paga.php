@@ -408,6 +408,21 @@ function eur(float $value): string {
 
 // ===== SEZIONE 18: LOGICA DI PROCESSO =====
         <section class="stack">
+
+/* ===== TODO: CASO D'USO NON IMPLEMENTATO =====
+ * Use Case: "Archivio buste paga"
+ * Description: Archiviazione e gestione dei cedolini storici con esportazione e ricerca avanzata
+ * Implementation Note: Aggiungere funzionalità di archivio con ricerca, filtri avanzati, esportazione
+ * Required: Tabella di archivio separata o flag archive, API di ricerca, export PDF/Excel
+ * Expected Features:
+ *   1. Ricerca avanzata: per periodo, importo, tipo contratto, stato
+ *   2. Esportazione batch: selezionare multiple buste per esportare in ZIP/Excel
+ *   3. Archiviazione: spostare buste vecchie in archivio separato per performance
+ *   4. Statistiche: grafici redditi annuali, medie, andamenti storici
+ * Current State: Solo visualizzazione con paginazione e filtri base
+ * Database: Potrebbe usare tabella separata Storico_buste_paga_archivio
+ * Status: PENDING - Solo visualizzazione implementata
+ */
 // INLINE COMMENT: Conditional logic or loop processing
           <?php foreach ($rows as $row): ?>
             <?php

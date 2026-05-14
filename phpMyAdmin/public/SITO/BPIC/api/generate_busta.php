@@ -55,6 +55,20 @@ $settings = [
 ];
 try {
 
+/* ===== TODO: CASO D'USO NON IMPLEMENTATO =====
+ * Use Case: "Confronto buste paga"
+ * Description: Comparazione tra buste paga multiple per analisi retributive
+ * Implementation Note: Implementare logica di confronto tra buste selezionate
+ * Required: Tabella Confronta (già esistente), endpoint GET per recuperare confronti, API per comparazione
+ * Expected Flow:
+ *   1. Selezionare 2-3 buste paga da visualizzare in parallelo
+ *   2. Calcolare differenze in lordo/netto/scatti/trattenute
+ *   3. Visualizzare grafici/tabelle comparative
+ *   4. Esportare report confronto in PDF/Excel
+ * Database: Tabella Confronta (ID_utente, ID_busta) già creata
+ * Status: PENDING - Struttura DB pronta, logica comparazione da sviluppare
+ */
+
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
   $stmt = $pdo->prepare('SELECT Maggiorazione_festiva, Maggiorazione_prefestiva, Maggiorazione_notturna, Maggiorazione_straordinaria, Indennita_reperibilita, Indennita_trasferta FROM Impostazioni_contratto WHERE ID_utente = ? LIMIT 1');
 // INLINE COMMENT: Conditional logic or loop processing
