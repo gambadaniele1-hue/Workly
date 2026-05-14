@@ -77,6 +77,29 @@
       color: #999;
       font-size: 16px;
     }
+    .usecase-details {
+      text-align: left;
+      margin-top: 24px;
+      background: #fcfcff;
+      border: 1px solid #e6e9ee;
+      padding: 18px;
+      border-radius: 8px;
+    }
+    .usecase-details h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .usecase-details h3 {
+      color: #34495e;
+      margin-bottom: 6px;
+    }
+    .usecase-details ul,
+    .usecase-details ol {
+      margin-top: 6px;
+      margin-bottom: 12px;
+      padding-left: 20px;
+      color: #444;
+    }
   </style>
 </head>
 <body>
@@ -90,6 +113,34 @@
   <div class="diagram-container">
     <img src="DiagrammaCasiDuso.png" alt="Diagramma dei Casi d'Uso">
   </div>
+  
+  <section class="usecase-details">
+    <h2>Generazione busta paga senza PDF</h2>
+
+    <h3>Precondizioni</h3>
+    <ul>
+      <li>L'utente è autenticato e ha i permessi per generare buste paga.</li>
+      <li>I dati anagrafici e retributivi del dipendente sono presenti nel database.</li>
+      <li>È definito il periodo di competenza e la configurazione delle voci retributive.</li>
+      <li>Il servizio di generazione PDF è disabilitato o non richiesto per questo caso.</li>
+    </ul>
+
+    <h3>Scenario</h3>
+    <ol>
+      <li>L'utente seleziona il dipendente e il periodo di competenza dalla UI.</li>
+      <li>Il sistema calcola imponibili, trattenute, contributi e netto a pagare.</li>
+      <li>Il sistema salva la busta paga nel database senza avviare la creazione del PDF.</li>
+      <li>Il sistema aggiorna lo stato della busta (es. "generata - senza PDF") e notifica l'utente.</li>
+    </ol>
+
+    <h3>Postcondizioni</h3>
+    <ul>
+      <li>La busta paga è registrata nel database con stato che indica l'assenza del PDF.</li>
+      <li>I risultati dei calcoli sono disponibili per consultazione e verifica nello storico.</li>
+      <li>La generazione del PDF può essere eseguita in un secondo momento come job separato.</li>
+      <li>Viene creato un log dell'operazione per scopi di audit e tracciamento.</li>
+    </ul>
+  </section>
 </div>
 
 </body>
