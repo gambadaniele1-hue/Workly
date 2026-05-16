@@ -481,7 +481,7 @@ $routePermissions = [
             --line: #e7decd;
             --accent: #0b8f77;
 
-// ===== SEZIONE 20: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 20: LOGICA DI PROCESSO ===== ?>
             --accent-soft: #d6f4ec;
             --admin: #c06a2a;
             --admin-soft: #ffe7d5;
@@ -503,13 +503,13 @@ $routePermissions = [
 
         .wrap {
 
-// ===== SEZIONE 21: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 21: LOGICA DI PROCESSO ===== ?>
             max-width: 1180px;
             margin: 0 auto;
             padding: 28px 20px 72px;
         }
 
-        /* ── Hero ── */
+        <?php /* ── Hero ── */ ?>
         .hero {
             background: rgba(255, 249, 239, 0.8);
             border: 1px solid var(--line);
@@ -525,7 +525,7 @@ $routePermissions = [
             content: '';
             position: absolute;
 
-// ===== SEZIONE 22: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 22: LOGICA DI PROCESSO ===== ?>
             width: 220px;
             height: 220px;
             border-radius: 50%;
@@ -547,7 +547,7 @@ $routePermissions = [
         }
 
 
-// ===== SEZIONE 23: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 23: LOGICA DI PROCESSO ===== ?>
         .session-note {
             margin-top: 10px;
             font-size: 14px;
@@ -569,7 +569,7 @@ $routePermissions = [
         }
 
 
-// ===== SEZIONE 24: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 24: LOGICA DI PROCESSO ===== ?>
         .kpi label {
             display: block;
             font-size: 12px;
@@ -591,9 +591,9 @@ $routePermissions = [
             border-bottom: 1px solid currentColor;
         }
 
-// ===== SEZIONE 25: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 25: LOGICA DI PROCESSO ===== ?>
 
-        /* ── Generic panel ── */
+        <?php /* ── Generic panel ── */ ?>
         .sections {
             margin-top: 22px;
             display: grid;
@@ -613,7 +613,7 @@ $routePermissions = [
             display: flex;
             justify-content: space-between;
 
-// ===== SEZIONE 26: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 26: LOGICA DI PROCESSO ===== ?>
             gap: 12px;
             align-items: flex-start;
             flex-wrap: wrap;
@@ -635,7 +635,7 @@ $routePermissions = [
         }
 
 
-// ===== SEZIONE 27: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 27: LOGICA DI PROCESSO ===== ?>
         .badge {
             border-radius: 999px;
             font-size: 12px;
@@ -657,7 +657,7 @@ $routePermissions = [
             color: #8f4b1b;
             border-color: #f0c39d;
 
-// ===== SEZIONE 28: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 28: LOGICA DI PROCESSO ===== ?>
         }
 
         .badge-count {
@@ -679,7 +679,7 @@ $routePermissions = [
             margin-top: 12px;
             overflow-x: auto;
 
-// ===== SEZIONE 29: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 29: LOGICA DI PROCESSO ===== ?>
             border: 1px solid var(--line);
             border-radius: 12px;
             background: #fff;
@@ -701,7 +701,7 @@ $routePermissions = [
 
         th {
 
-// ===== SEZIONE 30: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 30: LOGICA DI PROCESSO ===== ?>
             background: #f6efe3;
             color: #5c513f;
             position: sticky;
@@ -723,7 +723,7 @@ $routePermissions = [
             padding: 2px 6px;
             border-radius: 6px;
 
-// ===== SEZIONE 31: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 31: LOGICA DI PROCESSO ===== ?>
         }
 
         .error {
@@ -736,7 +736,7 @@ $routePermissions = [
             font-size: 13px;
         }
 
-        /* ── Riepilogo permessi – stili specifici ── */
+        <?php /* ── Riepilogo permessi – stili specifici ── */ ?>
         .perm-section {
             margin-top: 14px;
             border: 1px solid var(--line);
@@ -745,7 +745,7 @@ $routePermissions = [
         }
 
 
-// ===== SEZIONE 32: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 32: LOGICA DI PROCESSO ===== ?>
         .perm-section-head {
             display: flex;
             align-items: center;
@@ -767,7 +767,7 @@ $routePermissions = [
         }
 
 
-// ===== SEZIONE 33: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 33: LOGICA DI PROCESSO ===== ?>
         .perm-table-wrap {
             overflow-x: auto;
             background: #fffcf7;
@@ -789,7 +789,7 @@ $routePermissions = [
             font-weight: 600;
             text-transform: uppercase;
 
-// ===== SEZIONE 34: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 34: LOGICA DI PROCESSO ===== ?>
             letter-spacing: 0.05em;
             border-bottom: 1px solid var(--line);
             white-space: nowrap;
@@ -809,9 +809,9 @@ $routePermissions = [
 
         .perm-table .col-role { text-align: center; width: 80px; }
 
-        /* Method pills */
+        <?php /* Method pills */ ?>
 
-// ===== SEZIONE 35: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 35: LOGICA DI PROCESSO ===== ?>
         .m-pill {
             display: inline-block;
             border-radius: 999px;
@@ -826,14 +826,14 @@ $routePermissions = [
         .m-post   { background: #dbeafe; color: #1e3a8a; border: 1px solid #93c5fd; }
         .m-both   { background: #ede9fe; color: #4c1d95; border: 1px solid #c4b5fd; }
 
-        /* Access badges */
+        <?php /* Access badges */ ?>
         .a-badge {
             display: inline-block;
             border-radius: 6px;
             font-size: 11px;
             font-weight: 600;
 
-// ===== SEZIONE 36: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 36: LOGICA DI PROCESSO ===== ?>
             padding: 3px 9px;
             white-space: nowrap;
         }
@@ -841,7 +841,7 @@ $routePermissions = [
         .a-sess { background: #fef9c3; color: #854d0e; border: 1px solid #fde68a; }
         .a-jwt  { background: #dbeafe; color: #1e3a8a; border: 1px solid #93c5fd; }
 
-        /* Route code */
+        <?php /* Route code */ ?>
         code.route {
             font-family: 'IBM Plex Mono', monospace;
             font-size: 12px;
@@ -852,10 +852,10 @@ $routePermissions = [
             white-space: nowrap;
         }
 
-        /* Privilege cell */
+        <?php /* Privilege cell */ ?>
         .priv-cell {
 
-// ===== SEZIONE 37: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 37: LOGICA DI PROCESSO ===== ?>
             font-family: 'IBM Plex Mono', monospace;
             font-size: 11px;
             color: #5c513f;
@@ -866,24 +866,24 @@ $routePermissions = [
         }
         .priv-none { color: #9ca3af; font-style: italic; }
 
-        /* Check/cross icons */
+        <?php /* Check/cross icons */ ?>
         .ico-ok   { color: #16a34a; font-size: 15px; font-weight: 700; }
         .ico-no   { color: #dc2626; font-size: 15px; font-weight: 700; }
 
-        /* Legend */
+        <?php /* Legend */ ?>
         .perm-legend {
             display: flex;
             gap: 16px;
             flex-wrap: wrap;
             padding: 10px 4px 2px;
 
-// ===== SEZIONE 38: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 38: LOGICA DI PROCESSO ===== ?>
             font-size: 12px;
             color: var(--muted);
         }
         .perm-legend-item { display: flex; align-items: center; gap: 5px; }
 
-        /* Animations */
+        <?php /* Animations */ ?>
         @keyframes reveal {
             from { transform: translateY(10px); opacity: 0; }
             to   { transform: translateY(0);    opacity: 1; }
@@ -899,15 +899,15 @@ $routePermissions = [
             .panel { padding: 12px; }
         }
 
-// ===== SEZIONE 39: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 39: LOGICA DI PROCESSO ===== ?>
     </style>
 </head>
 <body>
 <main class="wrap">
 
-    <!-- =========================================================
-         HERO
-         ========================================================= -->
+        <?php /* =========================================================
+            HERO
+            ========================================================= */ ?>
     <section class="hero">
         <h1>Mockup applicazione BPIC</h1>
         <p class="subtitle">
@@ -944,9 +944,9 @@ $routePermissions = [
 
 
 // ===== SEZIONE 41: LOGICA DI PROCESSO =====
-    <!-- =========================================================
-         RIEPILOGO PERMESSI PER ROTTA
-         ========================================================= -->
+        <?php /* =========================================================
+            RIEPILOGO PERMESSI PER ROTTA
+            ========================================================= */ ?>
     <section class="sections" aria-label="Riepilogo permessi per rotta" style="margin-top:22px;">
         <article class="panel" style="animation-delay:0ms;">
             <header class="panel-head">
@@ -967,7 +967,7 @@ $routePermissions = [
 // INLINE COMMENT: Conditional logic or loop processing
                         <?php if ($rg['group'] === 'App protetta'): ?>
 
-// ===== SEZIONE 42: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 42: LOGICA DI PROCESSO ===== ?>
                             <span style="font-weight:400;opacity:.65;">(sessione PHP richiesta)</span>
 // INLINE COMMENT: Conditional logic or loop processing
                         <?php elseif ($rg['group'] === 'REST API JWT'): ?>
@@ -990,7 +990,7 @@ $routePermissions = [
                             </thead>
                             <tbody>
 
-// ===== SEZIONE 43: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 43: LOGICA DI PROCESSO ===== ?>
 // INLINE COMMENT: Conditional logic or loop processing
                                 <?php foreach ($rg['routes'] as $r):
                                     [$method, $path, $desc, $ospite, $registrato, $abbonato, $admin, $accesso, $privilegio] = $r;
@@ -1013,7 +1013,7 @@ $routePermissions = [
                                 <tr>
                                     <td>
 
-// ===== SEZIONE 44: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 44: LOGICA DI PROCESSO ===== ?>
                                         <code class="route"><?= htmlspecialchars($path); ?></code><br>
                                         <span style="font-size:12px;color:var(--muted);"><?= htmlspecialchars($desc); ?></span>
                                     </td>
@@ -1052,13 +1052,13 @@ $routePermissions = [
         </article>
     </section>
 
-    <!-- =========================================================
-         MAPPA ROTTE (dettaglio gruppi)
-         ========================================================= -->
+        <?php /* =========================================================
+            MAPPA ROTTE (dettaglio gruppi)
+            ========================================================= */ ?>
     <section class="sections" aria-label="Mappa rotte">
         <article class="panel" style="animation-delay:35ms;">
 
-// ===== SEZIONE 46: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 46: LOGICA DI PROCESSO ===== ?>
             <header class="panel-head">
                 <div>
                     <h2 class="panel-title">Mappa rotte BPIC</h2>
@@ -1174,7 +1174,7 @@ $routePermissions = [
                                     <tr>
                                         <td>
 
-// ===== SEZIONE 51: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 51: LOGICA DI PROCESSO ===== ?>
                                             <span style="display:inline-block;background:<?= $mc['bg']; ?>;color:<?= $mc['col']; ?>;border-radius:6px;padding:2px 8px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;white-space:nowrap;">
                                                 <?= htmlspecialchars($r[0]); ?>
                                             </span>
@@ -1196,12 +1196,12 @@ $routePermissions = [
 
         </article>
 
-// ===== SEZIONE 52: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 52: LOGICA DI PROCESSO ===== ?>
     </section>
 
-    <!-- =========================================================
-         VISTE DATABASE
-         ========================================================= -->
+        <?php /* =========================================================
+            VISTE DATABASE
+            ========================================================= */ ?>
     <section class="sections" aria-label="Viste database">
 // INLINE COMMENT: Conditional logic or loop processing
         <?php foreach ($results as $index => $result): ?>
@@ -1219,7 +1219,7 @@ $routePermissions = [
                     </div>
                 </header>
 
-// ===== SEZIONE 53: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 53: LOGICA DI PROCESSO ===== ?>
 
 // INLINE COMMENT: Conditional logic or loop processing
                 <?php if ($result['error'] !== null): ?>
@@ -1245,7 +1245,7 @@ $routePermissions = [
                                         <div style="display:flex;gap:12px">
                                             <div style="flex:1;background:#ecfeff;padding:10px;border-radius:8px">
 
-// ===== SEZIONE 54: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 54: LOGICA DI PROCESSO ===== ?>
                                                 <div style="font-size:12px;color:#065f46">Netto</div>
                                                 <div style="font-weight:800">€ <?= htmlspecialchars(number_format((float)($row['Netto'] ?? $row['Stipendio_netto'] ?? 0), 2, ',', '.')) ?></div>
                                             </div>
@@ -1267,7 +1267,7 @@ $routePermissions = [
                                         </div>
                                     </div>
 
-// ===== SEZIONE 55: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 55: LOGICA DI PROCESSO ===== ?>
                                 <?php endforeach; ?>
                             </div>
                         <?php else: ?>

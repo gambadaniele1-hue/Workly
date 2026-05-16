@@ -38,17 +38,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Se il form è stato inviato
     }
 }
 ?>
-<!DOCTYPE html> <!-- Dichiara il tipo di documento come HTML5 -->
-<html lang="it"> <!-- Inizio documento HTML, lingua italiana -->
+<!DOCTYPE html> <?php /* Dichiara il tipo di documento come HTML5 */ ?>
+<html lang="it"> <?php /* Inizio documento HTML, lingua italiana */ ?>
 <head>
-    <meta charset="UTF-8"> <!-- Set di caratteri UTF-8 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive -->
-    <title>Articolo Inserito</title> <!-- Titolo della pagina -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap CSS -->
+    <meta charset="UTF-8"> <?php /* Set di caratteri UTF-8 */ ?>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <?php /* Responsive */ ?>
+    <title>Articolo Inserito</title> <?php /* Titolo della pagina */ ?>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> <?php /* Bootstrap CSS */ ?>
 </head>
 <body>
-<div class="container mt-5"> <!-- Contenitore principale con margine superiore -->
-    <h1 class="mb-4">Inserisci un articolo</h1> <!-- Titolo -->
+<div class="container mt-5"> <?php /* Contenitore principale con margine superiore */ ?>
+    <h1 class="mb-4">Inserisci un articolo</h1> <?php /* Titolo */ ?>
     <?php
     if ($articolo) {
         echo '<div class="alert alert-success">Articolo inserito correttamente!</div>';
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Se il form è stato inviato
         <button type="submit" class="btn btn-primary">Inserisci</button>
     </form>
     <?php } ?>
-    <!-- Pulsante grande con icona casetta per tornare alla home -->
+    <?php /* Pulsante grande con icona casetta per tornare alla home */ ?>
     <div class="d-flex justify-content-center mt-5">
         <a href="index.php" class="btn btn-lg btn-success" title="Home">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-house-door" viewBox="0 0 16 16">

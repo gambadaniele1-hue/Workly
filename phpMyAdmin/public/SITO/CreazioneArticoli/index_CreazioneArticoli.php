@@ -16,7 +16,7 @@ if (!isset($_SESSION['loggato']) || $_SESSION['loggato'] !== true) {
 <body>
 <div class="container mt-5">
     <h1 class="mb-4">Inserisci un nuovo articolo</h1>
-    <!-- Form per inserire un nuovo articolo -->
+    <?php /* Form per inserire un nuovo articolo */ ?>
     <form action="insert.php" method="post">
         <div class="mb-3">
             <label for="nome" class="form-label">Nome articolo</label>
@@ -32,7 +32,7 @@ if (!isset($_SESSION['loggato']) || $_SESSION['loggato'] !== true) {
         </div>
         <div class="mb-3">
             <label for="immagine" class="form-label">Immagine</label>
-            <!-- Select per scegliere il file immagine tra quelli disponibili -->
+            <?php /* Select per scegliere il file immagine tra quelli disponibili */ ?>
             <select class="form-select" id="immagine" name="immagine" required>
                 <option value="biscotti.jpg">biscotti</option>
                 <option value="latte.jpg">latte</option>

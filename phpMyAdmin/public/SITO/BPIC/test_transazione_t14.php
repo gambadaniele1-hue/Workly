@@ -28,7 +28,7 @@ if (empty($_SESSION['user_id'])) {
       --card: #ffffff;
       --text: #0f172a;
 
-// ===== SEZIONE 2: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 2: LOGICA DI PROCESSO ===== ?>
       --muted: #64748b;
       --primary: #2563eb;
       --danger: #dc2626;
@@ -50,7 +50,7 @@ if (empty($_SESSION['user_id'])) {
     .card {
       background: var(--card);
 
-// ===== SEZIONE 3: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 3: LOGICA DI PROCESSO ===== ?>
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 20px;
@@ -72,7 +72,7 @@ if (empty($_SESSION['user_id'])) {
       font-weight: 700;
       cursor: pointer;
 
-// ===== SEZIONE 4: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 4: LOGICA DI PROCESSO ===== ?>
       text-decoration: none;
       display: inline-block;
       text-align: center;
@@ -94,7 +94,7 @@ if (empty($_SESSION['user_id'])) {
       background: #0b1220;
       color: #e5edf9;
 
-// ===== SEZIONE 5: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 5: LOGICA DI PROCESSO ===== ?>
       border-radius: 12px;
       padding: 14px;
       overflow: auto;
@@ -116,7 +116,7 @@ if (empty($_SESSION['user_id'])) {
 <body>
   <div class="wrap">
 
-// ===== SEZIONE 6: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 6: LOGICA DI PROCESSO ===== ?>
     <div class="card">
       <h1>Test T14 - Generazione busta paga</h1>
       <p>Workflow testato: BEGIN TRANSACTION, SELECT Contratto, SELECT DatiMensili, CALCOLO, INSERT BustaPaga, COMMIT.</p>
@@ -138,7 +138,7 @@ if (empty($_SESSION['user_id'])) {
       <pre id="log">Pronto.</pre>
     </div>
 
-// ===== SEZIONE 7: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 7: LOGICA DI PROCESSO ===== ?>
 
     <div class="card">
       <h2>Stato tabella T14_Test_BustaPaga (ultime 30 righe)</h2>
@@ -160,7 +160,7 @@ if (empty($_SESSION['user_id'])) {
       </table>
     </div>
 
-// ===== SEZIONE 8: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 8: LOGICA DI PROCESSO ===== ?>
   </div>
 
   <script>
@@ -191,7 +191,7 @@ if (empty($_SESSION['user_id'])) {
       }
       bearerToken = json.token;
 
-// ===== SEZIONE 9: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 9: LOGICA DI PROCESSO ===== ?>
       return bearerToken;
     }
 
@@ -214,7 +214,7 @@ if (empty($_SESSION['user_id'])) {
         : '/SITO/BPIC/api/use_cases.php';
 
 
-// ===== SEZIONE 10: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 10: LOGICA DI PROCESSO ===== ?>
       const res = await fetch(url, opts);
       const json = await res.json();
       return { status: res.status, data: json };
@@ -244,7 +244,7 @@ if (empty($_SESSION['user_id'])) {
           <td>${r.contratto_tipo ?? ''}</td>
           <td>${r.lordo ?? ''}</td>
 
-// ===== SEZIONE 11: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 11: LOGICA DI PROCESSO ===== ?>
           <td>${r.netto ?? ''}</td>
           <td>${r.tasse ?? ''}</td>
           <td>${r.batch_uuid ?? ''}</td>
@@ -267,7 +267,7 @@ if (empty($_SESSION['user_id'])) {
     document.getElementById('setupBtn').addEventListener('click', async () => {
       try {
 
-// ===== SEZIONE 12: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 12: LOGICA DI PROCESSO ===== ?>
         const out = await callUseCase('t14_test_setup', 'POST');
         log(out);
         await refreshState();
@@ -289,7 +289,7 @@ if (empty($_SESSION['user_id'])) {
     document.getElementById('nonAtomicBtn').addEventListener('click', async () => {
       try {
 
-// ===== SEZIONE 13: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 13: LOGICA DI PROCESSO ===== ?>
         const out = await callUseCase('t14_generazione_busta_paga_non_atomic', 'POST');
         log(out);
         await refreshState();
@@ -311,5 +311,5 @@ if (empty($_SESSION['user_id'])) {
   <script src="/SITO/BPIC/auth/auto_logout_on_close.js"></script>
 </body>
 
-// ===== SEZIONE 14: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 14: LOGICA DI PROCESSO ===== ?>
 </html>

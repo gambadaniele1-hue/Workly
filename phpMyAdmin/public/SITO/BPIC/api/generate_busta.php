@@ -144,7 +144,7 @@ function errorMsg($msg) {
   <div class="panel" style="background:#fee2e2;border-left:4px solid #dc2626;padding:16px">
     <div style="color:#991b1b;font-weight:700">❌ Errore</div>
 
-// ===== SEZIONE 6: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 6: LOGICA DI PROCESSO ===== ?>
     <div style="color:#7f1d1d;margin-top:8px"><?= htmlspecialchars($msg, ENT_QUOTES, 'UTF-8') ?></div>
   </div>
   <?php

@@ -231,7 +231,7 @@ if ($contratto === 'metalmeccanico') {
 }
 ?>
 
-// ===== SEZIONE 9: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 9: LOGICA DI PROCESSO ===== ?>
 <!doctype html>
 <html lang="it">
 <head>
@@ -253,7 +253,7 @@ if ($contratto === 'metalmeccanico') {
       box-sizing: border-box;
     }
 
-// ===== SEZIONE 10: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 10: LOGICA DI PROCESSO ===== ?>
     body {
       margin: 0;
       font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -275,7 +275,7 @@ if ($contratto === 'metalmeccanico') {
     .brand {
       display: flex;
 
-// ===== SEZIONE 11: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 11: LOGICA DI PROCESSO ===== ?>
       align-items: center;
       gap: 12px;
       font-weight: 700;
@@ -297,7 +297,7 @@ if ($contratto === 'metalmeccanico') {
       text-decoration: none;
       color: var(--primary);
 
-// ===== SEZIONE 12: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 12: LOGICA DI PROCESSO ===== ?>
       font-weight: 600;
       background: rgba(102, 126, 234, 0.12);
       padding: 8px 14px;
@@ -319,7 +319,7 @@ if ($contratto === 'metalmeccanico') {
       padding: 8px 14px;
       border-radius: 999px;
 
-// ===== SEZIONE 13: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 13: LOGICA DI PROCESSO ===== ?>
     }
     .hero {
       background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.25));
@@ -341,7 +341,7 @@ if ($contratto === 'metalmeccanico') {
     .subtitle strong {
       color: #1f2a44;
 
-// ===== SEZIONE 14: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 14: LOGICA DI PROCESSO ===== ?>
     }
     .grid {
       display: grid;
@@ -363,7 +363,7 @@ if ($contratto === 'metalmeccanico') {
       top: 0;
       left: 0;
 
-// ===== SEZIONE 15: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 15: LOGICA DI PROCESSO ===== ?>
       width: 100%;
       height: 4px;
       background: linear-gradient(90deg, var(--primary), var(--primary-dark));
@@ -385,7 +385,7 @@ if ($contratto === 'metalmeccanico') {
     }
     label {
 
-// ===== SEZIONE 16: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 16: LOGICA DI PROCESSO ===== ?>
       font-size: 14px;
       color: var(--text);
     }
@@ -407,7 +407,7 @@ if ($contratto === 'metalmeccanico') {
       font-size: 12px;
       color: var(--muted);
 
-// ===== SEZIONE 17: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 17: LOGICA DI PROCESSO ===== ?>
     }
     .helper {
       font-size: 13px;
@@ -429,7 +429,7 @@ if ($contratto === 'metalmeccanico') {
       appearance: none;
       width: 44px;
 
-// ===== SEZIONE 18: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 18: LOGICA DI PROCESSO ===== ?>
       height: 26px;
       border-radius: 999px;
       background: #e2e8f0;
@@ -451,7 +451,7 @@ if ($contratto === 'metalmeccanico') {
       transition: all 0.2s ease;
     }
 
-// ===== SEZIONE 19: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 19: LOGICA DI PROCESSO ===== ?>
     .toggle input:checked {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       border-color: rgba(102, 126, 234, 0.8);
@@ -473,7 +473,7 @@ if ($contratto === 'metalmeccanico') {
       background: #ecfdf3;
       border: 1px solid #bbf7d0;
 
-// ===== SEZIONE 20: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 20: LOGICA DI PROCESSO ===== ?>
       color: #166534;
     }
     .footer {
@@ -495,7 +495,7 @@ if ($contratto === 'metalmeccanico') {
     }
     .save-btn:active {
 
-// ===== SEZIONE 21: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 21: LOGICA DI PROCESSO ===== ?>
       transform: translateY(1px);
     }
     @media (max-width: 700px) {
@@ -517,7 +517,7 @@ if ($contratto === 'metalmeccanico') {
         <span class="brand-badge">BP</span>
         Impostazioni contratto
 
-// ===== SEZIONE 22: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 22: LOGICA DI PROCESSO ===== ?>
       </div>
       <div class="topbar-actions">
         <a class="mockup-link" href="/SITO/BPIC/mockup_viste.php">Apri mockup</a>
@@ -540,7 +540,7 @@ if ($contratto === 'metalmeccanico') {
 
       <section class="card">
 
-// ===== SEZIONE 23: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 23: LOGICA DI PROCESSO ===== ?>
         <h3>Livello del dipendente</h3>
         <div class="field">
           <label for="livello">Seleziona livello</label>
@@ -610,7 +610,7 @@ if ($contratto === 'metalmeccanico') {
           </div>
         </section>
 
-// ===== SEZIONE 26: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 26: LOGICA DI PROCESSO ===== ?>
 
         <section class="card">
           <h3>Mensilita aggiuntive</h3>
@@ -632,7 +632,7 @@ if ($contratto === 'metalmeccanico') {
       </div>
     </form>
 
-// ===== SEZIONE 27: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 27: LOGICA DI PROCESSO ===== ?>
   </main>
   <script src="/SITO/BPIC/auth/auto_logout_on_close.js"></script>
 </body>

@@ -149,7 +149,7 @@ if ($selectedContratto === '') {
 <html lang="it">
 <head>
 
-// ===== SEZIONE 6: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 6: LOGICA DI PROCESSO ===== ?>
   <meta charset="utf-8">
   <title>Profilo Contratto</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -171,7 +171,7 @@ if ($selectedContratto === '') {
       background: var(--bg);
       color: var(--text);
 
-// ===== SEZIONE 7: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 7: LOGICA DI PROCESSO ===== ?>
     }
     .page {
       max-width: 860px;
@@ -193,7 +193,7 @@ if ($selectedContratto === '') {
       border-radius: 16px;
       padding: 18px 20px;
 
-// ===== SEZIONE 8: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 8: LOGICA DI PROCESSO ===== ?>
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -215,7 +215,7 @@ if ($selectedContratto === '') {
       background: rgba(31, 111, 235, 0.12);
       display: grid;
 
-// ===== SEZIONE 9: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 9: LOGICA DI PROCESSO ===== ?>
       place-items: center;
       font-size: 22px;
       color: var(--primary);
@@ -237,7 +237,7 @@ if ($selectedContratto === '') {
       width: 50px;
       height: 28px;
 
-// ===== SEZIONE 10: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 10: LOGICA DI PROCESSO ===== ?>
       border-radius: 999px;
       background: #e5e7eb;
       border: 1px solid #d1d5db;
@@ -259,7 +259,7 @@ if ($selectedContratto === '') {
     }
     .option input:checked {
 
-// ===== SEZIONE 11: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 11: LOGICA DI PROCESSO ===== ?>
       background: var(--primary);
       border-color: var(--primary);
     }
@@ -281,7 +281,7 @@ if ($selectedContratto === '') {
       border: none;
       border-radius: 12px;
 
-// ===== SEZIONE 12: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 12: LOGICA DI PROCESSO ===== ?>
       padding: 12px 26px;
       font-size: 15px;
       font-weight: 600;
@@ -303,7 +303,7 @@ if ($selectedContratto === '') {
         <div class="card-left">
           <div class="badge">🏛️</div>
 
-// ===== SEZIONE 13: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 13: LOGICA DI PROCESSO ===== ?>
           <div>
             <h3>Dipendente Statale</h3>
             <p>Lavori nel settore pubblico?</p>
@@ -325,7 +325,7 @@ if ($selectedContratto === '') {
         <label class="option">
           <input type="radio" name="contratto" value="commerciante" <?php echo $selectedContratto === 'commerciante' ? 'checked' : ''; ?>>
 
-// ===== SEZIONE 14: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 14: LOGICA DI PROCESSO ===== ?>
         </label>
       </section>
 
@@ -347,7 +347,7 @@ if ($selectedContratto === '') {
       </div>
     </form>
 
-// ===== SEZIONE 15: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 15: LOGICA DI PROCESSO ===== ?>
   </main>
 
   <script>

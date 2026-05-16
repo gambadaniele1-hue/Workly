@@ -139,7 +139,7 @@ function eur(float $value): string {
       --bg: #f6f8fc;
       --card: #ffffff;
 
-// ===== SEZIONE 6: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 6: LOGICA DI PROCESSO ===== ?>
       --line: #e5e7eb;
       --txt: #0f172a;
       --muted: #64748b;
@@ -161,7 +161,7 @@ function eur(float $value): string {
       font-family: "Segoe UI", system-ui, sans-serif;
     }
 
-// ===== SEZIONE 7: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 7: LOGICA DI PROCESSO ===== ?>
 
     .layout {
       min-height: 100vh;
@@ -183,7 +183,7 @@ function eur(float $value): string {
 
     .user {
 
-// ===== SEZIONE 8: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 8: LOGICA DI PROCESSO ===== ?>
       font-size: 13px;
       color: #cbd5e1;
       margin-bottom: 18px;
@@ -205,7 +205,7 @@ function eur(float $value): string {
     }
 
 
-// ===== SEZIONE 9: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 9: LOGICA DI PROCESSO ===== ?>
     .menu a:hover,
     .menu a.active {
       background: var(--sidebar-soft);
@@ -227,7 +227,7 @@ function eur(float $value): string {
     }
 
 
-// ===== SEZIONE 10: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 10: LOGICA DI PROCESSO ===== ?>
     .head p {
       margin: 8px 0 0;
       color: var(--muted);
@@ -249,7 +249,7 @@ function eur(float $value): string {
     }
 
 
-// ===== SEZIONE 11: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 11: LOGICA DI PROCESSO ===== ?>
     .notice.err {
       background: #fee2e2;
       color: #991b1b;
@@ -271,7 +271,7 @@ function eur(float $value): string {
 
     .card-top {
 
-// ===== SEZIONE 12: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 12: LOGICA DI PROCESSO ===== ?>
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -293,7 +293,7 @@ function eur(float $value): string {
     .metrics {
       display: grid;
 
-// ===== SEZIONE 13: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 13: LOGICA DI PROCESSO ===== ?>
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
       margin-bottom: 12px;
@@ -315,7 +315,7 @@ function eur(float $value): string {
       font-size: 30px;
       line-height: 1;
 
-// ===== SEZIONE 14: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 14: LOGICA DI PROCESSO ===== ?>
     }
 
     .box.netto { background: var(--green-bg); }
@@ -337,7 +337,7 @@ function eur(float $value): string {
       color: #1d4ed8;
       font-weight: 700;
 
-// ===== SEZIONE 15: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 15: LOGICA DI PROCESSO ===== ?>
       padding: 8px 12px;
       text-decoration: none;
       cursor: pointer;
@@ -359,7 +359,7 @@ function eur(float $value): string {
     }
 
 
-// ===== SEZIONE 16: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 16: LOGICA DI PROCESSO ===== ?>
     @media (max-width: 1024px) {
       .layout { grid-template-columns: 1fr; }
       .metrics { grid-template-columns: 1fr; }
@@ -466,7 +466,7 @@ function eur(float $value): string {
               <div class="card-top">
                 <div>
 
-// ===== SEZIONE 20: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 20: LOGICA DI PROCESSO ===== ?>
                   <div class="month"><?= htmlspecialchars($mese, ENT_QUOTES, 'UTF-8') ?></div>
                   <div class="date">Generata il <?= htmlspecialchars($data, ENT_QUOTES, 'UTF-8') ?></div>
                 </div>
@@ -488,7 +488,7 @@ function eur(float $value): string {
                     Festivi: <?= htmlspecialchars(eur($lordo_festivi), ENT_QUOTES, 'UTF-8') ?><br>
                     Prefestivi: <?= htmlspecialchars(eur($lordo_prefestivi), ENT_QUOTES, 'UTF-8') ?><br>
 
-// ===== SEZIONE 21: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 21: LOGICA DI PROCESSO ===== ?>
                     Notturne: <?= htmlspecialchars(eur($lordo_notturne), ENT_QUOTES, 'UTF-8') ?><br>
                   </div>
                 </div>
@@ -510,7 +510,7 @@ function eur(float $value): string {
         </section>
       <?php endif; ?>
 
-// ===== SEZIONE 22: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 22: LOGICA DI PROCESSO ===== ?>
     </main>
   </div>
   <script src="/SITO/BPIC/auth/auto_logout_on_close.js"></script>

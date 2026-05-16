@@ -47,7 +47,7 @@
       border-radius: 15px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
-    /* Centra il contenuto della pagina e rende il diagramma responsive */
+    <?php /* Centra il contenuto della pagina e rende il diagramma responsive */ ?>
     .container {
       width: 100%;
       max-width: 1000px;

@@ -56,7 +56,7 @@ $isTenant = in_array('tenant', $roleNames, true);
     :root {
       --bg: #f1f5ff;
 
-// ===== SEZIONE 3: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 3: LOGICA DI PROCESSO ===== ?>
       --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
@@ -78,7 +78,7 @@ $isTenant = in_array('tenant', $roleNames, true);
       min-height: 100vh;
       display: grid;
 
-// ===== SEZIONE 4: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 4: LOGICA DI PROCESSO ===== ?>
       grid-template-columns: 300px 1fr;
     }
     .sidebar {
@@ -100,7 +100,7 @@ $isTenant = in_array('tenant', $roleNames, true);
       word-break: break-word;
     }
 
-// ===== SEZIONE 5: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 5: LOGICA DI PROCESSO ===== ?>
     .menu-title {
       font-size: 12px;
       text-transform: uppercase;
@@ -122,7 +122,7 @@ $isTenant = in_array('tenant', $roleNames, true);
       border: 1px solid rgba(174, 197, 255, 0.18);
       transition: all 0.2s ease;
 
-// ===== SEZIONE 6: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 6: LOGICA DI PROCESSO ===== ?>
     }
     .menu a:hover {
       background: var(--sidebar-soft);
@@ -144,7 +144,7 @@ $isTenant = in_array('tenant', $roleNames, true);
     }
     h1 {
 
-// ===== SEZIONE 7: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 7: LOGICA DI PROCESSO ===== ?>
       margin: 0 0 8px;
       font-size: 32px;
     }
@@ -166,7 +166,7 @@ $isTenant = in_array('tenant', $roleNames, true);
       padding: 6px 12px;
       border-radius: 8px;
 
-// ===== SEZIONE 8: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 8: LOGICA DI PROCESSO ===== ?>
       font-weight: 700;
       font-size: 13px;
       margin-top: 8px;
@@ -188,7 +188,7 @@ $isTenant = in_array('tenant', $roleNames, true);
     }
     .section-card p, .section-card li {
 
-// ===== SEZIONE 9: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 9: LOGICA DI PROCESSO ===== ?>
       margin: 6px 0;
       line-height: 1.6;
       color: #334155;
@@ -210,7 +210,7 @@ $isTenant = in_array('tenant', $roleNames, true);
     .step strong {
       color: var(--primary);
 
-// ===== SEZIONE 10: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 10: LOGICA DI PROCESSO ===== ?>
     }
     .tip {
       background: #f0ffd4;
@@ -232,7 +232,7 @@ $isTenant = in_array('tenant', $roleNames, true);
       display: inline-block;
       text-decoration: none;
 
-// ===== SEZIONE 11: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 11: LOGICA DI PROCESSO ===== ?>
       background: var(--secondary);
       color: white;
       padding: 10px 16px;
@@ -254,7 +254,7 @@ $isTenant = in_array('tenant', $roleNames, true);
         border-bottom: 1px solid rgba(255, 255, 255, 0.14);
       }
 
-// ===== SEZIONE 12: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 12: LOGICA DI PROCESSO ===== ?>
     }
   </style>
 </head>
@@ -276,7 +276,7 @@ $isTenant = in_array('tenant', $roleNames, true);
       </nav>
     </aside>
 
-// ===== SEZIONE 13: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 13: LOGICA DI PROCESSO ===== ?>
 
     <section class="content">
       <a href="/SITO/BPIC/home.php" class="back-btn">← Torna alla Home</a>
@@ -298,7 +298,7 @@ $isTenant = in_array('tenant', $roleNames, true);
       </div>
 
 
-// ===== SEZIONE 14: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 14: LOGICA DI PROCESSO ===== ?>
       <div class="section-card">
         <h3>👥 Il Tuo Ruolo</h3>
         <p>
@@ -322,7 +322,7 @@ $isTenant = in_array('tenant', $roleNames, true);
             <p>Hai accesso alle funzioni base del sistema. Alcune funzioni avanzate sono disponibili solo per utenti abbonati.</p>
           </div>
 
-// ===== SEZIONE 15: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 15: LOGICA DI PROCESSO ===== ?>
         <?php endif; ?>
       </div>
 
@@ -344,7 +344,7 @@ $isTenant = in_array('tenant', $roleNames, true);
         <div class="step">
           <strong>Passo 3: Aggiorna le Impostazioni</strong>
 
-// ===== SEZIONE 16: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 16: LOGICA DI PROCESSO ===== ?>
           <p>Puoi tornare in qualsiasi momento a <em>Impostazioni Contratto</em> per modificare i parametri, come indennità, mensilità aggiuntive e altre configurazioni.</p>
         </div>
       </div>
@@ -367,7 +367,7 @@ $isTenant = in_array('tenant', $roleNames, true);
         <p>
           La tua sessione è protetta e si chiude automaticamente quando:
 
-// ===== SEZIONE 17: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 17: LOGICA DI PROCESSO ===== ?>
         </p>
         <ul>
           <li>Chiudi la pagina/tab del browser</li>
@@ -389,7 +389,7 @@ $isTenant = in_array('tenant', $roleNames, true);
         
         <p><strong>Posso accedere da più dispositivi contemporaneamente?</strong></p>
 
-// ===== SEZIONE 18: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 18: LOGICA DI PROCESSO ===== ?>
         <p>Sì, puoi avere più sessioni contemporaneamente su dispositivi diversi.</p>
       </div>
 

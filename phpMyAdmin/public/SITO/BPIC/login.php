@@ -77,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
   <meta charset="utf-8">
 
-// ===== SEZIONE 4: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 4: LOGICA DI PROCESSO ===== ?>
   <title>Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
@@ -99,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       cursor: pointer;
       text-decoration: none;
 
-// ===== SEZIONE 5: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 5: LOGICA DI PROCESSO ===== ?>
       display: flex;
       align-items: center;
       justify-content: center;
@@ -121,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
-// ===== SEZIONE 6: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 6: LOGICA DI PROCESSO ===== ?>
     h1 {
       color: #2c3e50;
       text-align: center;
@@ -143,7 +143,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
     button {
 
-// ===== SEZIONE 7: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 7: LOGICA DI PROCESSO ===== ?>
       margin-top: 20px;
       padding: 12px 20px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -165,7 +165,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       border-radius: 8px;
       margin: 12px 0;
 
-// ===== SEZIONE 8: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 8: LOGICA DI PROCESSO ===== ?>
     }
     a {
       display: inline-block;
@@ -187,7 +187,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     .token-actions {
       display: flex;
 
-// ===== SEZIONE 9: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 9: LOGICA DI PROCESSO ===== ?>
       gap: 10px;
       margin-top: 10px;
       align-items: center;
@@ -209,7 +209,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   </style>
 </head>
 
-// ===== SEZIONE 10: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 10: LOGICA DI PROCESSO ===== ?>
 <body>
 
 <a href="../index.php" class="home-btn" title="Home">🏠</a>
@@ -233,7 +233,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <label>Email</label>
     <input type="email" name="email" required value="<?= htmlspecialchars($_POST["email"] ?? "", ENT_QUOTES, "UTF-8") ?>">
 
-// ===== SEZIONE 11: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 11: LOGICA DI PROCESSO ===== ?>
 
     <label>Password</label>
     <input type="password" name="password" required>
@@ -256,7 +256,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <hr>
   <?php endif; ?>
 
-// ===== SEZIONE 12: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 12: LOGICA DI PROCESSO ===== ?>
 
   <h2 style="text-align:center;">Hai un token?</h2>
   <form method="post" action="/SITO/BPIC/validate_token.php" style="max-width:500px;margin:0 auto;">
@@ -280,7 +280,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         return;
       }
 
-// ===== SEZIONE 13: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 13: LOGICA DI PROCESSO ===== ?>
       try {
         await navigator.clipboard.writeText(tokenField.value);
         status.textContent = 'Token copiato.';

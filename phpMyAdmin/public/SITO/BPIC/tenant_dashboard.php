@@ -405,7 +405,7 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
             --muted: #516173;
             --brand: #136f63;
 
-// ===== SEZIONE 16: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 16: LOGICA DI PROCESSO ===== ?>
             --brand-soft: #d8f0eb;
             --warn: #b45309;
             --danger: #b91c1c;
@@ -427,7 +427,7 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
             justify-content: space-between;
             gap: 14px;
 
-// ===== SEZIONE 17: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 17: LOGICA DI PROCESSO ===== ?>
             flex-wrap: wrap;
             align-items: center;
             margin-bottom: 18px;
@@ -449,7 +449,7 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
             border: 1px solid transparent;
             border-radius: 10px;
 
-// ===== SEZIONE 18: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 18: LOGICA DI PROCESSO ===== ?>
             padding: 10px 14px;
             text-decoration: none;
             font-weight: 700;
@@ -471,7 +471,7 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
 
-// ===== SEZIONE 19: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 19: LOGICA DI PROCESSO ===== ?>
             gap: 12px;
             margin: 16px 0 20px;
         }
@@ -493,7 +493,7 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
         .card {
             background: var(--card);
 
-// ===== SEZIONE 20: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 20: LOGICA DI PROCESSO ===== ?>
             border: 1px solid var(--line);
             border-radius: 14px;
             padding: 16px;
@@ -515,7 +515,7 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
             border-radius: 8px;
             font-family: inherit;
 
-// ===== SEZIONE 21: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 21: LOGICA DI PROCESSO ===== ?>
             background: #fff;
         }
         textarea { min-height: 80px; resize: vertical; }
@@ -537,7 +537,7 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
         }
         th, td {
 
-// ===== SEZIONE 22: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 22: LOGICA DI PROCESSO ===== ?>
             border-bottom: 1px solid #e6ece6;
             padding: 10px 8px;
             text-align: left;
@@ -559,7 +559,7 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
             align-items: center;
             flex-wrap: wrap;
 
-// ===== SEZIONE 23: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 23: LOGICA DI PROCESSO ===== ?>
         }
         .small-form select {
             max-width: 150px;
@@ -581,7 +581,7 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
             color: var(--muted);
             font-size: 13px;
 
-// ===== SEZIONE 24: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 24: LOGICA DI PROCESSO ===== ?>
         }
 
         @media (max-width: 900px) {
@@ -768,7 +768,7 @@ $roleLabel = empty($roleNames) ? 'nessun ruolo' : implode(', ', $roleNames);
                 <th>Azione rapida</th>
             </tr>
 
-// ===== SEZIONE 32: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 32: LOGICA DI PROCESSO ===== ?>
             </thead>
             <tbody>
 // INLINE COMMENT: Conditional logic or loop processing

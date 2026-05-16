@@ -28,7 +28,7 @@ $currentMonth = date('Y-m');
   <link rel="stylesheet" href="/SITO/BPIC/styles/global.css" />
   <style>
 
-// ===== SEZIONE 2: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 2: LOGICA DI PROCESSO ===== ?>
     :root{--bg:#f6f9ff;--card:#fff;--muted:#64748b;--primary:#2563eb;--sidebar:#0b1a3a;--sidebar-text:#e6eeff}
     *{box-sizing:border-box}
     body{margin:0;font-family:Segoe UI,system-ui,-apple-system,Roboto,Arial;color:#0f172a;background:var(--bg);}
@@ -50,7 +50,7 @@ $currentMonth = date('Y-m');
     .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:800}
     .btn-primary{background:linear-gradient(90deg,#2563eb,#3b82f6);color:#fff}
 
-// ===== SEZIONE 3: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 3: LOGICA DI PROCESSO ===== ?>
     .hint{color:var(--muted);font-size:13px}
     @media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{order:2}}
   </style>
@@ -94,7 +94,7 @@ $currentMonth = date('Y-m');
           </div>
 
 
-// ===== SEZIONE 5: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 5: LOGICA DI PROCESSO ===== ?>
           <div class="grid cols-2">
             <div>
               <label for="ore_lavorate">Ore lavorate</label>
@@ -116,7 +116,7 @@ $currentMonth = date('Y-m');
               <input type="number" id="ore_straordinari" name="ore_straordinari" min="0" value="0">
             </div>
 
-// ===== SEZIONE 6: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 6: LOGICA DI PROCESSO ===== ?>
             <div>
               <label for="ore_trasferta">Ore trasferta</label>
               <input type="number" id="ore_trasferta" name="ore_trasferta" min="0" value="0">
@@ -138,7 +138,7 @@ $currentMonth = date('Y-m');
             </div>
           </div>
 
-// ===== SEZIONE 7: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 7: LOGICA DI PROCESSO ===== ?>
 
           <div class="grid cols-1" style="margin-top:6px">
             <div>
@@ -160,7 +160,7 @@ $currentMonth = date('Y-m');
   </div>
 
 
-// ===== SEZIONE 8: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 8: LOGICA DI PROCESSO ===== ?>
   <script>
   (function(){
     const form = document.getElementById('busta-form');
@@ -183,7 +183,7 @@ $currentMonth = date('Y-m');
         result.innerHTML = html;
         status.textContent = 'Aggiornato';
 
-// ===== SEZIONE 9: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 9: LOGICA DI PROCESSO ===== ?>
       } catch (err) {
         status.textContent = 'Errore: ' + (err.message || err);
       } finally {
@@ -205,7 +205,7 @@ $currentMonth = date('Y-m');
                 .btn{padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:800}
                 .btn-primary{background:linear-gradient(90deg,#2563eb,#3b82f6);color:#fff}
 
-// ===== SEZIONE 10: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 10: LOGICA DI PROCESSO ===== ?>
                 .hint{color:var(--muted);font-size:13px}
                 @media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{order:2}}
               </style>
@@ -249,7 +249,7 @@ $currentMonth = date('Y-m');
 
                       <div class="grid cols-2">
 
-// ===== SEZIONE 12: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 12: LOGICA DI PROCESSO ===== ?>
                         <div>
                           <label for="ore_lavorate">Ore lavorate</label>
                           <input type="number" id="ore_lavorate" name="ore_lavorate" min="0" value="168" required>
@@ -271,7 +271,7 @@ $currentMonth = date('Y-m');
                         </div>
                         <div>
 
-// ===== SEZIONE 13: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 13: LOGICA DI PROCESSO ===== ?>
                           <label for="ore_trasferta">Ore trasferta</label>
                           <input type="number" id="ore_trasferta" name="ore_trasferta" min="0" value="0">
                         </div>
@@ -293,7 +293,7 @@ $currentMonth = date('Y-m');
               (function(){
                 const form = document.getElementById('busta-form');
 
-// ===== SEZIONE 14: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 14: LOGICA DI PROCESSO ===== ?>
                 const btn = document.getElementById('submit-btn');
                 const status = document.getElementById('status-text');
                 const result = document.getElementById('result-panel');
@@ -316,7 +316,7 @@ $currentMonth = date('Y-m');
                     status.textContent = 'Errore: ' + (err.message || err);
                   } finally {
 
-// ===== SEZIONE 15: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 15: LOGICA DI PROCESSO ===== ?>
                     btn.disabled = false;
                     setTimeout(()=> status.textContent = '', 3000);
                   }

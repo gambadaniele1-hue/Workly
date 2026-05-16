@@ -1,4 +1,4 @@
-<!-- Pulsante grande con icona casetta per tornare alla home --> <!-- Pulsante per tornare alla home -->
+<?php /* Pulsante grande con icona casetta per tornare alla home - Pulsante per tornare alla home */ ?>
 <div class="d-flex justify-content-center mt-5">
     <a href="index.php" class="btn btn-lg btn-success" title="Home">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-house-door" viewBox="0 0 16 16">
@@ -7,15 +7,15 @@
         </svg>
     </a>
 </div>
-<!doctype html> <!-- Dichiara il tipo di documento come HTML5 -->
-<html lang="it"> <!-- Inizio documento HTML, lingua italiana -->
-    <head> <!-- Inizio header -->
-        <title>Esercizio CRUD API (PHP/JS)</title> <!-- Titolo della pagina -->
-        <meta charset="utf-8" /> <!-- Set di caratteri UTF-8 -->
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /> <!-- Responsive -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" /> <!-- Bootstrap CSS -->
+<!doctype html> <?php /* Dichiara il tipo di documento come HTML5 */ ?>
+<html lang="it"> <?php /* Inizio documento HTML, lingua italiana */ ?>
+    <head> <?php /* Inizio header */ ?>
+        <title>Esercizio CRUD API (PHP/JS)</title> <?php /* Titolo della pagina */ ?>
+        <meta charset="utf-8" /> <?php /* Set di caratteri UTF-8 */ ?>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /> <?php /* Responsive */ ?>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" /> <?php /* Bootstrap CSS */ ?>
     </head>
-    <body> <!-- Inizio corpo pagina -->
+    <body> <?php /* Inizio corpo pagina */ ?>
     <?php
     // Endpoint API
     $json_file = 'users.json'; // File JSON dove sono salvati gli utenti
@@ -81,69 +81,69 @@
         }
     }
     ?>
-    <div class="container mt-4"> <!-- Contenitore principale -->
-    <ul class="nav nav-tabs" id="crudTab" role="tablist"> <!-- Tab per selezionare PHP o JS -->
+    <div class="container mt-4"> <?php /* Contenitore principale */ ?>
+    <ul class="nav nav-tabs" id="crudTab" role="tablist"> <?php /* Tab per selezionare PHP o JS */ ?>
           <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="php-tab" data-bs-toggle="tab" data-bs-target="#php" type="button" role="tab">PHP</button> <!-- Tab PHP -->
+            <button class="nav-link active" id="php-tab" data-bs-toggle="tab" data-bs-target="#php" type="button" role="tab">PHP</button> <?php /* Tab PHP */ ?>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link" id="js-tab" data-bs-toggle="tab" data-bs-target="#js" type="button" role="tab">JS</button> <!-- Tab JS -->
+            <button class="nav-link" id="js-tab" data-bs-toggle="tab" data-bs-target="#js" type="button" role="tab">JS</button> <?php /* Tab JS */ ?>
           </li>
         </ul>
-    <div class="tab-content" id="crudTabContent"> <!-- Contenuto dei tab -->
-          <div class="tab-pane fade show active p-3" id="php" role="tabpanel"> <!-- Tab PHP -->
-            <h2 class="text-center">CRUD API PHP</h2> <!-- Titolo sezione PHP -->
-            <form method="post" class="mb-3"> <!-- Form PHP -->
+    <div class="tab-content" id="crudTabContent"> <?php /* Contenuto dei tab */ ?>
+                    <div class="tab-pane fade show active p-3" id="php" role="tabpanel"> <?php /* Tab PHP */ ?>
+                        <h2 class="text-center">CRUD API PHP</h2> <?php /* Titolo sezione PHP */ ?>
+                        <form method="post" class="mb-3"> <?php /* Form PHP */ ?>
                 <div class="row g-2">
                     <div class="col">
-                        <input type="text" class="form-control" name="id" placeholder="ID (per Update/Delete)"> <!-- Campo ID -->
+                        <input type="text" class="form-control" name="id" placeholder="ID (per Update/Delete)"> <?php /* Campo ID */ ?>
                     </div>
                     <div class="col">
-                        <input type="text" class="form-control" name="name" placeholder="Nome"> <!-- Campo Nome -->
+                        <input type="text" class="form-control" name="name" placeholder="Nome"> <?php /* Campo Nome */ ?>
                     </div>
                     <div class="col">
-                        <input type="email" class="form-control" name="email" placeholder="Email"> <!-- Campo Email -->
+                        <input type="email" class="form-control" name="email" placeholder="Email"> <?php /* Campo Email */ ?>
                     </div>
                 </div>
                 <div class="mt-2">
-                    <button name="create" class="btn btn-success">Crea</button> <!-- Bottone Crea -->
-                    <button name="read" class="btn btn-primary">Visualizza</button> <!-- Bottone Visualizza -->
-                    <button name="update" class="btn btn-warning">Modifica</button> <!-- Bottone Modifica -->
-                    <button name="delete" class="btn btn-danger">Elimina</button> <!-- Bottone Elimina -->
+                    <button name="create" class="btn btn-success">Crea</button> <?php /* Bottone Crea */ ?>
+                    <button name="read" class="btn btn-primary">Visualizza</button> <?php /* Bottone Visualizza */ ?>
+                    <button name="update" class="btn btn-warning">Modifica</button> <?php /* Bottone Modifica */ ?>
+                    <button name="delete" class="btn btn-danger">Elimina</button> <?php /* Bottone Elimina */ ?>
                 </div>
             </form>
-            <?php if ($result) { echo '<div class="alert alert-info">' . $result . '</div>'; } ?> <!-- Mostra risultato -->
-          </div>
-          <div class="tab-pane fade p-3" id="js" role="tabpanel"> <!-- Tab JS -->
-            <h2 class="text-center">CRUD API JS</h2> <!-- Titolo sezione JS -->
-            <form id="jsCrudForm" class="mb-3"> <!-- Form JS -->
+            <?php if ($result) { echo '<div class="alert alert-info">' . $result . '</div>'; } ?> <?php /* Mostra risultato */ ?>
+                    </div>
+                    <div class="tab-pane fade p-3" id="js" role="tabpanel"> <?php /* Tab JS */ ?>
+                        <h2 class="text-center">CRUD API JS</h2> <?php /* Titolo sezione JS */ ?>
+                        <form id="jsCrudForm" class="mb-3"> <?php /* Form JS */ ?>
                 <div class="row g-2">
                     <div class="col">
-                        <input type="text" class="form-control" id="js-id" placeholder="ID (per Update/Delete)"> <!-- Campo ID -->
+                        <input type="text" class="form-control" id="js-id" placeholder="ID (per Update/Delete)"> <?php /* Campo ID */ ?>
                     </div>
                     <div class="col">
-                        <input type="text" class="form-control" id="js-name" placeholder="Nome"> <!-- Campo Nome -->
+                        <input type="text" class="form-control" id="js-name" placeholder="Nome"> <?php /* Campo Nome */ ?>
                     </div>
                     <div class="col">
-                        <input type="email" class="form-control" id="js-email" placeholder="Email"> <!-- Campo Email -->
+                        <input type="email" class="form-control" id="js-email" placeholder="Email"> <?php /* Campo Email */ ?>
                     </div>
                 </div>
                 <div class="mt-2">
-                    <button type="button" class="btn btn-success" onclick="jsCreate()">Crea</button> <!-- Bottone Crea -->
-                    <button type="button" class="btn btn-primary" onclick="jsRead()">Visualizza</button> <!-- Bottone Visualizza -->
-                    <button type="button" class="btn btn-warning" onclick="jsUpdate()">Modifica</button> <!-- Bottone Modifica -->
-                    <button type="button" class="btn btn-danger" onclick="jsDelete()">Elimina</button> <!-- Bottone Elimina -->
+                    <button type="button" class="btn btn-success" onclick="jsCreate()">Crea</button> <?php /* Bottone Crea */ ?>
+                    <button type="button" class="btn btn-primary" onclick="jsRead()">Visualizza</button> <?php /* Bottone Visualizza */ ?>
+                    <button type="button" class="btn btn-warning" onclick="jsUpdate()">Modifica</button> <?php /* Bottone Modifica */ ?>
+                    <button type="button" class="btn btn-danger" onclick="jsDelete()">Elimina</button> <?php /* Bottone Elimina */ ?>
                 </div>
             </form>
-            <div id="jsResult"></div> <!-- Risultato operazioni JS -->
+            <div id="jsResult"></div> <?php /* Risultato operazioni JS */ ?>
           </div>
         </div>
       </div>
-      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script> <!-- Popper.js -->
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" crossorigin="anonymous"></script> <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script> <?php /* Popper.js */ ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" crossorigin="anonymous"></script> <?php /* Bootstrap JS */ ?>
       <script>
-      const apiUrl = 'https://{{random}}.beeceptor.com/api/users'; // URL API di esempio
-      function jsCreate() { // Funzione per creare utente via JS
+    const apiUrl = 'https://{{random}}.beeceptor.com/api/users'; <?php /* URL API di esempio */ ?>
+    function jsCreate() { <?php /* Funzione per creare utente via JS */ ?>
           const name = document.getElementById('js-name').value; // Prende nome
           const email = document.getElementById('js-email').value; // Prende email
           fetch(apiUrl, {
@@ -152,16 +152,16 @@
               body: JSON.stringify({ name, email })
           })
           .then(r => r.text())
-          .then(data => document.getElementById('jsResult').innerHTML = `<div class='alert alert-success'>Creato: ${data}</div>`) // Mostra risultato
-          .catch(e => document.getElementById('jsResult').innerHTML = `<div class='alert alert-danger'>Errore: ${e}</div>`); // Mostra errore
+          .then(data => document.getElementById('jsResult').innerHTML = `<div class='alert alert-success'>Creato: ${data}</div>`) <?php /* Mostra risultato */ ?>
+          .catch(e => document.getElementById('jsResult').innerHTML = `<div class='alert alert-danger'>Errore: ${e}</div>`); <?php /* Mostra errore */ ?>
       }
-      function jsRead() { // Funzione per leggere utenti via JS
+    function jsRead() { <?php /* Funzione per leggere utenti via JS */ ?>
           fetch(apiUrl)
           .then(r => r.text())
-          .then(data => document.getElementById('jsResult').innerHTML = `<div class='alert alert-primary'>Utenti: ${data}</div>`) // Mostra utenti
-          .catch(e => document.getElementById('jsResult').innerHTML = `<div class='alert alert-danger'>Errore: ${e}</div>`); // Mostra errore
+          .then(data => document.getElementById('jsResult').innerHTML = `<div class='alert alert-primary'>Utenti: ${data}</div>`) <?php /* Mostra utenti */ ?>
+          .catch(e => document.getElementById('jsResult').innerHTML = `<div class='alert alert-danger'>Errore: ${e}</div>`); <?php /* Mostra errore */ ?>
       }
-      function jsUpdate() { // Funzione per aggiornare utente via JS
+    function jsUpdate() { <?php /* Funzione per aggiornare utente via JS */ ?>
           const id = document.getElementById('js-id').value; // Prende ID
           const name = document.getElementById('js-name').value; // Prende nome
           const email = document.getElementById('js-email').value; // Prende email
@@ -171,18 +171,18 @@
               body: JSON.stringify({ name, email })
           })
           .then(r => r.text())
-          .then(data => document.getElementById('jsResult').innerHTML = `<div class='alert alert-warning'>Aggiornato: ${data}</div>`) // Mostra risultato
-          .catch(e => document.getElementById('jsResult').innerHTML = `<div class='alert alert-danger'>Errore: ${e}</div>`); // Mostra errore
+          .then(data => document.getElementById('jsResult').innerHTML = `<div class='alert alert-warning'>Aggiornato: ${data}</div>`) <?php /* Mostra risultato */ ?>
+          .catch(e => document.getElementById('jsResult').innerHTML = `<div class='alert alert-danger'>Errore: ${e}</div>`); <?php /* Mostra errore */ ?>
       }
-      function jsDelete() { // Funzione per eliminare utente via JS
+    function jsDelete() { <?php /* Funzione per eliminare utente via JS */ ?>
           const id = document.getElementById('js-id').value; // Prende ID
           fetch(apiUrl + '/' + id, {
               method: 'DELETE'
           })
           .then(r => r.text())
-          .then(data => document.getElementById('jsResult').innerHTML = `<div class='alert alert-danger'>Eliminato: ${data}</div>`) // Mostra risultato
-          .catch(e => document.getElementById('jsResult').innerHTML = `<div class='alert alert-danger'>Errore: ${e}</div>`); // Mostra errore
+          .then(data => document.getElementById('jsResult').innerHTML = `<div class='alert alert-danger'>Eliminato: ${data}</div>`) <?php /* Mostra risultato */ ?>
+          .catch(e => document.getElementById('jsResult').innerHTML = `<div class='alert alert-danger'>Errore: ${e}</div>`); <?php /* Mostra errore */ ?>
       }
       </script>
-    </body> <!-- Fine corpo pagina -->
-</html> <!-- Fine documento HTML -->
+    </body> <?php /* Fine corpo pagina */ ?>
+</html> <?php /* Fine documento HTML */ ?>

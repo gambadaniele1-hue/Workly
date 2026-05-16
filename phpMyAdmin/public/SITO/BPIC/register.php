@@ -107,7 +107,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       left: 20px;
       background: #667eea;
 
-// ===== SEZIONE 5: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 5: LOGICA DI PROCESSO ===== ?>
       color: white;
       border: none;
       padding: 12px 16px;
@@ -129,7 +129,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
     .container {
 
-// ===== SEZIONE 6: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 6: LOGICA DI PROCESSO ===== ?>
       max-width: 500px;
       margin: 0 auto;
       background: #fff;
@@ -151,7 +151,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     input {
       width: 100%;
 
-// ===== SEZIONE 7: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 7: LOGICA DI PROCESSO ===== ?>
       padding: 12px;
       margin-top: 8px;
       border: 1px solid #ddd;
@@ -173,7 +173,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     button:hover {
       transform: translateY(-2px);
 
-// ===== SEZIONE 8: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 8: LOGICA DI PROCESSO ===== ?>
     }
     .err {
       background: #ffecec;
@@ -195,7 +195,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       color: #667eea;
       text-decoration: none;
 
-// ===== SEZIONE 9: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 9: LOGICA DI PROCESSO ===== ?>
     }
     a:hover {
       text-decoration: underline;

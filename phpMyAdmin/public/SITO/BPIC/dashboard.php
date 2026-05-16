@@ -79,7 +79,7 @@ if ($isAuthenticated) {
 ?>
 <!DOCTYPE html>
 
-// ===== SEZIONE 4: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 4: LOGICA DI PROCESSO ===== ?>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
@@ -101,7 +101,7 @@ if ($isAuthenticated) {
             font-family: 'Inter', Arial, sans-serif;
             background: radial-gradient(circle at top left, #eef4ff 0%, #f5f8ff 35%, #f8fafc 100%);
 
-// ===== SEZIONE 5: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 5: LOGICA DI PROCESSO ===== ?>
             color: var(--slate-900);
         }
         a { text-decoration: none; color: inherit; }
@@ -123,7 +123,7 @@ if ($isAuthenticated) {
             width: 40px;
             height: 40px;
 
-// ===== SEZIONE 6: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 6: LOGICA DI PROCESSO ===== ?>
             border-radius: 12px;
             background: var(--blue-500);
             display: inline-flex;
@@ -145,7 +145,7 @@ if ($isAuthenticated) {
         }
         .btn {
 
-// ===== SEZIONE 7: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 7: LOGICA DI PROCESSO ===== ?>
             border-radius: 12px;
             padding: 10px 20px;
             border: 1px solid transparent;
@@ -167,7 +167,7 @@ if ($isAuthenticated) {
             color: var(--white);
             box-shadow: 0 12px 24px rgba(37, 99, 235, 0.25);
 
-// ===== SEZIONE 8: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 8: LOGICA DI PROCESSO ===== ?>
         }
         .btn:hover { transform: translateY(-1px); }
         .hero {
@@ -189,7 +189,7 @@ if ($isAuthenticated) {
             font-size: 56px;
             font-weight: 800;
 
-// ===== SEZIONE 9: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 9: LOGICA DI PROCESSO ===== ?>
             margin: 24px 0 12px;
             line-height: 1.1;
         }
@@ -211,7 +211,7 @@ if ($isAuthenticated) {
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 24px;
 
-// ===== SEZIONE 10: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 10: LOGICA DI PROCESSO ===== ?>
             padding: 40px 80px;
         }
         .feature-card {
@@ -233,8 +233,8 @@ if ($isAuthenticated) {
             margin-bottom: 18px;
         }
 
-// ===== SEZIONE 11: LOGICA DI PROCESSO =====
-        .feature-card h3 { margin: 0 0 10px; font-size: 18px; }
+<?php // ===== SEZIONE 11: LOGICA DI PROCESSO ===== ?>
+    .feature-card h3 { margin: 0 0 10px; font-size: 18px; }
         .feature-card p { margin: 0; color: var(--slate-600); font-size: 14px; line-height: 1.5; }
         .panel {
             background: var(--white);
@@ -255,8 +255,8 @@ if ($isAuthenticated) {
             font-weight: 600;
         }
 
-// ===== SEZIONE 12: LOGICA DI PROCESSO =====
-        .status.admin { color: #15803d; background: #dcfce7; }
+<?php // ===== SEZIONE 12: LOGICA DI PROCESSO ===== ?>
+    .status.admin { color: #15803d; background: #dcfce7; }
         .status.abbonato { color: #1d4ed8; background: #dbeafe; }
         .status.non-abbonato { color: #b45309; background: #fef3c7; }
         .split {
@@ -277,7 +277,7 @@ if ($isAuthenticated) {
             display: flex;
             gap: 12px;
 
-// ===== SEZIONE 13: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 13: LOGICA DI PROCESSO ===== ?>
             flex-wrap: wrap;
             margin-top: 12px;
         }
@@ -299,7 +299,7 @@ if ($isAuthenticated) {
             color: var(--slate-600);
             white-space: pre-line;
 
-// ===== SEZIONE 14: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 14: LOGICA DI PROCESSO ===== ?>
         }
         .footer-actions {
             display: flex;
@@ -321,7 +321,7 @@ if ($isAuthenticated) {
             <span class="brand-icon">📄</span>
             BPIC
 
-// ===== SEZIONE 15: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 15: LOGICA DI PROCESSO ===== ?>
         </div>
         <div class="nav-links">
             <a href="#funzionalita">Funzionalità</a>
@@ -343,7 +343,7 @@ if ($isAuthenticated) {
             <a class="btn btn-outline" href="/SITO/BPIC/test_transazione_t14.php">Test Transazione T14</a>
         </div>
 
-// ===== SEZIONE 16: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 16: LOGICA DI PROCESSO ===== ?>
     </section>
 
     <section id="funzionalita" class="feature-grid">
@@ -365,7 +365,7 @@ if ($isAuthenticated) {
     </section>
 
 
-// ===== SEZIONE 17: LOGICA DI PROCESSO =====
+<?php // ===== SEZIONE 17: LOGICA DI PROCESSO ===== ?>
 
     <section id="prezzi" class="panel" style="text-align:center;">
         <h2>Prezzi chiari e trasparenti</h2>
