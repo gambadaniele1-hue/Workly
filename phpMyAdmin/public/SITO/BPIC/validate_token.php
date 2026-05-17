@@ -39,7 +39,7 @@ $userId = (int)$payload['user_id'];
 try {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
-    $stmt = $pdo->prepare('SELECT ID_utente, Email FROM Utenti WHERE ID_utente = ? LIMIT 1');
+    $stmt = $pdo->prepare('SELECT ID_utente, Email, ID_ruolo FROM Utenti WHERE ID_utente = ? LIMIT 1');
     $stmt->execute([$userId]);
     $user = $stmt->fetch();
 } catch (PDOException $e) {
@@ -58,22 +58,33 @@ if (!$user) {
 session_regenerate_id(true);
 $_SESSION['user_id'] = (int)$user['ID_utente'];
 $_SESSION['email'] = $user['Email'];
-$_SESSION['tipo_utente'] = $user['Tipo_utente'] ?? null;
+// role_id: prefer value from token payload, fallback to DB field
+$_SESSION['role_id'] = null;
+if (!empty($payload['role_id'])) {
+    $_SESSION['role_id'] = (int)$payload['role_id'];
+} elseif (!empty($user['ID_ruolo'])) {
+    $_SESSION['role_id'] = (int)$user['ID_ruolo'];
+}
 
-// Recupera ruoli e privilegi per mostrare nella dashboard
-
-/* BLOCK COMMENT: SQL Query execution to interact with database records */
-$stmt = $pdo->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
-    FROM Utente_Ruolo ur
-    JOIN Ruoli r ON r.ID_ruolo = ur.ID_ruolo
-    JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
-    JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
-    WHERE ur.email_utente = ?');
-$email = $user['Email'];
-$stmt->execute([$email]);
-$result = $stmt->fetchAll();
-
+// Recupera ruoli e privilegi per mostrare nella dashboard basandosi su ID_ruolo
 $roles = [];
+// se non abbiamo role_id, non possiamo popolare privilegi
+$permissions = [];
+if (!empty($_SESSION['role_id'])) {
+    try {
+        $stmt = $pdo->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
+            FROM Ruoli r
+            JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
+            JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
+            WHERE r.ID_ruolo = ?');
+        $stmt->execute([$_SESSION['role_id']]);
+        $result = $stmt->fetchAll();
+    } catch (PDOException $e) {
+        $result = [];
+    }
+} else {
+    $result = [];
+}
 
 // ===== SEZIONE 4: LOGICA DI PROCESSO =====
 $permissions = [];

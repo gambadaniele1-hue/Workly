@@ -34,7 +34,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '') {
 }
 
 $stmt = $pdo->prepare('
-    SELECT ID_utente, Email, Password_hash
+    SELECT ID_utente, Email, Password_hash, ID_ruolo
     FROM Utenti
     WHERE Email = ?
     LIMIT 1
@@ -54,8 +54,12 @@ if (!$user || !password_verify($password, $user['Password_hash'])) {
     exit;
 }
 
-$ttlSeconds = 600;
-$token = create_jwt((int)$user['ID_utente'], $ttlSeconds, JWT_SECRET);
+$ttlSeconds = 1000;
+$extra = [];
+if (isset($user['ID_ruolo'])) {
+    $extra['role_id'] = (int)$user['ID_ruolo'];
+}
+$token = create_jwt((int)$user['ID_utente'], $ttlSeconds, JWT_SECRET, $extra);
 
 http_response_code(200);
 echo json_encode([

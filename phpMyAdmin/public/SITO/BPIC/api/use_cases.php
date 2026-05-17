@@ -109,8 +109,7 @@ function fetch_user_and_permissions($mysqli, int $userId): array
 // ===== SEZIONE 4: LOGICA DI PROCESSO =====
 {
 
-/* BLOCK COMMENT: SQL Query execution to interact with database records */
-    $stmt = $mysqli->prepare('SELECT ID_utente, Email, N_Telefono FROM Utenti WHERE ID_utente = ? LIMIT 1');
+    $stmt = $mysqli->prepare('SELECT ID_utente, Email, N_Telefono, ID_ruolo FROM Utenti WHERE ID_utente = ? LIMIT 1');
     if (!$stmt) {
         send_json(500, ['error' => 'Errore interno (prepare utente).']);
     }
@@ -125,58 +124,51 @@ function fetch_user_and_permissions($mysqli, int $userId): array
         send_json(404, ['error' => 'Utente non trovato.']);
     }
 
-    $email = (string)$user['Email'];
-
-
-/* BLOCK COMMENT: SQL Query execution to interact with database records */
-    $stmt = $mysqli->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
-        FROM Utente_Ruolo ur
-
-// ===== SEZIONE 5: LOGICA DI PROCESSO =====
-        JOIN Ruoli r ON r.ID_ruolo = ur.ID_ruolo
-        JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
-        JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
-        WHERE ur.email_utente = ?');
-    if (!$stmt) {
-        send_json(500, ['error' => 'Errore interno (prepare permessi).']);
-    }
-
-    $stmt->bind_param('s', $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
+    $roleId = isset($user['ID_ruolo']) && $user['ID_ruolo'] !== null ? (int)$user['ID_ruolo'] : null;
     $roles = [];
     $permissions = [];
     $roleMap = [];
     $permMap = [];
     $roleNames = [];
 
-    while ($row = $result->fetch_assoc()) {
-        $roleId = (int)$row['ID_ruolo'];
-
-// ===== SEZIONE 6: LOGICA DI PROCESSO =====
-        if (!isset($roleMap[$roleId])) {
-            $roleMap[$roleId] = true;
-            $roles[] = ['id' => $roleId, 'name' => $row['Nome_ruolo']];
-            $roleNames[] = $row['Nome_ruolo'];
+    if ($roleId !== null) {
+        $stmt = $mysqli->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
+            FROM Ruoli r
+            JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
+            JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
+            WHERE r.ID_ruolo = ?');
+        if (!$stmt) {
+            send_json(500, ['error' => 'Errore interno (prepare permessi).']);
         }
 
-        $permId = (int)$row['ID_privilegio'];
-        if (!isset($permMap[$permId])) {
-            $permMap[$permId] = true;
-            $permissions[] = [
-                'id' => $permId,
-                'name' => $row['Nome_privilegio'],
-                'resource' => $row['Risorsa'],
-                'action' => $row['Azione'],
-            ];
+        $stmt->bind_param('i', $roleId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        while ($row = $result->fetch_assoc()) {
+            $roleIdRow = (int)$row['ID_ruolo'];
+            if (!isset($roleMap[$roleIdRow])) {
+                $roleMap[$roleIdRow] = true;
+                $roles[] = ['id' => $roleIdRow, 'name' => $row['Nome_ruolo']];
+                $roleNames[] = $row['Nome_ruolo'];
+            }
+
+            $permId = (int)$row['ID_privilegio'];
+            if (!isset($permMap[$permId])) {
+                $permMap[$permId] = true;
+                $permissions[] = [
+                    'id' => $permId,
+                    'name' => $row['Nome_privilegio'],
+                    'resource' => $row['Risorsa'],
+                    'action' => $row['Azione'],
+                ];
+            }
         }
+
+        $stmt->close();
     }
-    $stmt->close();
 
     return [
-
-// ===== SEZIONE 7: LOGICA DI PROCESSO =====
         'user' => $user,
         'roles' => $roles,
         'permissions' => $permissions,
@@ -399,8 +391,6 @@ $currentUserId = (int)$auth['user']['ID_utente'];
 $input = request_data($method);
 $useCase = (string)($input['use_case'] ?? $_GET['use_case'] ?? '');
 
-
-// ===== SEZIONE 15: LOGICA DI PROCESSO =====
 if ($useCase === '') {
     send_json(400, [
         'error' => 'Parametro use_case mancante.',
@@ -805,26 +795,18 @@ switch ($useCase) {
         try {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
-            $stmt = $mysqli->prepare('INSERT INTO Utenti (N_Telefono, Email, ID_busta, Password_hash) VALUES (?, ?, NULL, ?)');
+            $stmt = $mysqli->prepare('INSERT INTO Utenti (N_Telefono, Email, ID_busta, Password_hash, ID_ruolo) VALUES (?, ?, NULL, ?, ?)');
             if (!$stmt) {
                 throw new RuntimeException('Prepare insert utente fallita.');
             }
-            $stmt->bind_param('sss', $telefono, $email, $passwordHash);
+            $stmt->bind_param('sssi', $telefono, $email, $passwordHash, $idRuolo);
             $stmt->execute();
             $userId = (int)$stmt->insert_id;
             $stmt->close();
 
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
-            $stmt = $mysqli->prepare('INSERT INTO Utente_Ruolo (ID_ruolo, email_utente) VALUES (?, ?)');
-            if (!$stmt) {
-                throw new RuntimeException('Prepare ruolo utente fallita.');
-            }
-            $stmt->bind_param('is', $idRuolo, $email);
-
-// ===== SEZIONE 33: LOGICA DI PROCESSO =====
-            $stmt->execute();
-            $stmt->close();
+            // ruolo già impostato nella colonna Utenti.ID_ruolo
 
             $mysqli->commit();
         } catch (Throwable $e) {
@@ -911,26 +893,19 @@ switch ($useCase) {
             if ($idRuolo !== null) {
                 $email = (string)$existing['Email'];
 
-/* BLOCK COMMENT: SQL Query execution to interact with database records */
-                $stmt = $mysqli->prepare('DELETE FROM Utente_Ruolo WHERE email_utente = ?');
+/* Update role in Utenti table */
+                $stmt = $mysqli->prepare('UPDATE Utenti SET ID_ruolo = ? WHERE ID_utente = ?');
                 if (!$stmt) {
-                    throw new RuntimeException('Prepare delete ruolo utente fallita.');
+                    throw new RuntimeException('Prepare update ruolo utente fallita.');
                 }
-                $stmt->bind_param('s', $email);
+                $stmt->bind_param('ii', $idRuolo, $userId);
                 $stmt->execute();
                 $stmt->close();
 
 // ===== SEZIONE 37: LOGICA DI PROCESSO =====
 
 
-/* BLOCK COMMENT: SQL Query execution to interact with database records */
-                $stmt = $mysqli->prepare('INSERT INTO Utente_Ruolo (ID_ruolo, email_utente) VALUES (?, ?)');
-                if (!$stmt) {
-                    throw new RuntimeException('Prepare insert ruolo utente fallita.');
-                }
-                $stmt->bind_param('is', $idRuolo, $email);
-                $stmt->execute();
-                $stmt->close();
+                // ruolo già aggiornato nella tabella Utenti
             }
 
             $mysqli->commit();
@@ -1075,21 +1050,15 @@ switch ($useCase) {
         $mysqli->begin_transaction();
         try {
             if ($nomeRuolo !== null) {
-
-/* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('UPDATE Ruoli SET Nome_ruolo = ? WHERE ID_ruolo = ?');
                 if (!$stmt) {
                     throw new RuntimeException('Prepare update nome ruolo fallita.');
                 }
                 $stmt->bind_param('si', $nomeRuolo, $idRuolo);
                 $stmt->execute();
-
-// ===== SEZIONE 44: LOGICA DI PROCESSO =====
                 $stmt->close();
             }
             if ($descrizione !== null) {
-
-/* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('UPDATE Ruoli SET Descrizione = ? WHERE ID_ruolo = ?');
                 if (!$stmt) {
                     throw new RuntimeException('Prepare update descrizione ruolo fallita.');
@@ -1099,8 +1068,6 @@ switch ($useCase) {
                 $stmt->close();
             }
             if ($attivo !== null) {
-
-/* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('UPDATE Ruoli SET Attivo = ? WHERE ID_ruolo = ?');
                 if (!$stmt) {
                     throw new RuntimeException('Prepare update attivo ruolo fallita.');
@@ -1110,15 +1077,11 @@ switch ($useCase) {
                 $stmt->close();
             }
 
-// ===== SEZIONE 45: LOGICA DI PROCESSO =====
-
             if ($privilegi !== null) {
                 if (!is_array($privilegi)) {
                     throw new RuntimeException('privilegi deve essere un array.');
                 }
 
-
-/* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('DELETE FROM Ruolo_Privilegio WHERE ID_ruolo = ?');
                 if (!$stmt) {
                     throw new RuntimeException('Prepare delete ruolo_privilegio fallita.');
@@ -1128,15 +1091,11 @@ switch ($useCase) {
                 $stmt->close();
 
                 if (!empty($privilegi)) {
-
-/* BLOCK COMMENT: SQL Query execution to interact with database records */
                     $stmt = $mysqli->prepare('INSERT INTO Ruolo_Privilegio (ID_ruolo, ID_privilegio, Data_assegnazione) VALUES (?, ?, NOW())');
                     if (!$stmt) {
                         throw new RuntimeException('Prepare insert ruolo_privilegio fallita.');
                     }
                     foreach ($privilegi as $idPrivRaw) {
-
-// ===== SEZIONE 46: LOGICA DI PROCESSO =====
                         $idPriv = (int)$idPrivRaw;
                         if ($idPriv <= 0) {
                             continue;
@@ -1157,8 +1116,6 @@ switch ($useCase) {
         send_json(200, [
             'use_case' => $useCase,
             'message' => 'Ruolo aggiornato con successo.',
-
-// ===== SEZIONE 47: LOGICA DI PROCESSO =====
             'id_ruolo' => $idRuolo,
         ]);
 

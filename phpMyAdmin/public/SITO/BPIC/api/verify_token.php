@@ -30,7 +30,8 @@ if (!$payload || empty($payload['user_id'])) {
 $userId = (int)$payload['user_id'];
 
 // Recupera email e ruoli/privilegi
-$stmt = $pdo->prepare('SELECT Email FROM Utenti WHERE ID_utente = ? LIMIT 1');
+// Ottieni email e eventualmente ID_ruolo
+$stmt = $pdo->prepare('SELECT Email, ID_ruolo FROM Utenti WHERE ID_utente = ? LIMIT 1');
 try {
     $stmt->execute([$userId]);
     $user = $stmt->fetch();
@@ -46,16 +47,26 @@ if (!$user) {
     exit;
 }
 
-$email = $user['Email'];
 
-$stmt = $pdo->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
-    FROM Utente_Ruolo ur
-    JOIN Ruoli r ON r.ID_ruolo = ur.ID_ruolo
-    JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
-    JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
-    WHERE ur.email_utente = ?');
-$stmt->execute([$email]);
-$result = $stmt->fetchAll();
+// Determina role_id: prefer valore nel payload, altrimenti quello salvato in tabella Utenti
+$email = $user['Email'];
+$roleId = null;
+if (!empty($payload['role_id'])) {
+    $roleId = (int)$payload['role_id'];
+} elseif (!empty($user['ID_ruolo'])) {
+    $roleId = (int)$user['ID_ruolo'];
+}
+
+$result = [];
+if ($roleId !== null) {
+    $stmt = $pdo->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
+        FROM Ruoli r
+        JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
+        JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
+        WHERE r.ID_ruolo = ?');
+    $stmt->execute([$roleId]);
+    $result = $stmt->fetchAll();
+}
 
 $roles = [];
 $permissions = [];

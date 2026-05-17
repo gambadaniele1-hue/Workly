@@ -57,15 +57,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
           $pdo->beginTransaction();
 
-
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
-          $stmt = $pdo->prepare("INSERT INTO Utenti (N_Telefono, Email, ID_busta, Password_hash) VALUES (?, ?, ?, ?)");
-          $stmt->execute([$telefonoParam, $email, null, $passwordHash]);
-
-
-/* BLOCK COMMENT: SQL Query execution to interact with database records */
-          $stmt2 = $pdo->prepare("INSERT INTO Utente_Ruolo (email_utente, ID_ruolo) VALUES (?, 3)");
-          $stmt2->execute([$email]);
+          $stmt = $pdo->prepare("INSERT INTO Utenti (N_Telefono, Email, ID_busta, Password_hash, ID_ruolo) VALUES (?, ?, ?, ?, ?)");
+          $defaultRole = 3;
+          $stmt->execute([$telefonoParam, $email, null, $passwordHash, $defaultRole]);
 
           $pdo->commit();
           $ok = true;

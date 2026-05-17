@@ -76,23 +76,22 @@ function fetchSessionAuth(PDO $pdo): array
         return [is_array($roles) ? $roles : [], is_array($permissions) ? $permissions : []];
     }
 
-    $email = (string)($_SESSION['email'] ?? '');
-    if ($email === '') {
+    $roleId = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
+    if ($roleId === 0) {
         return [[], []];
     }
 
-
-/* BLOCK COMMENT: SQL Query execution to interact with database records */
-    $stmt = $pdo->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
-        FROM Utente_Ruolo ur
-        JOIN Ruoli r ON r.ID_ruolo = ur.ID_ruolo
-
-// ===== SEZIONE 4: LOGICA DI PROCESSO =====
-        JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
-        JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
-        WHERE ur.email_utente = ?');
-    $stmt->execute([$email]);
-    $rows = $stmt->fetchAll();
+    try {
+        $stmt = $pdo->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
+            FROM Ruoli r
+            JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
+            JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
+            WHERE r.ID_ruolo = ?');
+        $stmt->execute([$roleId]);
+        $rows = $stmt->fetchAll();
+    } catch (PDOException $e) {
+        $rows = [];
+    }
 
     $roles = [];
     $permissions = [];

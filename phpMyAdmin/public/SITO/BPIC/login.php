@@ -35,10 +35,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $errors[] = "Email non valida.";
     } else {
       $stmt = $pdo->prepare(" 
-            SELECT ID_utente, Email, Password_hash
-            FROM Utenti
-            WHERE Email = ?
-            LIMIT 1
+        SELECT ID_utente, Email, Password_hash, ID_ruolo
+        FROM Utenti
+        WHERE Email = ?
+        LIMIT 1
         ");
       try {
         $stmt->execute([$email]);
@@ -58,8 +58,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Genera un token JWT visibile all'utente e non imposta ancora la sessione.
         // L'utente dovrà validare il token (tramite la form) per essere reindirizzato alla dashboard.
         require_once __DIR__ . '/api/jwt.php';
-        $ttlSeconds = 600; // durata in secondi
-        $generatedToken = create_jwt((int)$user['ID_utente'], $ttlSeconds, JWT_SECRET);
+        $ttlSeconds = 1000; // durata in secondi richiesta
+        $extra = [];
+        if (isset($user['ID_ruolo'])) {
+          $extra['role_id'] = (int)$user['ID_ruolo'];
+        }
+        $generatedToken = create_jwt((int)$user['ID_utente'], $ttlSeconds, JWT_SECRET, $extra);
         // Non eseguire redirect qui: il token viene mostrato nella vista e l'utente lo valida tramite validate_token.php
         // in modo che solo dopo la validazione la sessione venga impostata e si entri nella dashboard.
         }

@@ -519,8 +519,7 @@ if ($contratto === 'metalmeccanico') {
         <h3>Livello del dipendente</h3>
         <div class="field">
           <label for="livello">Seleziona livello</label>
-
-/* BLOCK COMMENT: SQL Query execution to interact with database records */
+          <?php /* BLOCK COMMENT: SQL Query execution to interact with database records */ ?>
           <select id="livello" name="livello" <?php echo empty($livelli) ? 'disabled' : ''; ?>>
             <option value="">Seleziona...</option>
             <?php foreach ($livelli as $livello): ?>
@@ -538,8 +537,7 @@ if ($contratto === 'metalmeccanico') {
       <div class="grid" style="margin-top: 16px;">
         <section class="card">
           <h3>Maggiorazioni (%)</h3>
-
-// ===== SEZIONE 24: LOGICA DI PROCESSO =====
+          <?php // ===== SEZIONE 24: LOGICA DI PROCESSO ===== ?>
           <div class="field">
             <label for="notturna">Maggiorazione notturna</label>
             <input id="notturna" name="maggiorazione_notturna" type="number" min="0" step="1" placeholder="0.00" value="<?php echo htmlspecialchars(format_decimal($maggNotturna), ENT_QUOTES, 'UTF-8'); ?>">
@@ -560,8 +558,7 @@ if ($contratto === 'metalmeccanico') {
             <input id="prefestivi" name="maggiorazione_prefestivi" type="number" min="0" step="1" placeholder="0.00" value="<?php echo htmlspecialchars(format_decimal($maggPrefestivi), ENT_QUOTES, 'UTF-8'); ?>">
             <div class="unit">Percentuale</div>
           </div>
-
-// ===== SEZIONE 25: LOGICA DI PROCESSO =====
+          <?php // ===== SEZIONE 25: LOGICA DI PROCESSO ===== ?>
           <div class="field">
             <label for="malattia">Indennita di malattia</label>
             <input id="malattia" name="indennita_malattia" type="number" min="0" step="1" placeholder="0.00" value="<?php echo htmlspecialchars(format_decimal($indMalattia), ENT_QUOTES, 'UTF-8'); ?>">

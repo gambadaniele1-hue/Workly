@@ -54,16 +54,44 @@ if (!$roles || !$permissions) {
     if (is_string($email) && $email !== '') {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
-        $stmt = $mysqli->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
-            FROM Utente_Ruolo ur
-            JOIN Ruoli r ON r.ID_ruolo = ur.ID_ruolo
-            JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
-            JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
-            WHERE ur.email_utente = ?');
-        if ($stmt) {
-            $stmt->bind_param('s', $email);
-            $stmt->execute();
-            $result = $stmt->get_result();
+        // Usa il role_id in sessione invece della tabella Utente_Ruolo
+        $roleId = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
+        $roles = [];
+        $permissions = [];
+        $roleMap = [];
+        $permMap = [];
+        if ($roleId > 0) {
+            $stmt = $mysqli->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
+                FROM Ruoli r
+                JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
+                JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
+                WHERE r.ID_ruolo = ?');
+            if ($stmt) {
+                $stmt->bind_param('i', $roleId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                while ($row = $result->fetch_assoc()) {
+                    $roleIdRow = (int)$row['ID_ruolo'];
+                    if (!isset($roleMap[$roleIdRow])) {
+                        $roleMap[$roleIdRow] = true;
+                        $roles[] = ['id' => $roleIdRow, 'name' => $row['Nome_ruolo']];
+                    }
+                    $permId = (int)$row['ID_privilegio'];
+                    if (!isset($permMap[$permId])) {
+                        $permMap[$permId] = true;
+                        $permissions[] = [
+                            'id' => $permId,
+                            'name' => $row['Nome_privilegio'],
+                            'resource' => $row['Risorsa'],
+                            'action' => $row['Azione'],
+                        ];
+                    }
+                }
+
+                $stmt->close();
+            }
+        }
 
             $roles = [];
             $permissions = [];
@@ -98,7 +126,7 @@ if (!$roles || !$permissions) {
 // ===== SEZIONE 5: LOGICA DI PROCESSO =====
         }
     }
-}
+
 
 $roles = is_array($roles) ? $roles : [];
 $permissions = is_array($permissions) ? $permissions : [];

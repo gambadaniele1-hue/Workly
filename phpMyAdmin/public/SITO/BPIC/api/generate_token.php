@@ -21,8 +21,12 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $userId = (int)$_SESSION['user_id'];
-$ttl = 24 * 3600; // token valido 24 ore
-$token = create_jwt($userId, $ttl, JWT_SECRET);
+$ttl = 1000; // token valido 1000 secondi come richiesto
+$extra = [];
+if (!empty($_SESSION['role_id'])) {
+    $extra['role_id'] = (int)$_SESSION['role_id'];
+}
+$token = create_jwt($userId, $ttl, JWT_SECRET, $extra);
 
 http_response_code(200);
 echo json_encode(['token' => $token, 'expires_in' => $ttl], JSON_UNESCAPED_UNICODE);
