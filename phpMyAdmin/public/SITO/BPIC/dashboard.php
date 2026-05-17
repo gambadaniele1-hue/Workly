@@ -14,7 +14,6 @@ $isAuthenticated = isset($_SESSION['user_id']);
 $roles = $isAuthenticated ? ($_SESSION['roles'] ?? null) : [];
 $permissions = $isAuthenticated ? ($_SESSION['permissions'] ?? null) : [];
 
-// INLINE COMMENT: Conditional logic or loop processing
 if ($isAuthenticated && (!$roles || !$permissions) && isset($_SESSION['email'])) {
     require_once __DIR__ . "/database.php";
     $email = $_SESSION['email'];
@@ -36,17 +35,14 @@ if ($isAuthenticated && (!$roles || !$permissions) && isset($_SESSION['email']))
     $roleMap = [];
     $permMap = [];
 
-// INLINE COMMENT: Conditional logic or loop processing
     foreach ($result as $row) {
         $roleId = (int)$row['ID_ruolo'];
-// INLINE COMMENT: Conditional logic or loop processing
         if (!isset($roleMap[$roleId])) {
             $roleMap[$roleId] = true;
             $roles[] = ['id' => $roleId, 'name' => $row['Nome_ruolo']];
         }
 
         $permId = (int)$row['ID_privilegio'];
-// INLINE COMMENT: Conditional logic or loop processing
         if (!isset($permMap[$permId])) {
             $permMap[$permId] = true;
             $permissions[] = ['id' => $permId, 'name' => $row['Nome_privilegio'], 'resource' => $row['Risorsa'], 'action' => $row['Azione']];
@@ -65,13 +61,11 @@ $isAbbonato = in_array('utente_abbonato', $roleNames, true);
 $isNonAbbonato = in_array('utente_non_abbonato', $roleNames, true);
 $isTenant = in_array('tenant', $roleNames, true);
 
-// INLINE COMMENT: Conditional logic or loop processing
 if ($isAuthenticated && $isTenant) {
     header('Location: /SITO/BPIC/tenant_dashboard.php');
     exit;
 }
 
-// INLINE COMMENT: Conditional logic or loop processing
 if ($isAuthenticated) {
     header('Location: /SITO/BPIC/home.php');
     exit;
@@ -79,7 +73,6 @@ if ($isAuthenticated) {
 ?>
 <!DOCTYPE html>
 
-<?php // ===== SEZIONE 4: LOGICA DI PROCESSO ===== ?>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
@@ -101,7 +94,6 @@ if ($isAuthenticated) {
             font-family: 'Inter', Arial, sans-serif;
             background: radial-gradient(circle at top left, #eef4ff 0%, #f5f8ff 35%, #f8fafc 100%);
 
-<?php // ===== SEZIONE 5: LOGICA DI PROCESSO ===== ?>
             color: var(--slate-900);
         }
         a { text-decoration: none; color: inherit; }
@@ -123,7 +115,6 @@ if ($isAuthenticated) {
             width: 40px;
             height: 40px;
 
-<?php // ===== SEZIONE 6: LOGICA DI PROCESSO ===== ?>
             border-radius: 12px;
             background: var(--blue-500);
             display: inline-flex;
@@ -145,7 +136,6 @@ if ($isAuthenticated) {
         }
         .btn {
 
-<?php // ===== SEZIONE 7: LOGICA DI PROCESSO ===== ?>
             border-radius: 12px;
             padding: 10px 20px;
             border: 1px solid transparent;
@@ -167,7 +157,6 @@ if ($isAuthenticated) {
             color: var(--white);
             box-shadow: 0 12px 24px rgba(37, 99, 235, 0.25);
 
-<?php // ===== SEZIONE 8: LOGICA DI PROCESSO ===== ?>
         }
         .btn:hover { transform: translateY(-1px); }
         .hero {
@@ -189,7 +178,6 @@ if ($isAuthenticated) {
             font-size: 56px;
             font-weight: 800;
 
-<?php // ===== SEZIONE 9: LOGICA DI PROCESSO ===== ?>
             margin: 24px 0 12px;
             line-height: 1.1;
         }
@@ -211,7 +199,6 @@ if ($isAuthenticated) {
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 24px;
 
-<?php // ===== SEZIONE 10: LOGICA DI PROCESSO ===== ?>
             padding: 40px 80px;
         }
         .feature-card {
@@ -233,7 +220,6 @@ if ($isAuthenticated) {
             margin-bottom: 18px;
         }
 
-<?php // ===== SEZIONE 11: LOGICA DI PROCESSO ===== ?>
     .feature-card h3 { margin: 0 0 10px; font-size: 18px; }
         .feature-card p { margin: 0; color: var(--slate-600); font-size: 14px; line-height: 1.5; }
         .panel {
@@ -255,7 +241,6 @@ if ($isAuthenticated) {
             font-weight: 600;
         }
 
-<?php // ===== SEZIONE 12: LOGICA DI PROCESSO ===== ?>
     .status.admin { color: #15803d; background: #dcfce7; }
         .status.abbonato { color: #1d4ed8; background: #dbeafe; }
         .status.non-abbonato { color: #b45309; background: #fef3c7; }
@@ -277,7 +262,6 @@ if ($isAuthenticated) {
             display: flex;
             gap: 12px;
 
-<?php // ===== SEZIONE 13: LOGICA DI PROCESSO ===== ?>
             flex-wrap: wrap;
             margin-top: 12px;
         }
@@ -299,7 +283,6 @@ if ($isAuthenticated) {
             color: var(--slate-600);
             white-space: pre-line;
 
-<?php // ===== SEZIONE 14: LOGICA DI PROCESSO ===== ?>
         }
         .footer-actions {
             display: flex;
@@ -321,7 +304,6 @@ if ($isAuthenticated) {
             <span class="brand-icon">📄</span>
             BPIC
 
-<?php // ===== SEZIONE 15: LOGICA DI PROCESSO ===== ?>
         </div>
         <div class="nav-links">
             <a href="#funzionalita">Funzionalità</a>
@@ -343,7 +325,6 @@ if ($isAuthenticated) {
             <a class="btn btn-outline" href="/SITO/BPIC/test_transazione_t14.php">Test Transazione T14</a>
         </div>
 
-<?php // ===== SEZIONE 16: LOGICA DI PROCESSO ===== ?>
     </section>
 
     <section id="funzionalita" class="feature-grid">
@@ -365,7 +346,6 @@ if ($isAuthenticated) {
     </section>
 
 
-<?php // ===== SEZIONE 17: LOGICA DI PROCESSO ===== ?>
 
     <section id="prezzi" class="panel" style="text-align:center;">
         <h2>Prezzi chiari e trasparenti</h2>

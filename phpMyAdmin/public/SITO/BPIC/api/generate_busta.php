@@ -9,11 +9,9 @@
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
-// INLINE COMMENT: Conditional logic or loop processing
 if (session_status() !== PHP_SESSION_ACTIVE) {
   session_start();
 }
-// INLINE COMMENT: Conditional logic or loop processing
 if (empty($_SESSION['user_id'])) {
   http_response_code(401);
   echo 'Unauthorized';
@@ -71,15 +69,11 @@ try {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
   $stmt = $pdo->prepare('SELECT Maggiorazione_festiva, Maggiorazione_prefestiva, Maggiorazione_notturna, Maggiorazione_straordinaria, Indennita_reperibilita, Indennita_trasferta FROM Impostazioni_contratto WHERE ID_utente = ? LIMIT 1');
-// INLINE COMMENT: Conditional logic or loop processing
   if ($stmt) {
     $stmt->execute([$userId]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
-// INLINE COMMENT: Conditional logic or loop processing
     if ($row) {
-// INLINE COMMENT: Conditional logic or loop processing
       foreach ($settings as $k => $_) {
-// INLINE COMMENT: Conditional logic or loop processing
         if (array_key_exists($k, $row)) {
           $settings[$k] = (float)$row[$k];
         }
@@ -144,7 +138,6 @@ function errorMsg($msg) {
   <div class="panel" style="background:#fee2e2;border-left:4px solid #dc2626;padding:16px">
     <div style="color:#991b1b;font-weight:700">❌ Errore</div>
 
-<?php // ===== SEZIONE 6: LOGICA DI PROCESSO ===== ?>
     <div style="color:#7f1d1d;margin-top:8px"><?= htmlspecialchars($msg, ENT_QUOTES, 'UTF-8') ?></div>
   </div>
   <?php
@@ -182,7 +175,6 @@ try {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
       $insArch = $pdo->prepare('INSERT INTO Confronta (ID_utente, ID_busta) VALUES (?, ?)');
-// INLINE COMMENT: Conditional logic or loop processing
       if ($insArch) {
         $insArch->execute([$userId, $bustaId]);
       }
@@ -191,7 +183,6 @@ try {
     }
   } catch (PDOException $e) {
     // If ID_utente column doesn't exist yet, try without it (old schema)
-// INLINE COMMENT: Conditional logic or loop processing
     if (strpos($e->getMessage(), 'Unknown column') !== false) {
 
 // ===== SEZIONE 8: LOGICA DI PROCESSO =====
@@ -221,7 +212,6 @@ try {
         $insArch = $pdo->prepare('INSERT INTO Confronta (ID_utente, ID_busta) VALUES (?, ?)');
 
 // ===== SEZIONE 9: LOGICA DI PROCESSO =====
-// INLINE COMMENT: Conditional logic or loop processing
         if ($insArch) {
           $insArch->execute([$userId, $bustaId]);
         }
@@ -230,7 +220,6 @@ try {
       }
     } else {
       // If it's a duplicate entry (unique index in DB not removed), insert without ID_utente
-// INLINE COMMENT: Conditional logic or loop processing
       if (strpos($e->getMessage(), '1062') !== false || strpos($e->getMessage(), 'Duplicate entry') !== false) {
         try {
 
@@ -258,7 +247,6 @@ try {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
             $insArch = $pdo->prepare('INSERT INTO Confronta (ID_utente, ID_busta) VALUES (?, ?)');
-// INLINE COMMENT: Conditional logic or loop processing
             if ($insArch) {
               $insArch->execute([$userId, $bustaId]);
             }
@@ -303,7 +291,6 @@ function fm($n){return number_format((float)$n, 2, ',', '.');}
 // ===== SEZIONE 12: LOGICA DI PROCESSO =====
       <small style="color:#94a3b8">Lordo</small>
       <div style="font-weight:800;font-size:20px">€ <?= fm($lordo) ?></div>
-// INLINE COMMENT: Conditional logic or loop processing
       <?php if (!empty($bustaId)): ?>
         <div style="font-size:12px;color:#0f766e">Salvato (ID <?= $bustaId ?>)</div>
       <?php endif; ?>

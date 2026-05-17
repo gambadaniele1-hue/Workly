@@ -13,14 +13,12 @@ require_once __DIR__ . "/api/jwt.php";
 
 session_start();
 
-// INLINE COMMENT: Conditional logic or loop processing
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: /SITO/BPIC/login.php');
     exit;
 }
 
 $token = trim($_POST['token'] ?? '');
-// INLINE COMMENT: Conditional logic or loop processing
 if ($token === '') {
     $error = 'Token mancante.';
     echo "<p>$error</p><p><a href=\"/SITO/BPIC/login.php\">Torna al login</a></p>";
@@ -30,7 +28,6 @@ if ($token === '') {
 $payload = verify_jwt($token, JWT_SECRET);
 
 // ===== SEZIONE 2: LOGICA DI PROCESSO =====
-// INLINE COMMENT: Conditional logic or loop processing
 if (!$payload || empty($payload['user_id'])) {
     $error = 'Token non valido o scaduto.';
     echo "<p>$error</p><p><a href=\"/SITO/BPIC/login.php\">Torna al login</a></p>";
@@ -50,7 +47,6 @@ try {
     exit;
 }
 
-// INLINE COMMENT: Conditional logic or loop processing
 if (!$user) {
     echo "<p>Utente non trovato.</p><p><a href=\"/SITO/BPIC/login.php\">Torna al login</a></p>";
     exit;
@@ -84,17 +80,14 @@ $permissions = [];
 $roleMap = [];
 $permMap = [];
 
-// INLINE COMMENT: Conditional logic or loop processing
 foreach ($result as $row) {
     $roleId = (int)$row['ID_ruolo'];
-// INLINE COMMENT: Conditional logic or loop processing
     if (!isset($roleMap[$roleId])) {
         $roleMap[$roleId] = true;
         $roles[] = ['id' => $roleId, 'name' => $row['Nome_ruolo']];
     }
 
     $permId = (int)$row['ID_privilegio'];
-// INLINE COMMENT: Conditional logic or loop processing
     if (!isset($permMap[$permId])) {
         $permMap[$permId] = true;
         $permissions[] = ['id' => $permId, 'name' => $row['Nome_privilegio'], 'resource' => $row['Risorsa'], 'action' => $row['Azione']];
@@ -109,7 +102,6 @@ $_SESSION['permissions'] = $permissions;
 $roleNames = array_map(static fn(array $r): string => (string)($r['name'] ?? ''), $roles);
 $isTenant = in_array('tenant', $roleNames, true);
 
-// INLINE COMMENT: Conditional logic or loop processing
 if ($isTenant) {
     header('Location: /SITO/BPIC/tenant_dashboard.php');
     exit;
@@ -127,7 +119,6 @@ try {
     $hasContractSettings = false;
 }
 
-// INLINE COMMENT: Conditional logic or loop processing
 if ($hasContractSettings) {
 
 // ===== SEZIONE 6: LOGICA DI PROCESSO =====

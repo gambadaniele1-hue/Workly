@@ -10,7 +10,6 @@
 declare(strict_types=1);
 
 session_start();
-// INLINE COMMENT: Conditional logic or loop processing
 if (empty($_SESSION['user_id'])) {
   header('Location: /SITO/BPIC/login.php');
   exit;
@@ -39,15 +38,11 @@ try {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
   $stmt = $pdo->prepare('SELECT Maggiorazione_festiva, Maggiorazione_prefestiva, Maggiorazione_notturna, Maggiorazione_straordinaria, Indennita_reperibilita, Indennita_trasferta FROM Impostazioni_contratto WHERE ID_utente = ? LIMIT 1');
-// INLINE COMMENT: Conditional logic or loop processing
   if ($stmt) {
     $stmt->execute([$userId]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
-// INLINE COMMENT: Conditional logic or loop processing
     if ($row) {
-// INLINE COMMENT: Conditional logic or loop processing
       foreach ($settings as $k => $_) {
-// INLINE COMMENT: Conditional logic or loop processing
         if (array_key_exists($k, $row)) {
           $settings[$k] = (float)$row[$k];
         }
@@ -60,17 +55,14 @@ try {
   // fallback usa valori di default
 }
 
-// INLINE COMMENT: Conditional logic or loop processing
 if ($requestMethod === 'POST' && isset($_POST['delete_id_busta'])) {
   $idBusta = (int)($_POST['delete_id_busta'] ?? 0);
-// INLINE COMMENT: Conditional logic or loop processing
   if ($idBusta > 0) {
     try {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
       $del = $pdo->prepare('DELETE FROM Confronta WHERE ID_utente = ? AND ID_busta = ?');
       $del->execute([$userId, $idBusta]);
-// INLINE COMMENT: Conditional logic or loop processing
       if ($del->rowCount() > 0) {
         $message = 'Busta rimossa dallo storico.';
       } else {
@@ -99,7 +91,6 @@ try {
   $rows = $q->fetchAll(PDO::FETCH_ASSOC);
 
   // Fallback: se lo storico e vuoto, mostra direttamente le buste dell'utente.
-// INLINE COMMENT: Conditional logic or loop processing
   if (empty($rows)) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
@@ -139,7 +130,6 @@ function eur(float $value): string {
       --bg: #f6f8fc;
       --card: #ffffff;
 
-<?php // ===== SEZIONE 6: LOGICA DI PROCESSO ===== ?>
       --line: #e5e7eb;
       --txt: #0f172a;
       --muted: #64748b;
@@ -161,7 +151,6 @@ function eur(float $value): string {
       font-family: "Segoe UI", system-ui, sans-serif;
     }
 
-<?php // ===== SEZIONE 7: LOGICA DI PROCESSO ===== ?>
 
     .layout {
       min-height: 100vh;
@@ -183,7 +172,6 @@ function eur(float $value): string {
 
     .user {
 
-<?php // ===== SEZIONE 8: LOGICA DI PROCESSO ===== ?>
       font-size: 13px;
       color: #cbd5e1;
       margin-bottom: 18px;
@@ -205,7 +193,6 @@ function eur(float $value): string {
     }
 
 
-<?php // ===== SEZIONE 9: LOGICA DI PROCESSO ===== ?>
     .menu a:hover,
     .menu a.active {
       background: var(--sidebar-soft);
@@ -227,7 +214,6 @@ function eur(float $value): string {
     }
 
 
-<?php // ===== SEZIONE 10: LOGICA DI PROCESSO ===== ?>
     .head p {
       margin: 8px 0 0;
       color: var(--muted);
@@ -249,7 +235,6 @@ function eur(float $value): string {
     }
 
 
-<?php // ===== SEZIONE 11: LOGICA DI PROCESSO ===== ?>
     .notice.err {
       background: #fee2e2;
       color: #991b1b;
@@ -271,7 +256,6 @@ function eur(float $value): string {
 
     .card-top {
 
-<?php // ===== SEZIONE 12: LOGICA DI PROCESSO ===== ?>
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -293,7 +277,6 @@ function eur(float $value): string {
     .metrics {
       display: grid;
 
-<?php // ===== SEZIONE 13: LOGICA DI PROCESSO ===== ?>
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
       margin-bottom: 12px;
@@ -315,7 +298,6 @@ function eur(float $value): string {
       font-size: 30px;
       line-height: 1;
 
-<?php // ===== SEZIONE 14: LOGICA DI PROCESSO ===== ?>
     }
 
     .box.netto { background: var(--green-bg); }
@@ -337,7 +319,6 @@ function eur(float $value): string {
       color: #1d4ed8;
       font-weight: 700;
 
-<?php // ===== SEZIONE 15: LOGICA DI PROCESSO ===== ?>
       padding: 8px 12px;
       text-decoration: none;
       cursor: pointer;
@@ -359,7 +340,6 @@ function eur(float $value): string {
     }
 
 
-<?php // ===== SEZIONE 16: LOGICA DI PROCESSO ===== ?>
     @media (max-width: 1024px) {
       .layout { grid-template-columns: 1fr; }
       .metrics { grid-template-columns: 1fr; }
@@ -392,16 +372,13 @@ function eur(float $value): string {
         <p>Visualizza e gestisci le buste generate con riepilogo Netto, Lordo e Tasse.</p>
       </header>
 
-// INLINE COMMENT: Conditional logic or loop processing
       <?php if ($message !== ''): ?>
         <div class="notice ok"><?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?></div>
       <?php endif; ?>
-// INLINE COMMENT: Conditional logic or loop processing
       <?php if ($error !== ''): ?>
         <div class="notice err"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></div>
       <?php endif; ?>
 
-// INLINE COMMENT: Conditional logic or loop processing
       <?php if (empty($rows)): ?>
         <div class="empty">Nessuna busta paga presente nello storico.</div>
       <?php else: ?>
@@ -423,7 +400,6 @@ function eur(float $value): string {
  * Database: Potrebbe usare tabella separata Storico_buste_paga_archivio
  * Status: PENDING - Solo visualizzazione implementata
  */
-// INLINE COMMENT: Conditional logic or loop processing
           <?php foreach ($rows as $row): ?>
             <?php
               $lordo = (float)($row['Stipendio_lordo'] ?? 0);
@@ -466,7 +442,6 @@ function eur(float $value): string {
               <div class="card-top">
                 <div>
 
-<?php // ===== SEZIONE 20: LOGICA DI PROCESSO ===== ?>
                   <div class="month"><?= htmlspecialchars($mese, ENT_QUOTES, 'UTF-8') ?></div>
                   <div class="date">Generata il <?= htmlspecialchars($data, ENT_QUOTES, 'UTF-8') ?></div>
                 </div>
@@ -488,7 +463,6 @@ function eur(float $value): string {
                     Festivi: <?= htmlspecialchars(eur($lordo_festivi), ENT_QUOTES, 'UTF-8') ?><br>
                     Prefestivi: <?= htmlspecialchars(eur($lordo_prefestivi), ENT_QUOTES, 'UTF-8') ?><br>
 
-<?php // ===== SEZIONE 21: LOGICA DI PROCESSO ===== ?>
                     Notturne: <?= htmlspecialchars(eur($lordo_notturne), ENT_QUOTES, 'UTF-8') ?><br>
                   </div>
                 </div>
@@ -510,7 +484,6 @@ function eur(float $value): string {
         </section>
       <?php endif; ?>
 
-<?php // ===== SEZIONE 22: LOGICA DI PROCESSO ===== ?>
     </main>
   </div>
   <script src="/SITO/BPIC/auth/auto_logout_on_close.js"></script>

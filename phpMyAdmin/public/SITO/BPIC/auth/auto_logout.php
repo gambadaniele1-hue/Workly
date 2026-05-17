@@ -13,7 +13,6 @@ session_start();
 
 $_SESSION = [];
 
-// INLINE COMMENT: Conditional logic or loop processing
 if (ini_get('session.use_cookies')) {
     $params = session_get_cookie_params();
     setcookie(

@@ -9,11 +9,9 @@
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
-// INLINE COMMENT: Conditional logic or loop processing
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
-// INLINE COMMENT: Conditional logic or loop processing
 if (empty($_SESSION['user_id'])) {
     http_response_code(401);
     echo 'Unauthorized';
@@ -26,7 +24,6 @@ require_once __DIR__ . '/../../../../vendor/autoload.php';
 $userId = (int)($_SESSION['user_id'] ?? 0);
 $idBusta = (int)($_GET['id_busta'] ?? 0);
 
-// INLINE COMMENT: Conditional logic or loop processing
 if ($idBusta <= 0) {
     http_response_code(422);
 
@@ -54,7 +51,6 @@ try {
 
 // ===== SEZIONE 3: LOGICA DI PROCESSO =====
 
-// INLINE COMMENT: Conditional logic or loop processing
 if (!$busta) {
     http_response_code(404);
     echo 'Busta paga non trovata';
@@ -184,9 +180,7 @@ $pdf->Ln(2);
 $pdf->SetFont('Arial', 'B', 12);
 $pdf->Cell(0, 8, toPdfText('Dettaglio voci valorizzate'), 0, 1, 'L');
 $pdf->SetFont('Arial', '', 11);
-// INLINE COMMENT: Conditional logic or loop processing
 foreach ($caratteristiche as $label => $val) {
-// INLINE COMMENT: Conditional logic or loop processing
     if ($val === null) {
         continue;
     }

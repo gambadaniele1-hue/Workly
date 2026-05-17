@@ -14,7 +14,6 @@ require_once __DIR__ . '/jwt.php';
 header('Content-Type: application/json; charset=utf-8');
 session_start();
 
-// INLINE COMMENT: Conditional logic or loop processing
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Non autenticato.']);

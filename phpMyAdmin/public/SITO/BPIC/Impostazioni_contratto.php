@@ -12,7 +12,6 @@ declare(strict_types=1);
 require_once __DIR__ . '/database.php';
 session_start();
 
-// INLINE COMMENT: Conditional logic or loop processing
 if (empty($_SESSION['user_id'])) {
   header('Location: /SITO/BPIC/login.php');
   exit;
@@ -88,7 +87,6 @@ function db_to_contratto(string $value): string
 function normalize_decimal(string $value): float
 {
   $value = str_replace(',', '.', trim($value));
-// INLINE COMMENT: Conditional logic or loop processing
   if ($value === '') {
     return 0.0;
   }
@@ -142,7 +140,6 @@ $stmt = $pdo->prepare("SELECT * FROM {$settingsTable} WHERE ID_utente = ? LIMIT 
 $stmt->execute([$userId]);
 $savedRow = (array)($stmt->fetch() ?: []);
 
-// INLINE COMMENT: Conditional logic or loop processing
 if (empty($savedRow) && $settingsTable !== 'Profilo_contratto') {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
@@ -152,7 +149,6 @@ if (empty($savedRow) && $settingsTable !== 'Profilo_contratto') {
 }
 
 $contratto = normalize_contratto((string)($_GET['contratto'] ?? ($_POST['contratto'] ?? '')));
-// INLINE COMMENT: Conditional logic or loop processing
 if ($contratto === '' && !empty($savedRow['tipologia_dipendente'])) {
   $contratto = db_to_contratto((string)$savedRow['tipologia_dipendente']);
 }
@@ -170,7 +166,6 @@ $indTrasferta = (float)($savedRow['Indennita_trasferta'] ?? 0);
 $tredicesimaValue = (string)($savedRow['Tredicesima'] ?? 'NO');
 $quattordicesimaValue = (string)($savedRow['Quattordicesima'] ?? 'NO');
 
-// INLINE COMMENT: Conditional logic or loop processing
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $livelloValue = trim((string)($_POST['livello'] ?? ''));
   $maggNotturna = normalize_decimal((string)($_POST['maggiorazione_notturna'] ?? ''));
@@ -186,7 +181,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $quattordicesimaValue = isset($_POST['quattordicesima']) ? 'SI' : 'NO';
 
   $dbTipologia = contratto_to_db($contratto);
-// INLINE COMMENT: Conditional logic or loop processing
   if ($dbTipologia === '' && !empty($savedRow['tipologia_dipendente'])) {
     $dbTipologia = (string)$savedRow['tipologia_dipendente'];
   }
@@ -194,7 +188,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
   $stmt = $pdo->prepare("INSERT INTO {$settingsTable} (ID_utente, tipologia_dipendente, Livello_dipendente, Maggiorazione_notturna, Maggiorazione_straordinaria, Maggiorazione_festiva, Maggiorazione_prefestiva, Indennita_malattia, Indennita_reperibilita, Indennita_trasferta, Tredicesima, Quattordicesima) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE tipologia_dipendente = VALUES(tipologia_dipendente), Livello_dipendente = VALUES(Livello_dipendente), Maggiorazione_notturna = VALUES(Maggiorazione_notturna), Maggiorazione_straordinaria = VALUES(Maggiorazione_straordinaria), Maggiorazione_festiva = VALUES(Maggiorazione_festiva), Maggiorazione_prefestiva = VALUES(Maggiorazione_prefestiva), Indennita_malattia = VALUES(Indennita_malattia), Indennita_reperibilita = VALUES(Indennita_reperibilita), Indennita_trasferta = VALUES(Indennita_trasferta), Tredicesima = VALUES(Tredicesima), Quattordicesima = VALUES(Quattordicesima)");
-// INLINE COMMENT: Conditional logic or loop processing
   if ($stmt->execute([
     $userId,
     $dbTipologia,
@@ -218,11 +211,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $livelli = [];
 $subtitle = '';
 
-// INLINE COMMENT: Conditional logic or loop processing
 if ($contratto === 'metalmeccanico') {
   $livelli = ['D1', 'D2', 'C1', 'C2', 'C3', 'B1', 'B2', 'B3', 'A1'];
   $subtitle = 'Livelli contratto metalmeccanico.';
-// INLINE COMMENT: Conditional logic or loop processing
 } elseif ($contratto === 'commerciante') {
   $livelli = ['7', '6', '5', '4', '3', '2', '1'];
   $subtitle = 'Livelli contratto commercio.';
@@ -231,7 +222,6 @@ if ($contratto === 'metalmeccanico') {
 }
 ?>
 
-<?php // ===== SEZIONE 9: LOGICA DI PROCESSO ===== ?>
 <!doctype html>
 <html lang="it">
 <head>
@@ -253,7 +243,6 @@ if ($contratto === 'metalmeccanico') {
       box-sizing: border-box;
     }
 
-<?php // ===== SEZIONE 10: LOGICA DI PROCESSO ===== ?>
     body {
       margin: 0;
       font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -275,7 +264,6 @@ if ($contratto === 'metalmeccanico') {
     .brand {
       display: flex;
 
-<?php // ===== SEZIONE 11: LOGICA DI PROCESSO ===== ?>
       align-items: center;
       gap: 12px;
       font-weight: 700;
@@ -297,7 +285,6 @@ if ($contratto === 'metalmeccanico') {
       text-decoration: none;
       color: var(--primary);
 
-<?php // ===== SEZIONE 12: LOGICA DI PROCESSO ===== ?>
       font-weight: 600;
       background: rgba(102, 126, 234, 0.12);
       padding: 8px 14px;
@@ -319,7 +306,6 @@ if ($contratto === 'metalmeccanico') {
       padding: 8px 14px;
       border-radius: 999px;
 
-<?php // ===== SEZIONE 13: LOGICA DI PROCESSO ===== ?>
     }
     .hero {
       background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.25));
@@ -341,7 +327,6 @@ if ($contratto === 'metalmeccanico') {
     .subtitle strong {
       color: #1f2a44;
 
-<?php // ===== SEZIONE 14: LOGICA DI PROCESSO ===== ?>
     }
     .grid {
       display: grid;
@@ -363,7 +348,6 @@ if ($contratto === 'metalmeccanico') {
       top: 0;
       left: 0;
 
-<?php // ===== SEZIONE 15: LOGICA DI PROCESSO ===== ?>
       width: 100%;
       height: 4px;
       background: linear-gradient(90deg, var(--primary), var(--primary-dark));
@@ -385,7 +369,6 @@ if ($contratto === 'metalmeccanico') {
     }
     label {
 
-<?php // ===== SEZIONE 16: LOGICA DI PROCESSO ===== ?>
       font-size: 14px;
       color: var(--text);
     }
@@ -407,7 +390,6 @@ if ($contratto === 'metalmeccanico') {
       font-size: 12px;
       color: var(--muted);
 
-<?php // ===== SEZIONE 17: LOGICA DI PROCESSO ===== ?>
     }
     .helper {
       font-size: 13px;
@@ -429,7 +411,6 @@ if ($contratto === 'metalmeccanico') {
       appearance: none;
       width: 44px;
 
-<?php // ===== SEZIONE 18: LOGICA DI PROCESSO ===== ?>
       height: 26px;
       border-radius: 999px;
       background: #e2e8f0;
@@ -451,7 +432,6 @@ if ($contratto === 'metalmeccanico') {
       transition: all 0.2s ease;
     }
 
-<?php // ===== SEZIONE 19: LOGICA DI PROCESSO ===== ?>
     .toggle input:checked {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       border-color: rgba(102, 126, 234, 0.8);
@@ -473,7 +453,6 @@ if ($contratto === 'metalmeccanico') {
       background: #ecfdf3;
       border: 1px solid #bbf7d0;
 
-<?php // ===== SEZIONE 20: LOGICA DI PROCESSO ===== ?>
       color: #166534;
     }
     .footer {
@@ -495,7 +474,6 @@ if ($contratto === 'metalmeccanico') {
     }
     .save-btn:active {
 
-<?php // ===== SEZIONE 21: LOGICA DI PROCESSO ===== ?>
       transform: translateY(1px);
     }
     @media (max-width: 700px) {
@@ -517,7 +495,6 @@ if ($contratto === 'metalmeccanico') {
         <span class="brand-badge">BP</span>
         Impostazioni contratto
 
-<?php // ===== SEZIONE 22: LOGICA DI PROCESSO ===== ?>
       </div>
       <div class="topbar-actions">
         <a class="mockup-link" href="/SITO/BPIC/mockup_viste.php">Apri mockup</a>
@@ -530,7 +507,6 @@ if ($contratto === 'metalmeccanico') {
       <div class="subtitle"><?php echo htmlspecialchars($subtitle, ENT_QUOTES, 'UTF-8'); ?></div>
     </section>
 
-// INLINE COMMENT: Conditional logic or loop processing
     <?php if ($saveSuccess): ?>
       <div class="notice success">Impostazioni salvate correttamente.</div>
     <?php endif; ?>
@@ -540,7 +516,6 @@ if ($contratto === 'metalmeccanico') {
 
       <section class="card">
 
-<?php // ===== SEZIONE 23: LOGICA DI PROCESSO ===== ?>
         <h3>Livello del dipendente</h3>
         <div class="field">
           <label for="livello">Seleziona livello</label>
@@ -548,14 +523,12 @@ if ($contratto === 'metalmeccanico') {
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
           <select id="livello" name="livello" <?php echo empty($livelli) ? 'disabled' : ''; ?>>
             <option value="">Seleziona...</option>
-// INLINE COMMENT: Conditional logic or loop processing
             <?php foreach ($livelli as $livello): ?>
               <option value="<?php echo htmlspecialchars($livello, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $livelloValue === $livello ? 'selected' : ''; ?>>
                 <?php echo htmlspecialchars($livello, ENT_QUOTES, 'UTF-8'); ?>
               </option>
             <?php endforeach; ?>
           </select>
-// INLINE COMMENT: Conditional logic or loop processing
           <?php if (empty($livelli)): ?>
             <div class="helper">Per questa tipologia il livello non e richiesto.</div>
           <?php endif; ?>
@@ -610,7 +583,6 @@ if ($contratto === 'metalmeccanico') {
           </div>
         </section>
 
-<?php // ===== SEZIONE 26: LOGICA DI PROCESSO ===== ?>
 
         <section class="card">
           <h3>Mensilita aggiuntive</h3>
@@ -632,7 +604,6 @@ if ($contratto === 'metalmeccanico') {
       </div>
     </form>
 
-<?php // ===== SEZIONE 27: LOGICA DI PROCESSO ===== ?>
   </main>
   <script src="/SITO/BPIC/auth/auto_logout_on_close.js"></script>
 </body>

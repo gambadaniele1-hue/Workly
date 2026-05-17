@@ -42,7 +42,6 @@ function get_json_body(): array
     $raw = file_get_contents('php://input');
 
 // ===== SEZIONE 2: LOGICA DI PROCESSO =====
-// INLINE COMMENT: Conditional logic or loop processing
     if ($raw === false || $raw === '') {
         return [];
     }
@@ -60,14 +59,11 @@ function get_json_body(): array
  */
 function request_data(string $method): array
 {
-// INLINE COMMENT: Conditional logic or loop processing
     if ($method === 'GET') {
         return $_GET;
     }
-// INLINE COMMENT: Conditional logic or loop processing
     if ($method === 'POST') {
         $body = get_json_body();
-// INLINE COMMENT: Conditional logic or loop processing
         if (!empty($body)) {
             return $body;
         }
@@ -89,13 +85,11 @@ function request_data(string $method): array
 function bearer_token(): ?string
 {
     $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-// INLINE COMMENT: Conditional logic or loop processing
     if ($authHeader === '' && function_exists('apache_request_headers')) {
         $headers = apache_request_headers();
         $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
     }
 
-// INLINE COMMENT: Conditional logic or loop processing
     if (!preg_match('/^Bearer\s+(\S+)$/i', $authHeader, $matches)) {
         return null;
     }
@@ -117,7 +111,6 @@ function fetch_user_and_permissions($mysqli, int $userId): array
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
     $stmt = $mysqli->prepare('SELECT ID_utente, Email, N_Telefono FROM Utenti WHERE ID_utente = ? LIMIT 1');
-// INLINE COMMENT: Conditional logic or loop processing
     if (!$stmt) {
         send_json(500, ['error' => 'Errore interno (prepare utente).']);
     }
@@ -128,7 +121,6 @@ function fetch_user_and_permissions($mysqli, int $userId): array
     $user = $result ? $result->fetch_assoc() : null;
     $stmt->close();
 
-// INLINE COMMENT: Conditional logic or loop processing
     if (!$user) {
         send_json(404, ['error' => 'Utente non trovato.']);
     }
@@ -145,7 +137,6 @@ function fetch_user_and_permissions($mysqli, int $userId): array
         JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
         JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
         WHERE ur.email_utente = ?');
-// INLINE COMMENT: Conditional logic or loop processing
     if (!$stmt) {
         send_json(500, ['error' => 'Errore interno (prepare permessi).']);
     }
@@ -160,12 +151,10 @@ function fetch_user_and_permissions($mysqli, int $userId): array
     $permMap = [];
     $roleNames = [];
 
-// INLINE COMMENT: Conditional logic or loop processing
     while ($row = $result->fetch_assoc()) {
         $roleId = (int)$row['ID_ruolo'];
 
 // ===== SEZIONE 6: LOGICA DI PROCESSO =====
-// INLINE COMMENT: Conditional logic or loop processing
         if (!isset($roleMap[$roleId])) {
             $roleMap[$roleId] = true;
             $roles[] = ['id' => $roleId, 'name' => $row['Nome_ruolo']];
@@ -173,7 +162,6 @@ function fetch_user_and_permissions($mysqli, int $userId): array
         }
 
         $permId = (int)$row['ID_privilegio'];
-// INLINE COMMENT: Conditional logic or loop processing
         if (!isset($permMap[$permId])) {
             $permMap[$permId] = true;
             $permissions[] = [
@@ -205,16 +193,13 @@ function fetch_user_and_permissions($mysqli, int $userId): array
  */
 function has_permission(array $auth, string $resource, string $action): bool
 {
-// INLINE COMMENT: Conditional logic or loop processing
     if (in_array('admin', $auth['role_names'], true)) {
         return true;
     }
 
-// INLINE COMMENT: Conditional logic or loop processing
     foreach ($auth['permissions'] as $perm) {
         $resourceOk = isset($perm['resource']) && $perm['resource'] === $resource;
         $actionOk = isset($perm['action']) && ($perm['action'] === $action || $perm['action'] === 'ALL');
-// INLINE COMMENT: Conditional logic or loop processing
         if ($resourceOk && $actionOk) {
             return true;
         }
@@ -234,7 +219,6 @@ function has_permission(array $auth, string $resource, string $action): bool
  */
 function require_permission(array $auth, string $resource, string $action): void
 {
-// INLINE COMMENT: Conditional logic or loop processing
     if (!has_permission($auth, $resource, $action)) {
         send_json(403, [
             'error' => 'Permessi insufficienti.',
@@ -252,7 +236,6 @@ function require_permission(array $auth, string $resource, string $action): void
  */
 function fetch_view($mysqli, string $viewName, bool $isAdmin, int $userId): array
 {
-// INLINE COMMENT: Conditional logic or loop processing
     if (!preg_match('/^[a-zA-Z0-9_]+$/', $viewName)) {
         send_json(400, ['error' => 'Nome vista non valido.']);
     }
@@ -265,7 +248,6 @@ function fetch_view($mysqli, string $viewName, bool $isAdmin, int $userId): arra
     $types = '';
     $params = [];
 
-// INLINE COMMENT: Conditional logic or loop processing
     if (!$isAdmin && in_array($viewName, [
         'v_generazione_busta_paga',
         'v_download_pdf',
@@ -280,14 +262,12 @@ function fetch_view($mysqli, string $viewName, bool $isAdmin, int $userId): arra
 
     $sql .= ' ORDER BY 1 DESC';
     $stmt = $mysqli->prepare($sql);
-// INLINE COMMENT: Conditional logic or loop processing
     if (!$stmt) {
         send_json(500, ['error' => 'Errore interno (prepare vista).']);
 
 // ===== SEZIONE 10: LOGICA DI PROCESSO =====
     }
 
-// INLINE COMMENT: Conditional logic or loop processing
     if ($types !== '') {
         $stmt->bind_param($types, ...$params);
     }
@@ -295,7 +275,6 @@ function fetch_view($mysqli, string $viewName, bool $isAdmin, int $userId): arra
     $stmt->execute();
     $result = $stmt->get_result();
     $rows = [];
-// INLINE COMMENT: Conditional logic or loop processing
     while ($row = $result->fetch_assoc()) {
         $rows[] = $row;
     }
@@ -359,7 +338,6 @@ function t14_load_seed(PDO $pdo, int $userId): array
     $stmt->execute([$userId, 'seed']);
     $datiMensili = $stmt->fetch();
 
-// INLINE COMMENT: Conditional logic or loop processing
     if (!$contratto || !$datiMensili) {
         throw new RuntimeException('Seed T14 non trovato. Esegui prima use_case=t14_test_setup.');
     }
@@ -398,7 +376,6 @@ function t14_calcolo(array $contratto, array $datiMensili): array
     ];
 }
 
-// INLINE COMMENT: Conditional logic or loop processing
 if (!in_array($method, ['GET', 'POST', 'PUT', 'DELETE'], true)) {
 
 // ===== SEZIONE 14: LOGICA DI PROCESSO =====
@@ -406,13 +383,11 @@ if (!in_array($method, ['GET', 'POST', 'PUT', 'DELETE'], true)) {
 }
 
 $token = bearer_token();
-// INLINE COMMENT: Conditional logic or loop processing
 if ($token === null) {
     send_json(401, ['error' => 'Token Bearer mancante.']);
 }
 
 $payload = verify_jwt($token, JWT_SECRET);
-// INLINE COMMENT: Conditional logic or loop processing
 if (!$payload || empty($payload['user_id'])) {
     send_json(401, ['error' => 'JWT non valido o scaduto.']);
 }
@@ -426,7 +401,6 @@ $useCase = (string)($input['use_case'] ?? $_GET['use_case'] ?? '');
 
 
 // ===== SEZIONE 15: LOGICA DI PROCESSO =====
-// INLINE COMMENT: Conditional logic or loop processing
 if ($useCase === '') {
     send_json(400, [
         'error' => 'Parametro use_case mancante.',
@@ -449,7 +423,6 @@ switch ($useCase) {
         require_permission($auth, 'buste_paga', 'INSERT');
 
 // ===== SEZIONE 16: LOGICA DI PROCESSO =====
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'POST') {
             send_json(405, ['error' => 'Metodo richiesto: POST']);
         }
@@ -475,7 +448,6 @@ switch ($useCase) {
             ? (float)$input['stipendio_netto']
             : $lordo;
 
-// INLINE COMMENT: Conditional logic or loop processing
         if ($mese === '' || $lordo < 0 || $netto < 0 || $oreLavorate < 0 || $pagaOraria < 0) {
             send_json(422, ['error' => 'Valori busta paga non validi.']);
         }
@@ -485,7 +457,6 @@ switch ($useCase) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
             $stmt = $mysqli->prepare('INSERT INTO Busta_paga (Mese_riferimento, Stipendio_lordo, Stipendio_netto, Ore_lavorate, Paga_oraria, Ore_ferie, Ore_malattia, Ore_straordinari, Ore_festivi, Ore_prefestivi, Ore_notturne, Ore_reperibilita, Ore_trasferta) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-// INLINE COMMENT: Conditional logic or loop processing
             if (!$stmt) {
                 throw new RuntimeException('Prepare insert busta fallita.');
             }
@@ -497,7 +468,6 @@ switch ($useCase) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
             $stmt = $mysqli->prepare('UPDATE Utenti SET ID_busta = ? WHERE ID_utente = ?');
-// INLINE COMMENT: Conditional logic or loop processing
             if (!$stmt) {
 
 // ===== SEZIONE 18: LOGICA DI PROCESSO =====
@@ -523,7 +493,6 @@ switch ($useCase) {
         require_permission($auth, 'buste_paga', 'INSERT');
 
 // ===== SEZIONE 19: LOGICA DI PROCESSO =====
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'POST') {
             send_json(405, ['error' => 'Metodo richiesto: POST']);
         }
@@ -550,7 +519,6 @@ switch ($useCase) {
         require_permission($auth, 'buste_paga', 'INSERT');
 
 // ===== SEZIONE 20: LOGICA DI PROCESSO =====
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'POST') {
             send_json(405, ['error' => 'Metodo richiesto: POST']);
         }
@@ -588,7 +556,6 @@ switch ($useCase) {
                 'rows_after_commit' => (int)($left['cnt'] ?? 0),
             ]);
         } catch (Throwable $e) {
-// INLINE COMMENT: Conditional logic or loop processing
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }
@@ -597,7 +564,6 @@ switch ($useCase) {
 
     case 't14_generazione_busta_paga_non_atomic':
         require_permission($auth, 'buste_paga', 'INSERT');
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'POST') {
 
 // ===== SEZIONE 22: LOGICA DI PROCESSO =====
@@ -669,7 +635,6 @@ switch ($useCase) {
 
     case 'invio_pdf_email':
         require_permission($auth, 'email', 'INSERT');
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'POST') {
             send_json(405, ['error' => 'Metodo richiesto: POST']);
 
@@ -678,7 +643,6 @@ switch ($useCase) {
 
         $idBusta = (int)($input['id_busta'] ?? 0);
         $destinatario = trim((string)($input['destinatario'] ?? $auth['user']['Email'] ?? ''));
-// INLINE COMMENT: Conditional logic or loop processing
         if ($idBusta <= 0 || !filter_var($destinatario, FILTER_VALIDATE_EMAIL)) {
             send_json(422, ['error' => 'Parametri invio non validi.']);
         }
@@ -686,17 +650,14 @@ switch ($useCase) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
         $sql = 'SELECT * FROM v_invio_pdf_email WHERE ID_busta = ?';
-// INLINE COMMENT: Conditional logic or loop processing
         if (!$isAdmin) {
             $sql .= ' AND ID_utente = ?';
         }
 
         $stmt = $mysqli->prepare($sql);
-// INLINE COMMENT: Conditional logic or loop processing
         if (!$stmt) {
             send_json(500, ['error' => 'Errore interno (prepare invio).']);
         }
-// INLINE COMMENT: Conditional logic or loop processing
         if ($isAdmin) {
             $stmt->bind_param('i', $idBusta);
         } else {
@@ -709,7 +670,6 @@ switch ($useCase) {
         $row = $result ? $result->fetch_assoc() : null;
         $stmt->close();
 
-// INLINE COMMENT: Conditional logic or loop processing
         if (!$row) {
             send_json(404, ['error' => 'Busta paga non trovata per invio email.']);
         }
@@ -732,13 +692,11 @@ switch ($useCase) {
 
     case 'archivio_buste_paga_delete':
         require_permission($auth, 'archivio', 'SELECT');
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'DELETE') {
             send_json(405, ['error' => 'Metodo richiesto: DELETE']);
         }
 
         $idBusta = (int)($input['id_busta'] ?? 0);
-// INLINE COMMENT: Conditional logic or loop processing
         if ($idBusta <= 0) {
             send_json(422, ['error' => 'id_busta non valido.']);
         }
@@ -746,7 +704,6 @@ switch ($useCase) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
         $sql = 'DELETE FROM Confronta WHERE ID_busta = ?';
-// INLINE COMMENT: Conditional logic or loop processing
         if (!$isAdmin) {
             $sql .= ' AND ID_utente = ?';
         }
@@ -754,11 +711,9 @@ switch ($useCase) {
 // ===== SEZIONE 28: LOGICA DI PROCESSO =====
 
         $stmt = $mysqli->prepare($sql);
-// INLINE COMMENT: Conditional logic or loop processing
         if (!$stmt) {
             send_json(500, ['error' => 'Errore interno (prepare delete archivio).']);
         }
-// INLINE COMMENT: Conditional logic or loop processing
         if ($isAdmin) {
             $stmt->bind_param('i', $idBusta);
         } else {
@@ -784,14 +739,12 @@ switch ($useCase) {
 
     case 'confronto_buste_paga_create':
         require_permission($auth, 'confronto', 'SELECT');
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'POST') {
             send_json(405, ['error' => 'Metodo richiesto: POST']);
         }
 
         $idA = (int)($input['id_busta_a'] ?? 0);
         $idB = (int)($input['id_busta_b'] ?? 0);
-// INLINE COMMENT: Conditional logic or loop processing
         if ($idA <= 0 || $idB <= 0 || $idA === $idB) {
             send_json(422, ['error' => 'id_busta_a/id_busta_b non validi.']);
         }
@@ -801,7 +754,6 @@ switch ($useCase) {
 
 // ===== SEZIONE 30: LOGICA DI PROCESSO =====
             $stmt = $mysqli->prepare('INSERT IGNORE INTO Confronta (ID_utente, ID_busta, Data_confronto) VALUES (?, ?, NOW())');
-// INLINE COMMENT: Conditional logic or loop processing
             if (!$stmt) {
                 throw new RuntimeException('Prepare confronto fallita.');
             }
@@ -833,7 +785,6 @@ switch ($useCase) {
 
     case 'gestione_utenti_create':
         require_permission($auth, 'utenti', 'ALL');
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'POST') {
             send_json(405, ['error' => 'Metodo richiesto: POST']);
         }
@@ -843,7 +794,6 @@ switch ($useCase) {
         $password = (string)($input['password'] ?? '');
         $idRuolo = (int)($input['id_ruolo'] ?? 3);
 
-// INLINE COMMENT: Conditional logic or loop processing
         if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($password) < 6) {
 
 // ===== SEZIONE 32: LOGICA DI PROCESSO =====
@@ -856,7 +806,6 @@ switch ($useCase) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
             $stmt = $mysqli->prepare('INSERT INTO Utenti (N_Telefono, Email, ID_busta, Password_hash) VALUES (?, ?, NULL, ?)');
-// INLINE COMMENT: Conditional logic or loop processing
             if (!$stmt) {
                 throw new RuntimeException('Prepare insert utente fallita.');
             }
@@ -868,7 +817,6 @@ switch ($useCase) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
             $stmt = $mysqli->prepare('INSERT INTO Utente_Ruolo (ID_ruolo, email_utente) VALUES (?, ?)');
-// INLINE COMMENT: Conditional logic or loop processing
             if (!$stmt) {
                 throw new RuntimeException('Prepare ruolo utente fallita.');
             }
@@ -894,7 +842,6 @@ switch ($useCase) {
 
     case 'gestione_utenti_update':
         require_permission($auth, 'utenti', 'ALL');
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'PUT') {
 
 // ===== SEZIONE 34: LOGICA DI PROCESSO =====
@@ -902,7 +849,6 @@ switch ($useCase) {
         }
 
         $userId = (int)($input['user_id'] ?? 0);
-// INLINE COMMENT: Conditional logic or loop processing
         if ($userId <= 0) {
             send_json(422, ['error' => 'user_id non valido.']);
         }
@@ -914,7 +860,6 @@ switch ($useCase) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
         $stmt = $mysqli->prepare('SELECT Email FROM Utenti WHERE ID_utente = ? LIMIT 1');
-// INLINE COMMENT: Conditional logic or loop processing
         if (!$stmt) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
@@ -927,19 +872,16 @@ switch ($useCase) {
 
 // ===== SEZIONE 35: LOGICA DI PROCESSO =====
         $stmt->close();
-// INLINE COMMENT: Conditional logic or loop processing
         if (!$existing) {
             send_json(404, ['error' => 'Utente non trovato.']);
         }
 
         $mysqli->begin_transaction();
         try {
-// INLINE COMMENT: Conditional logic or loop processing
             if ($telefono !== null) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('UPDATE Utenti SET N_Telefono = ? WHERE ID_utente = ?');
-// INLINE COMMENT: Conditional logic or loop processing
                 if (!$stmt) {
                     throw new RuntimeException('Prepare update telefono fallita.');
                 }
@@ -948,9 +890,7 @@ switch ($useCase) {
                 $stmt->close();
             }
 
-// INLINE COMMENT: Conditional logic or loop processing
             if ($password !== null) {
-// INLINE COMMENT: Conditional logic or loop processing
                 if (strlen($password) < 6) {
                     throw new RuntimeException('Password troppo corta.');
 
@@ -960,7 +900,6 @@ switch ($useCase) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('UPDATE Utenti SET Password_hash = ? WHERE ID_utente = ?');
-// INLINE COMMENT: Conditional logic or loop processing
                 if (!$stmt) {
                     throw new RuntimeException('Prepare update password fallita.');
                 }
@@ -969,13 +908,11 @@ switch ($useCase) {
                 $stmt->close();
             }
 
-// INLINE COMMENT: Conditional logic or loop processing
             if ($idRuolo !== null) {
                 $email = (string)$existing['Email'];
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('DELETE FROM Utente_Ruolo WHERE email_utente = ?');
-// INLINE COMMENT: Conditional logic or loop processing
                 if (!$stmt) {
                     throw new RuntimeException('Prepare delete ruolo utente fallita.');
                 }
@@ -988,7 +925,6 @@ switch ($useCase) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('INSERT INTO Utente_Ruolo (ID_ruolo, email_utente) VALUES (?, ?)');
-// INLINE COMMENT: Conditional logic or loop processing
                 if (!$stmt) {
                     throw new RuntimeException('Prepare insert ruolo utente fallita.');
                 }
@@ -1013,18 +949,15 @@ switch ($useCase) {
 
     case 'gestione_utenti_delete':
         require_permission($auth, 'utenti', 'ALL');
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'DELETE') {
             send_json(405, ['error' => 'Metodo richiesto: DELETE']);
         }
 
         $userId = (int)($input['user_id'] ?? 0);
-// INLINE COMMENT: Conditional logic or loop processing
         if ($userId <= 0) {
             send_json(422, ['error' => 'user_id non valido.']);
         }
 
-// INLINE COMMENT: Conditional logic or loop processing
         if ($userId === $currentUserId) {
             send_json(409, ['error' => 'Non puoi eliminare il tuo stesso account da questa API.']);
         }
@@ -1032,7 +965,6 @@ switch ($useCase) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
         $stmt = $mysqli->prepare('DELETE FROM Utenti WHERE ID_utente = ?');
-// INLINE COMMENT: Conditional logic or loop processing
         if (!$stmt) {
             send_json(500, ['error' => 'Errore interno (delete utente).']);
 
@@ -1059,7 +991,6 @@ switch ($useCase) {
         require_permission($auth, 'ruoli', 'ALL');
 
 // ===== SEZIONE 40: LOGICA DI PROCESSO =====
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'POST') {
             send_json(405, ['error' => 'Metodo richiesto: POST']);
         }
@@ -1069,11 +1000,9 @@ switch ($useCase) {
         $attivo = isset($input['attivo']) ? (int)(bool)$input['attivo'] : 1;
         $privilegi = $input['privilegi'] ?? [];
 
-// INLINE COMMENT: Conditional logic or loop processing
         if ($nomeRuolo === '') {
             send_json(422, ['error' => 'nome_ruolo obbligatorio.']);
         }
-// INLINE COMMENT: Conditional logic or loop processing
         if (!is_array($privilegi)) {
             send_json(422, ['error' => 'privilegi deve essere un array di ID privilegio.']);
         }
@@ -1083,7 +1012,6 @@ switch ($useCase) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
             $stmt = $mysqli->prepare('INSERT INTO Ruoli (Nome_ruolo, Descrizione, Attivo) VALUES (?, ?, ?)');
-// INLINE COMMENT: Conditional logic or loop processing
             if (!$stmt) {
 
 // ===== SEZIONE 41: LOGICA DI PROCESSO =====
@@ -1094,19 +1022,15 @@ switch ($useCase) {
             $idRuolo = (int)$stmt->insert_id;
             $stmt->close();
 
-// INLINE COMMENT: Conditional logic or loop processing
             if (!empty($privilegi)) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('INSERT INTO Ruolo_Privilegio (ID_ruolo, ID_privilegio, Data_assegnazione) VALUES (?, ?, NOW())');
-// INLINE COMMENT: Conditional logic or loop processing
                 if (!$stmt) {
                     throw new RuntimeException('Prepare ruolo_privilegio fallita.');
                 }
-// INLINE COMMENT: Conditional logic or loop processing
                 foreach ($privilegi as $idPrivilegioRaw) {
                     $idPrivilegio = (int)$idPrivilegioRaw;
-// INLINE COMMENT: Conditional logic or loop processing
                     if ($idPrivilegio <= 0) {
                         continue;
                     }
@@ -1132,7 +1056,6 @@ switch ($useCase) {
 
     case 'gestione_ruoli_update':
         require_permission($auth, 'ruoli', 'ALL');
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'PUT') {
             send_json(405, ['error' => 'Metodo richiesto: PUT']);
         }
@@ -1140,7 +1063,6 @@ switch ($useCase) {
 // ===== SEZIONE 43: LOGICA DI PROCESSO =====
 
         $idRuolo = (int)($input['id_ruolo'] ?? 0);
-// INLINE COMMENT: Conditional logic or loop processing
         if ($idRuolo <= 0) {
             send_json(422, ['error' => 'id_ruolo non valido.']);
         }
@@ -1152,12 +1074,10 @@ switch ($useCase) {
 
         $mysqli->begin_transaction();
         try {
-// INLINE COMMENT: Conditional logic or loop processing
             if ($nomeRuolo !== null) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('UPDATE Ruoli SET Nome_ruolo = ? WHERE ID_ruolo = ?');
-// INLINE COMMENT: Conditional logic or loop processing
                 if (!$stmt) {
                     throw new RuntimeException('Prepare update nome ruolo fallita.');
                 }
@@ -1167,12 +1087,10 @@ switch ($useCase) {
 // ===== SEZIONE 44: LOGICA DI PROCESSO =====
                 $stmt->close();
             }
-// INLINE COMMENT: Conditional logic or loop processing
             if ($descrizione !== null) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('UPDATE Ruoli SET Descrizione = ? WHERE ID_ruolo = ?');
-// INLINE COMMENT: Conditional logic or loop processing
                 if (!$stmt) {
                     throw new RuntimeException('Prepare update descrizione ruolo fallita.');
                 }
@@ -1180,12 +1098,10 @@ switch ($useCase) {
                 $stmt->execute();
                 $stmt->close();
             }
-// INLINE COMMENT: Conditional logic or loop processing
             if ($attivo !== null) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('UPDATE Ruoli SET Attivo = ? WHERE ID_ruolo = ?');
-// INLINE COMMENT: Conditional logic or loop processing
                 if (!$stmt) {
                     throw new RuntimeException('Prepare update attivo ruolo fallita.');
                 }
@@ -1196,9 +1112,7 @@ switch ($useCase) {
 
 // ===== SEZIONE 45: LOGICA DI PROCESSO =====
 
-// INLINE COMMENT: Conditional logic or loop processing
             if ($privilegi !== null) {
-// INLINE COMMENT: Conditional logic or loop processing
                 if (!is_array($privilegi)) {
                     throw new RuntimeException('privilegi deve essere un array.');
                 }
@@ -1206,7 +1120,6 @@ switch ($useCase) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('DELETE FROM Ruolo_Privilegio WHERE ID_ruolo = ?');
-// INLINE COMMENT: Conditional logic or loop processing
                 if (!$stmt) {
                     throw new RuntimeException('Prepare delete ruolo_privilegio fallita.');
                 }
@@ -1214,21 +1127,17 @@ switch ($useCase) {
                 $stmt->execute();
                 $stmt->close();
 
-// INLINE COMMENT: Conditional logic or loop processing
                 if (!empty($privilegi)) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
                     $stmt = $mysqli->prepare('INSERT INTO Ruolo_Privilegio (ID_ruolo, ID_privilegio, Data_assegnazione) VALUES (?, ?, NOW())');
-// INLINE COMMENT: Conditional logic or loop processing
                     if (!$stmt) {
                         throw new RuntimeException('Prepare insert ruolo_privilegio fallita.');
                     }
-// INLINE COMMENT: Conditional logic or loop processing
                     foreach ($privilegi as $idPrivRaw) {
 
 // ===== SEZIONE 46: LOGICA DI PROCESSO =====
                         $idPriv = (int)$idPrivRaw;
-// INLINE COMMENT: Conditional logic or loop processing
                         if ($idPriv <= 0) {
                             continue;
                         }
@@ -1255,13 +1164,11 @@ switch ($useCase) {
 
     case 'gestione_ruoli_delete':
         require_permission($auth, 'ruoli', 'ALL');
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'DELETE') {
             send_json(405, ['error' => 'Metodo richiesto: DELETE']);
         }
 
         $idRuolo = (int)($input['id_ruolo'] ?? 0);
-// INLINE COMMENT: Conditional logic or loop processing
         if ($idRuolo <= 0) {
             send_json(422, ['error' => 'id_ruolo non valido.']);
         }
@@ -1269,7 +1176,6 @@ switch ($useCase) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
         $stmt = $mysqli->prepare('DELETE FROM Ruoli WHERE ID_ruolo = ?');
-// INLINE COMMENT: Conditional logic or loop processing
         if (!$stmt) {
             send_json(500, ['error' => 'Errore interno (delete ruolo).']);
         }
@@ -1294,7 +1200,6 @@ switch ($useCase) {
 
     case 'gestione_privilegi_create':
         require_permission($auth, 'privilegi', 'ALL');
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'POST') {
             send_json(405, ['error' => 'Metodo richiesto: POST']);
         }
@@ -1306,7 +1211,6 @@ switch ($useCase) {
         $risorsa = trim((string)($input['risorsa'] ?? ''));
         $azione = strtoupper(trim((string)($input['azione'] ?? '')));
 
-// INLINE COMMENT: Conditional logic or loop processing
         if ($nome === '' || $risorsa === '' || !in_array($azione, ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'ALL'], true)) {
             send_json(422, ['error' => 'Dati privilegio non validi.']);
         }
@@ -1314,7 +1218,6 @@ switch ($useCase) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
         $stmt = $mysqli->prepare('INSERT INTO Privilegi (Nome_privilegio, Descrizione, Risorsa, Azione) VALUES (?, ?, ?, ?)');
-// INLINE COMMENT: Conditional logic or loop processing
         if (!$stmt) {
             send_json(500, ['error' => 'Errore interno (insert privilegio).']);
         }
@@ -1333,13 +1236,11 @@ switch ($useCase) {
 
     case 'gestione_privilegi_update':
         require_permission($auth, 'privilegi', 'ALL');
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'PUT') {
             send_json(405, ['error' => 'Metodo richiesto: PUT']);
         }
 
         $idPrivilegio = (int)($input['id_privilegio'] ?? 0);
-// INLINE COMMENT: Conditional logic or loop processing
         if ($idPrivilegio <= 0) {
             send_json(422, ['error' => 'id_privilegio non valido.']);
         }
@@ -1351,19 +1252,16 @@ switch ($useCase) {
 
 // ===== SEZIONE 51: LOGICA DI PROCESSO =====
 
-// INLINE COMMENT: Conditional logic or loop processing
         if ($azione !== null && !in_array($azione, ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'ALL'], true)) {
             send_json(422, ['error' => 'azione non valida.']);
         }
 
         $mysqli->begin_transaction();
         try {
-// INLINE COMMENT: Conditional logic or loop processing
             if ($nome !== null) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('UPDATE Privilegi SET Nome_privilegio = ? WHERE ID_privilegio = ?');
-// INLINE COMMENT: Conditional logic or loop processing
                 if (!$stmt) {
                     throw new RuntimeException('Prepare update nome privilegio fallita.');
                 }
@@ -1371,12 +1269,10 @@ switch ($useCase) {
                 $stmt->execute();
                 $stmt->close();
             }
-// INLINE COMMENT: Conditional logic or loop processing
             if ($descrizione !== null) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('UPDATE Privilegi SET Descrizione = ? WHERE ID_privilegio = ?');
-// INLINE COMMENT: Conditional logic or loop processing
                 if (!$stmt) {
                     throw new RuntimeException('Prepare update descrizione privilegio fallita.');
 
@@ -1386,12 +1282,10 @@ switch ($useCase) {
                 $stmt->execute();
                 $stmt->close();
             }
-// INLINE COMMENT: Conditional logic or loop processing
             if ($risorsa !== null) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('UPDATE Privilegi SET Risorsa = ? WHERE ID_privilegio = ?');
-// INLINE COMMENT: Conditional logic or loop processing
                 if (!$stmt) {
                     throw new RuntimeException('Prepare update risorsa privilegio fallita.');
                 }
@@ -1399,12 +1293,10 @@ switch ($useCase) {
                 $stmt->execute();
                 $stmt->close();
             }
-// INLINE COMMENT: Conditional logic or loop processing
             if ($azione !== null) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
                 $stmt = $mysqli->prepare('UPDATE Privilegi SET Azione = ? WHERE ID_privilegio = ?');
-// INLINE COMMENT: Conditional logic or loop processing
                 if (!$stmt) {
                     throw new RuntimeException('Prepare update azione privilegio fallita.');
                 }
@@ -1429,7 +1321,6 @@ switch ($useCase) {
 
     case 'gestione_privilegi_delete':
         require_permission($auth, 'privilegi', 'ALL');
-// INLINE COMMENT: Conditional logic or loop processing
         if ($method !== 'DELETE') {
             send_json(405, ['error' => 'Metodo richiesto: DELETE']);
 
@@ -1437,7 +1328,6 @@ switch ($useCase) {
         }
 
         $idPrivilegio = (int)($input['id_privilegio'] ?? 0);
-// INLINE COMMENT: Conditional logic or loop processing
         if ($idPrivilegio <= 0) {
             send_json(422, ['error' => 'id_privilegio non valido.']);
         }
@@ -1445,7 +1335,6 @@ switch ($useCase) {
 
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
         $stmt = $mysqli->prepare('DELETE FROM Privilegi WHERE ID_privilegio = ?');
-// INLINE COMMENT: Conditional logic or loop processing
         if (!$stmt) {
             send_json(500, ['error' => 'Errore interno (delete privilegio).']);
         }
