@@ -10,7 +10,7 @@
 declare(strict_types=1);
 
 // auth.php include già database.php
-require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/api/auth.php';
 
 $userId = $currentUser['user_id'];
 

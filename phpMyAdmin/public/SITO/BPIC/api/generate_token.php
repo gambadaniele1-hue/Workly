@@ -8,7 +8,7 @@ declare(strict_types=1);
  * da passare ad altri servizi tramite header Authorization: Bearer.
  */
 
-require_once __DIR__ . '/../auth.php'; // verifica cookie JWT, popola $currentUser
+require_once __DIR__ . '/auth.php'; // verifica cookie JWT, popola $currentUser
 
 header('Content-Type: application/json; charset=utf-8');
 

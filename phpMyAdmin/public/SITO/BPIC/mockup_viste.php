@@ -8,7 +8,7 @@
 
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
 // auth.php include già database.php
-require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/api/auth.php';
 
 /* =====================================================================
  * MAPPA ROTTE BPIC

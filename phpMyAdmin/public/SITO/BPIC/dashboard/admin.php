@@ -14,7 +14,7 @@ declare(strict_types=1);
  *   4. Ogni azione usa fetch() verso le API in api/admin/
  */
 
-require_once __DIR__ . '/../auth.php'; // popola $currentUser e $pdo
+require_once __DIR__ . '/../api/auth.php'; // popola $currentUser e $pdo
 
 // Solo gli admin possono accedere
 if ($currentUser['role_name'] !== 'admin') {
@@ -297,15 +297,32 @@ unset($_stmt);
     setTimeout(() => { el.textContent = ''; }, 3000);
   }
 
+  // ── Helper: fetch JSON con gestione errori ──────────────────────────
+  // Restituisce { ok, status, data } senza lanciare eccezioni.
+  async function fetchJson(url, options = {}) {
+    try {
+      const res  = await fetch(url, options);
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        // Il server ha risposto con non-JSON (es. redirect a login)
+        data = { error: 'Sessione scaduta. Ricarica la pagina.' };
+      }
+      return { ok: res.ok, status: res.status, data };
+    } catch (e) {
+      return { ok: false, status: 0, data: { error: 'Errore di rete: ' + e.message } };
+    }
+  }
+
   // ── Sezione 1: Gestione Utenti ───────────────────────────────────────
   async function loadUtenti() {
     const tbody = document.getElementById('utenti-tbody');
     tbody.innerHTML = '<tr><td colspan="5" style="color:var(--muted)">Caricamento…</td></tr>';
 
-    const res  = await fetch('/SITO/BPIC/api/admin/users.php');
-    const data = await res.json();
+    const { ok, data } = await fetchJson('/SITO/BPIC/api/admin/users.php');
 
-    if (!res.ok) {
+    if (!ok) {
       tbody.innerHTML = `<tr><td colspan="5" class="msg-err">${data.error || 'Errore.'}</td></tr>`;
       return;
     }
@@ -331,19 +348,17 @@ unset($_stmt);
   }
 
   async function deleteUser(id, email) {
-    // Chiede conferma prima di procedere
     if (!confirm('Eliminare l\'utente "' + email + '"?\nQuesta operazione non può essere annullata.')) return;
 
-    const res  = await fetch('/SITO/BPIC/api/admin/users.php', {
+    const { ok, data } = await fetchJson('/SITO/BPIC/api/admin/users.php', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id_utente: id }),
     });
-    const data = await res.json();
 
-    if (res.ok) {
+    if (ok) {
       showMsg('utenti-msg', 'Utente eliminato.', false);
-      loadUtenti(); // ricarica la tabella
+      loadUtenti();
     } else {
       showMsg('utenti-msg', data.error || 'Errore durante l\'eliminazione.', true);
     }
@@ -354,15 +369,13 @@ unset($_stmt);
     const container = document.getElementById('ruoli-content');
     container.innerHTML = '<p style="color:var(--muted)">Caricamento…</p>';
 
-    const res  = await fetch('/SITO/BPIC/api/admin/roles.php');
-    const data = await res.json();
+    const { ok, data } = await fetchJson('/SITO/BPIC/api/admin/roles.php');
 
-    if (!res.ok) {
+    if (!ok) {
       container.innerHTML = `<p class="msg-err">${data.error || 'Errore.'}</p>`;
       return;
     }
 
-    // Salva i ruoli in memoria per riusarli in Gestione Ruoli
     allRoles = data.roles || [];
 
     container.innerHTML = allRoles.map(r => `
@@ -385,17 +398,17 @@ unset($_stmt);
     const tbody = document.getElementById('gestione-tbody');
     tbody.innerHTML = '<tr><td colspan="5" style="color:var(--muted)">Caricamento…</td></tr>';
 
-    // Carica utenti e ruoli in parallelo
     const [resUsers, resRoles] = await Promise.all([
-      fetch('/SITO/BPIC/api/admin/users.php'),
-      fetch('/SITO/BPIC/api/admin/roles.php'),
+      fetchJson('/SITO/BPIC/api/admin/users.php'),
+      fetchJson('/SITO/BPIC/api/admin/roles.php'),
     ]);
 
-    const dataUsers = await resUsers.json();
-    const dataRoles = await resRoles.json();
+    const dataUsers = resUsers.data;
+    const dataRoles = resRoles.data;
 
     if (!resUsers.ok || !resRoles.ok) {
-      tbody.innerHTML = '<tr><td colspan="5" class="msg-err">Errore nel caricamento dati.</td></tr>';
+      const errMsg = (!resUsers.ok ? resUsers.data.error : resRoles.data.error) || 'Errore nel caricamento dati.';
+      tbody.innerHTML = `<tr><td colspan="5" class="msg-err">${errMsg}</td></tr>`;
       return;
     }
 
@@ -433,14 +446,13 @@ unset($_stmt);
     const select  = document.getElementById('role-select-' + idUtente);
     const idRuolo = parseInt(select.value);
 
-    const res  = await fetch('/SITO/BPIC/api/admin/roles.php', {
+    const { ok, data } = await fetchJson('/SITO/BPIC/api/admin/roles.php', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id_utente: idUtente, id_ruolo: idRuolo }),
     });
-    const data = await res.json();
 
-    if (res.ok) {
+    if (ok) {
       showMsg('gestione-msg', 'Ruolo aggiornato.', false);
     } else {
       showMsg('gestione-msg', data.error || 'Errore durante l\'aggiornamento.', true);

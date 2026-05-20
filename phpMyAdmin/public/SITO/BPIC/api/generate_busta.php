@@ -10,7 +10,7 @@
 declare(strict_types=1);
 
 // auth.php verifica il JWT e popola $currentUser (reindirizza al login se non valido)
-require_once __DIR__ . '/../auth.php';
+require_once __DIR__ . '/auth.php';
 
 // Basic input retrieval and sanitation
 $month = filter_input(INPUT_POST, 'mese', FILTER_SANITIZE_STRING) ?: date('Y-m');
