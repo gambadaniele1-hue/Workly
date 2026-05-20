@@ -10,7 +10,7 @@
 declare(strict_types=1);
 
 // auth.php include database.php e verifica il JWT; se non loggato risponde 401
-require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/api/auth.php';
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
 $userId = $currentUser['user_id'];

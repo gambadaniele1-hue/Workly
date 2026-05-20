@@ -10,7 +10,7 @@
 declare(strict_types=1);
 
 // Carica il middleware JWT: verifica il cookie, popola $currentUser, redirect se non loggato
-require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/api/auth.php';
 
 // Email non è nel JWT: la recuperiamo dal DB con una query semplice
 $_stmt = $pdo->prepare('SELECT Email FROM Utenti WHERE ID_utente = ? LIMIT 1');

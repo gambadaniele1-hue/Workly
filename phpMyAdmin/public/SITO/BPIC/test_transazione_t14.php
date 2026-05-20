@@ -9,7 +9,7 @@
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
-require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/api/auth.php';
 ?>
 <!doctype html>
 <html lang="it">
