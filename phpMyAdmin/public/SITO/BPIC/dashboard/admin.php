@@ -471,6 +471,5 @@ unset($_stmt);
   // Mostra Gestione Utenti di default all'apertura della pagina
   showSection('utenti');
 </script>
-<script src="/SITO/BPIC/auth/auto_logout_on_close.js"></script>
 </body>
 </html>

@@ -357,6 +357,5 @@ $isTenant    = $currentUser['role_name'] === 'tenant';
     </section>
   </main>
 
-  <script src="/SITO/BPIC/auth/auto_logout_on_close.js"></script>
 </body>
 </html>

@@ -286,7 +286,6 @@ require_once __DIR__ . '/api/auth.php';
 
     refreshState().catch((e) => log(String(e)));
   </script>
-  <script src="/SITO/BPIC/auth/auto_logout_on_close.js"></script>
 </body>
 
 </html>
