@@ -9,35 +9,16 @@
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
-session_start();
-if (empty($_SESSION['user_id'])) {
-  header('Location: /SITO/BPIC/login.php');
-  exit;
-}
+require_once __DIR__ . '/auth.php';
 
-$email = (string)($_SESSION['email'] ?? 'utente');
-$roles = $_SESSION['roles'] ?? [];
-$roleNames = [];
-if (is_array($roles)) {
-  foreach ($roles as $role) {
-    if (isset($role['name'])) {
-      $roleNames[] = $role['name'];
-    }
-  }
-}
-$roleDisplay = !empty($roleNames) ? implode(', ', $roleNames) : 'Utente standard';
-
-// ===== SEZIONE 2: LOGICA DI PROCESSO =====
-$roleIds = [];
-if (is_array($roles)) {
-  foreach ($roles as $role) {
-    if (isset($role['id'])) {
-      $roleIds[] = (int)$role['id'];
-    }
-  }
-}
-$isAbbonato = in_array(1, $roleIds, true) || in_array(2, $roleIds, true);
-$isTenant = in_array('tenant', $roleNames, true);
+// Email non è nel JWT: la recuperiamo dal DB
+$_stmt = $pdo->prepare('SELECT Email FROM Utenti WHERE ID_utente = ? LIMIT 1');
+$_stmt->execute([$currentUser['user_id']]);
+$email = (string)($_stmt->fetchColumn() ?: '');
+unset($_stmt);
+$roleDisplay = $currentUser['role_name'] ?: 'Utente standard';
+$isAbbonato  = in_array($currentUser['role_id'], [1, 2], true);
+$isTenant    = $currentUser['role_name'] === 'tenant';
 ?>
 <!doctype html>
 <html lang="it">

@@ -9,16 +9,15 @@
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
-session_start();
-if (empty($_SESSION['user_id'])) {
-  header('Location: /SITO/BPIC/login.php');
-  exit;
-}
+// auth.php include già database.php, quindi $pdo è disponibile
+require_once __DIR__ . '/auth.php';
 
-require_once __DIR__ . '/database.php';
-
-$userId = (int)($_SESSION['user_id'] ?? 0);
-$email = (string)($_SESSION['email'] ?? 'utente');
+$userId = $currentUser['user_id'];
+// Email non è nel JWT: la recuperiamo dal DB
+$_stmt = $pdo->prepare('SELECT Email FROM Utenti WHERE ID_utente = ? LIMIT 1');
+$_stmt->execute([$userId]);
+$email = (string)($_stmt->fetchColumn() ?: '');
+unset($_stmt);
 $message = '';
 $error = '';
 $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';

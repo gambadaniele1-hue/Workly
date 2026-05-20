@@ -7,14 +7,8 @@
  */
 
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
-session_start();
-
-if (!isset($_SESSION['user_id'])) {
-    header('Location: /SITO/BPIC/login.php');
-    exit;
-}
-
-require_once __DIR__ . '/database.php';
+// auth.php include già database.php
+require_once __DIR__ . '/auth.php';
 
 /* =====================================================================
  * MAPPA ROTTE BPIC
@@ -44,97 +38,36 @@ require_once __DIR__ . '/database.php';
  * GET       /SITO/BPIC/api/generate_token.php   Genera JWT da sessione attiva
  * ===================================================================== */
 
-$roles = $_SESSION['roles'] ?? null;
-$permissions = $_SESSION['permissions'] ?? null;
-
-if (!$roles || !$permissions) {
-
-// ===== SEZIONE 3: LOGICA DI PROCESSO =====
-    $email = $_SESSION['email'] ?? null;
-    if (is_string($email) && $email !== '') {
-
-/* BLOCK COMMENT: SQL Query execution to interact with database records */
-        // Usa il role_id in sessione invece della tabella Utente_Ruolo
-        $roleId = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
-        $roles = [];
-        $permissions = [];
-        $roleMap = [];
-        $permMap = [];
-        if ($roleId > 0) {
-            $stmt = $mysqli->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
-                FROM Ruoli r
-                JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
-                JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
-                WHERE r.ID_ruolo = ?');
-            if ($stmt) {
-                $stmt->bind_param('i', $roleId);
-                $stmt->execute();
-                $result = $stmt->get_result();
-
-                while ($row = $result->fetch_assoc()) {
-                    $roleIdRow = (int)$row['ID_ruolo'];
-                    if (!isset($roleMap[$roleIdRow])) {
-                        $roleMap[$roleIdRow] = true;
-                        $roles[] = ['id' => $roleIdRow, 'name' => $row['Nome_ruolo']];
-                    }
-                    $permId = (int)$row['ID_privilegio'];
-                    if (!isset($permMap[$permId])) {
-                        $permMap[$permId] = true;
-                        $permissions[] = [
-                            'id' => $permId,
-                            'name' => $row['Nome_privilegio'],
-                            'resource' => $row['Risorsa'],
-                            'action' => $row['Azione'],
-                        ];
-                    }
-                }
-
-                $stmt->close();
-            }
+// Carica i permessi dal DB in base al role_id nel JWT
+$permissions = [];
+$roles       = [];
+if ($currentUser['role_id'] > 0) {
+    $stmt = $pdo->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
+        FROM Ruoli r
+        JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
+        JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
+        WHERE r.ID_ruolo = ?');
+    $stmt->execute([$currentUser['role_id']]);
+    $rows    = $stmt->fetchAll();
+    $roleMap = [];
+    $permMap = [];
+    foreach ($rows as $row) {
+        $rId = (int)$row['ID_ruolo'];
+        if (!isset($roleMap[$rId])) {
+            $roleMap[$rId] = true;
+            $roles[] = ['id' => $rId, 'name' => $row['Nome_ruolo']];
         }
-
-            $roles = [];
-            $permissions = [];
-            $roleMap = [];
-            $permMap = [];
-
-            while ($row = $result->fetch_assoc()) {
-                $roleId = (int)$row['ID_ruolo'];
-
-// ===== SEZIONE 4: LOGICA DI PROCESSO =====
-                if (!isset($roleMap[$roleId])) {
-                    $roleMap[$roleId] = true;
-                    $roles[] = ['id' => $roleId, 'name' => $row['Nome_ruolo']];
-                }
-
-                $permId = (int)$row['ID_privilegio'];
-                if (!isset($permMap[$permId])) {
-                    $permMap[$permId] = true;
-                    $permissions[] = [
-                        'id' => $permId,
-                        'name' => $row['Nome_privilegio'],
-                        'resource' => $row['Risorsa'],
-                        'action' => $row['Azione'],
-                    ];
-                }
-            }
-
-            $stmt->close();
-            $_SESSION['roles'] = $roles;
-            $_SESSION['permissions'] = $permissions;
-
-// ===== SEZIONE 5: LOGICA DI PROCESSO =====
+        $pId = (int)$row['ID_privilegio'];
+        if (!isset($permMap[$pId])) {
+            $permMap[$pId] = true;
+            $permissions[] = ['id' => $pId, 'name' => $row['Nome_privilegio'], 'resource' => $row['Risorsa'], 'action' => $row['Azione']];
         }
     }
+}
 
-
-$roles = is_array($roles) ? $roles : [];
-$permissions = is_array($permissions) ? $permissions : [];
-$roleNames = array_values(array_filter(array_map(static function ($role): string {
-    return (string)($role['name'] ?? '');
-}, $roles)));
-$isAdmin = in_array('admin', $roleNames, true);
-$currentUserId = (int)($_SESSION['user_id'] ?? 0);
+$roleNames     = [$currentUser['role_name']];
+$isAdmin       = $currentUser['role_name'] === 'admin';
+$currentUserId = $currentUser['user_id'];
 
 
 /**

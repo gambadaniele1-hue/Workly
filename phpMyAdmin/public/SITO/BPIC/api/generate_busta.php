@@ -9,14 +9,8 @@
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-  session_start();
-}
-if (empty($_SESSION['user_id'])) {
-  http_response_code(401);
-  echo 'Unauthorized';
-  exit;
-}
+// auth.php verifica il JWT e popola $currentUser (reindirizza al login se non valido)
+require_once __DIR__ . '/../auth.php';
 
 // Basic input retrieval and sanitation
 $month = filter_input(INPUT_POST, 'mese', FILTER_SANITIZE_STRING) ?: date('Y-m');
@@ -36,11 +30,8 @@ $prefestivi = (int)($_POST['ore_prefestivi'] ?? 0);
 $notturne = (int)($_POST['ore_notturne'] ?? 0);
 $reperibilita = (int)($_POST['ore_reperibilita'] ?? 0);
 
-// Include DB connection
-require_once __DIR__ . '/../database.php';
-
-// Load contract settings for current user
-$userId = (int)($_SESSION['user_id'] ?? 0);
+// $pdo è già disponibile tramite auth.php → database.php
+$userId = $currentUser['user_id'];
 $settings = [
   'Maggiorazione_festiva' => 0.0,
   'Maggiorazione_prefestiva' => 0.0,

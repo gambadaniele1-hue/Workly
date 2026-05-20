@@ -1,35 +1,23 @@
 <?php
-/**
- * File: api/generate_token.php
- * Description: Main functionality for this module.
- * Features: Data processing, Database interaction, User interface.
- * Usage: Accessed via web browser or API endpoint.
+declare(strict_types=1);
+
+/*
+ * api/generate_token.php — Genera un nuovo JWT per l'utente già autenticato.
+ *
+ * Usato da client che hanno già il cookie valido e vogliono un token
+ * da passare ad altri servizi tramite header Authorization: Bearer.
  */
 
-// ===== SEZIONE 1: LOGICA DI PROCESSO =====
-declare(strict_types=1);
-require_once __DIR__ . '/../database.php';
-require_once __DIR__ . '/jwt.php';
+require_once __DIR__ . '/../auth.php'; // verifica cookie JWT, popola $currentUser
 
 header('Content-Type: application/json; charset=utf-8');
-session_start();
 
-if (!isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Non autenticato.']);
-    exit;
-}
-
-$userId = (int)$_SESSION['user_id'];
-$ttl = 1000; // token valido 1000 secondi come richiesto
-$extra = [];
-if (!empty($_SESSION['role_id'])) {
-    $extra['role_id'] = (int)$_SESSION['role_id'];
-}
-$token = create_jwt($userId, $ttl, JWT_SECRET, $extra);
+// Crea un nuovo JWT con gli stessi dati dell'utente loggato
+$ttl   = 3600;
+$token = create_jwt($currentUser['user_id'], $ttl, JWT_SECRET, [
+    'role_id'   => $currentUser['role_id'],
+    'role_name' => $currentUser['role_name'],
+]);
 
 http_response_code(200);
 echo json_encode(['token' => $token, 'expires_in' => $ttl], JSON_UNESCAPED_UNICODE);
-
-// ===== SEZIONE 2: LOGICA DI PROCESSO =====
-exit;

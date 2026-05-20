@@ -9,13 +9,8 @@
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
-require_once __DIR__ . '/database.php';
-session_start();
-
-if (empty($_SESSION['user_id'])) {
-    header('Location: /SITO/BPIC/login.php');
-    exit;
-}
+// auth.php include già database.php
+require_once __DIR__ . '/auth.php';
 
 
 /**
@@ -67,20 +62,12 @@ function ensureTenantTables(PDO $pdo): void
  * Return: mixed
  * Description: Executes business logic for fetchSessionAuth.
  */
-function fetchSessionAuth(PDO $pdo): array
+// Carica ruoli e permessi dal DB per questo ruolo
+function fetchRoleAuth(PDO $pdo, int $roleId): array
 {
-    $roles = $_SESSION['roles'] ?? null;
-    $permissions = $_SESSION['permissions'] ?? null;
-
-    if ($roles && $permissions) {
-        return [is_array($roles) ? $roles : [], is_array($permissions) ? $permissions : []];
-    }
-
-    $roleId = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
     if ($roleId === 0) {
         return [[], []];
     }
-
     try {
         $stmt = $pdo->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
             FROM Ruoli r
@@ -92,36 +79,19 @@ function fetchSessionAuth(PDO $pdo): array
     } catch (PDOException $e) {
         $rows = [];
     }
-
-    $roles = [];
-    $permissions = [];
-    $roleMap = [];
-    $permMap = [];
-
+    $roles = []; $permissions = []; $roleMap = []; $permMap = [];
     foreach ($rows as $row) {
-        $roleId = (int)$row['ID_ruolo'];
-        if (!isset($roleMap[$roleId])) {
-            $roleMap[$roleId] = true;
-            $roles[] = ['id' => $roleId, 'name' => $row['Nome_ruolo']];
+        $rId = (int)$row['ID_ruolo'];
+        if (!isset($roleMap[$rId])) {
+            $roleMap[$rId] = true;
+            $roles[] = ['id' => $rId, 'name' => $row['Nome_ruolo']];
         }
-
-        $permId = (int)$row['ID_privilegio'];
-        if (!isset($permMap[$permId])) {
-
-// ===== SEZIONE 5: LOGICA DI PROCESSO =====
-            $permMap[$permId] = true;
-            $permissions[] = [
-                'id' => $permId,
-                'name' => $row['Nome_privilegio'],
-                'resource' => $row['Risorsa'],
-                'action' => $row['Azione'],
-            ];
+        $pId = (int)$row['ID_privilegio'];
+        if (!isset($permMap[$pId])) {
+            $permMap[$pId] = true;
+            $permissions[] = ['id' => $pId, 'name' => $row['Nome_privilegio'], 'resource' => $row['Risorsa'], 'action' => $row['Azione']];
         }
     }
-
-    $_SESSION['roles'] = $roles;
-    $_SESSION['permissions'] = $permissions;
-
     return [$roles, $permissions];
 }
 
@@ -152,11 +122,11 @@ function hasTenantPermission(array $roleNames, array $permissions): bool
 }
 
 ensureTenantTables($pdo);
-[$roles, $permissions] = fetchSessionAuth($pdo);
-$roleNames = array_values(array_filter(array_map(static fn($r): string => (string)($r['name'] ?? ''), $roles)));
+[$roles, $permissions] = fetchRoleAuth($pdo, $currentUser['role_id']);
+$roleNames = [$currentUser['role_name']];
 
-$isAdmin = in_array('admin', $roleNames, true);
-$isTenant = in_array('tenant', $roleNames, true);
+$isAdmin         = $currentUser['role_name'] === 'admin';
+$isTenant        = $currentUser['role_name'] === 'tenant';
 $canManageTenant = $isTenant || hasTenantPermission($roleNames, $permissions);
 
 // ===== SEZIONE 7: LOGICA DI PROCESSO =====

@@ -9,13 +9,13 @@
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
-session_start();
-if (empty($_SESSION['user_id'])) {
-  header('Location: /SITO/BPIC/login.php');
-  exit;
-}
+require_once __DIR__ . '/auth.php';
 
-$email = (string)($_SESSION['email'] ?? 'utente');
+// Email non è nel JWT: la recuperiamo dal DB
+$_stmt = $pdo->prepare('SELECT Email FROM Utenti WHERE ID_utente = ? LIMIT 1');
+$_stmt->execute([$currentUser['user_id']]);
+$email = (string)($_stmt->fetchColumn() ?: '');
+unset($_stmt);
 $currentMonth = date('Y-m');
 ?>
 <!doctype html>

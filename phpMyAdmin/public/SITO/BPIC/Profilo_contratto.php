@@ -9,15 +9,10 @@
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
-require_once __DIR__ . '/database.php';
-session_start();
+// auth.php include già database.php
+require_once __DIR__ . '/auth.php';
 
-if (empty($_SESSION['user_id'])) {
-  header('Location: /SITO/BPIC/login.php');
-  exit;
-}
-
-$userId = (int)$_SESSION['user_id'];
+$userId = $currentUser['user_id'];
 
 try {
 
