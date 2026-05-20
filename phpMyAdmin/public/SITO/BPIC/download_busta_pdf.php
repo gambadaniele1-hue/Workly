@@ -9,19 +9,11 @@
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
-}
-if (empty($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo 'Unauthorized';
-    exit;
-}
-
-require_once __DIR__ . '/database.php';
+// auth.php include database.php e verifica il JWT; se non loggato risponde 401
+require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
-$userId = (int)($_SESSION['user_id'] ?? 0);
+$userId = $currentUser['user_id'];
 $idBusta = (int)($_GET['id_busta'] ?? 0);
 
 if ($idBusta <= 0) {

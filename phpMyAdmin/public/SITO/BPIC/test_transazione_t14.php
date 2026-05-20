@@ -9,11 +9,7 @@
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
-session_start();
-if (empty($_SESSION['user_id'])) {
-    header('Location: /SITO/BPIC/login.php');
-    exit;
-}
+require_once __DIR__ . '/auth.php';
 ?>
 <!doctype html>
 <html lang="it">

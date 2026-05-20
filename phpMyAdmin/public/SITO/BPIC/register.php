@@ -9,18 +9,16 @@
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 require_once __DIR__ . "/database.php";
+require_once __DIR__ . '/api/jwt.php';
 
-session_start();
-
-if (!empty($_SESSION['user_id'])) {
-  $roleNames = array_map(static fn(array $r): string => (string)($r['name'] ?? ''), $_SESSION['roles'] ?? []);
-  if (in_array('tenant', $roleNames, true)) {
-    header('Location: /SITO/BPIC/tenant_dashboard.php');
+// Se l'utente ha già un JWT valido, mandalo alla sua pagina (non ha senso registrarsi di nuovo)
+$_regPayload = verify_jwt($_COOKIE['jwt'] ?? '', JWT_SECRET);
+if ($_regPayload && !empty($_regPayload['user_id'])) {
+    $roleName = (string)($_regPayload['role_name'] ?? '');
+    header('Location: ' . ($roleName === 'tenant' ? '/SITO/BPIC/tenant_dashboard.php' : '/SITO/BPIC/home.php'));
     exit;
-  }
-  header('Location: /SITO/BPIC/home.php');
-  exit;
 }
+unset($_regPayload);
 
 $errors = [];
 $ok = false;

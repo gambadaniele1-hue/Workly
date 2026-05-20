@@ -7,63 +7,22 @@
  */
 
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
-session_start();
-$isAuthenticated = isset($_SESSION['user_id']);
-
-// Recupera ruoli e privilegi dalla sessione se presenti, altrimenti dal DB
-$roles = $isAuthenticated ? ($_SESSION['roles'] ?? null) : [];
-$permissions = $isAuthenticated ? ($_SESSION['permissions'] ?? null) : [];
-
-if ($isAuthenticated && (!$roles || !$permissions) && isset($_SESSION['email'])) {
-    require_once __DIR__ . "/database.php";
-    // Ottieni privilegi basandosi su role_id in sessione
-    $roleId = isset($_SESSION['role_id']) ? (int)$_SESSION['role_id'] : 0;
-    $roles = [];
-    $permissions = [];
-    if ($roleId > 0) {
-        $stmt = $pdo->prepare('SELECT r.ID_ruolo, r.Nome_ruolo, p.ID_privilegio, p.Nome_privilegio, p.Risorsa, p.Azione
-            FROM Ruoli r
-            JOIN Ruolo_Privilegio rp ON rp.ID_ruolo = r.ID_ruolo
-            JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
-            WHERE r.ID_ruolo = ?');
-        $stmt->execute([$roleId]);
-        $result = $stmt->fetchAll();
-
-        $roleMap = [];
-        $permMap = [];
-        foreach ($result as $row) {
-            $roleIdRow = (int)$row['ID_ruolo'];
-            if (!isset($roleMap[$roleIdRow])) {
-                $roleMap[$roleIdRow] = true;
-                $roles[] = ['id' => $roleIdRow, 'name' => $row['Nome_ruolo']];
-            }
-            $permId = (int)$row['ID_privilegio'];
-            if (!isset($permMap[$permId])) {
-                $permMap[$permId] = true;
-                $permissions[] = ['id' => $permId, 'name' => $row['Nome_privilegio'], 'resource' => $row['Risorsa'], 'action' => $row['Azione']];
-            }
-        }
-
-        $_SESSION['roles'] = $roles;
-        $_SESSION['permissions'] = $permissions;
+// Questa è la landing page pubblica.
+// Se l'utente ha già un JWT valido lo reindirizziamo alla sua area.
+require_once __DIR__ . '/api/jwt.php';
+$_dashPayload = verify_jwt($_COOKIE['jwt'] ?? '', JWT_SECRET);
+if ($_dashPayload && !empty($_dashPayload['user_id'])) {
+    $roleName = (string)($_dashPayload['role_name'] ?? '');
+    if ($roleName === 'admin') {
+        header('Location: /SITO/BPIC/dashboard/admin.php');
+    } elseif ($roleName === 'tenant') {
+        header('Location: /SITO/BPIC/tenant_dashboard.php');
+    } else {
+        header('Location: /SITO/BPIC/home.php');
     }
-}
-
-$roleNames = array_map(fn($r) => $r['name'], $roles ?? []);
-$isAdmin = in_array('admin', $roleNames, true);
-$isAbbonato = in_array('utente_abbonato', $roleNames, true);
-$isNonAbbonato = in_array('utente_non_abbonato', $roleNames, true);
-$isTenant = in_array('tenant', $roleNames, true);
-
-if ($isAuthenticated && $isTenant) {
-    header('Location: /SITO/BPIC/tenant_dashboard.php');
     exit;
 }
-
-if ($isAuthenticated) {
-    header('Location: /SITO/BPIC/home.php');
-    exit;
-}
+unset($_dashPayload);
 ?>
 <!DOCTYPE html>
 

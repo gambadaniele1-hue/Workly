@@ -1,32 +1,16 @@
 <?php
-/**
- * File: auth/auto_logout.php
- * Description: Main functionality for this module.
- * Features: Data processing, Database interaction, User interface.
- * Usage: Accessed via web browser or API endpoint.
- */
-
-// ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 
-session_start();
+/*
+ * auto_logout.php — Chiamato dal JavaScript quando l'utente chiude la finestra.
+ * Cancella il cookie JWT esattamente come fa logout.php.
+ */
+setcookie('jwt', '', [
+    'expires'  => time() - 3600,
+    'path'     => '/',
+    'httponly' => true,
+    'samesite' => 'Strict',
+    // 'secure' => true,
+]);
 
-$_SESSION = [];
-
-if (ini_get('session.use_cookies')) {
-    $params = session_get_cookie_params();
-    setcookie(
-        session_name(),
-        '',
-        time() - 42000,
-        $params['path'],
-        $params['domain'],
-        (bool)$params['secure'],
-        (bool)$params['httponly']
-    );
-}
-
-
-// ===== SEZIONE 2: LOGICA DI PROCESSO =====
-session_destroy();
-http_response_code(204);
+http_response_code(204); // "No Content" — nessun redirect, è una chiamata JS in background
