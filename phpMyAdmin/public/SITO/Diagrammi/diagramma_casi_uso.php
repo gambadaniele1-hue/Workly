@@ -114,7 +114,7 @@
   <p class="description">Diagramma UML che mostra i casi d'uso e gli attori del sistema</p>
   
   <div class="diagram-container">
-    <img src="DiagrammaCasiDuso.png" alt="Diagramma dei Casi d'Uso" data-zoom="1">
+    <img src="UseCaseDiagram.png" alt="Diagramma dei Casi d'Uso" data-zoom="1">
   </div>
   
   <section class="usecase-details">

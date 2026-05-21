@@ -75,7 +75,7 @@
   <p class="description">Diagramma UML che mostra la struttura e le relazioni tra le classi del progetto</p>
   
   <div class="diagram-container">
-    <img src="DiagrammaClassi.png" alt="Diagramma delle Classi" data-zoom="1">
+    <img src="Diagramma_Classi.png" alt="Diagramma delle Classi" data-zoom="1">
   </div>
 </div>
 <script>
