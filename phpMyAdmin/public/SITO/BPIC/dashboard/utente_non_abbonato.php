@@ -509,7 +509,7 @@ unset($_stmt);
 
     const { ok, data: _d } = await apiFetch('/SITO/BPIC/api/payslip');
     const real = ok ? (_d.payslips || []) : [];
-    const data = { payslips: real.length > 0 ? real : MOCK_PAYSLIPS };
+    const data = { payslips: [...real, ...MOCK_PAYSLIPS] };
 
     if (!data.payslips || data.payslips.length === 0) {
       grid.innerHTML = '<p style="color:var(--muted)">Nessuna busta paga trovata. Creane una!</p>';

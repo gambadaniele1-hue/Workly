@@ -472,7 +472,7 @@ unset($_stmt);
 
     const { ok, data } = await apiFetch('/SITO/BPIC/api/payslip');
     const real = ok ? (data.payslips || []) : [];
-    cachedPayslips = real.length > 0 ? real : MOCK_PAYSLIPS;
+    cachedPayslips = [...real, ...MOCK_PAYSLIPS];
 
     if (cachedPayslips.length === 0) {
       grid.innerHTML = '<p style="color:var(--muted)">Nessuna busta paga trovata. Creane una!</p>';
@@ -690,7 +690,7 @@ unset($_stmt);
     if (cachedPayslips.length === 0) {
       const { ok, data } = await apiFetch('/SITO/BPIC/api/payslip');
       const real = ok ? (data.payslips || []) : [];
-      cachedPayslips = real.length > 0 ? real : MOCK_PAYSLIPS;
+      cachedPayslips = [...real, ...MOCK_PAYSLIPS];
     }
 
     const options = cachedPayslips.map(p =>

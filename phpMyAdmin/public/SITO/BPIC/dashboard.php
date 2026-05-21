@@ -15,10 +15,12 @@ if ($_dashPayload && !empty($_dashPayload['user_id'])) {
     $roleName = (string)($_dashPayload['role_name'] ?? '');
     if ($roleName === 'admin') {
         header('Location: /SITO/BPIC/dashboard/admin.php');
-    } elseif ($roleName === 'tenant') {
-        header('Location: /SITO/BPIC/tenant_dashboard.php');
+    } elseif ($roleName === 'utente_abbonato') {
+        header('Location: /SITO/BPIC/dashboard/utente_abbonato.php');
+    } elseif ($roleName === 'utente_non_abbonato') {
+        header('Location: /SITO/BPIC/dashboard/utente_non_abbonato.php');
     } else {
-        header('Location: /SITO/BPIC/home.php');
+        header('Location: /SITO/BPIC/unknown_role.php');
     }
     exit;
 }
@@ -275,7 +277,6 @@ unset($_dashPayload);
         <div class="hero-actions">
             <a class="btn btn-primary" href="/SITO/BPIC/register.php">Inizia Gratis →</a>
             <a class="btn btn-outline" href="/SITO/BPIC/login.php">Accedi</a>
-            <a class="btn btn-outline" href="/SITO/BPIC/test_transazione_t14.php">Test Transazione T14</a>
         </div>
 
     </section>
