@@ -25,15 +25,15 @@ EOF
 
 echo "📂 Installazione phpMyAdmin..."
 cd /var/www/html
-#sudo wget https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.zip
-#sudo unzip phpMyAdmin-latest-all-languages.zip
-#sudo mv phpMyAdmin-*-all-languages phpmyadmin
-#sudo rm phpMyAdmin-latest-all-languages.zip
+sudo wget https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.zip
+sudo unzip phpMyAdmin-latest-all-languages.zip
+sudo mv phpMyAdmin-*-all-languages phpmyadmin
+sudo rm phpMyAdmin-latest-all-languages.zip
 
 echo "⚙️  Configurazione phpMyAdmin..."
 cd phpmyadmin
-#sudo cp config.sample.inc.php config.inc.php
-#sudo sed -i "s/\(\$cfg\['blowfish_secret'\] = \).*/\1'$BLOWFISH_SECRET';/" config.inc.php
+sudo cp config.sample.inc.php config.inc.php
+sudo sed -i "s/\(\$cfg\['blowfish_secret'\] = \).*/\1'$BLOWFISH_SECRET';/" config.inc.php
 
 echo "🌐 Configurazione Apache per phpMyAdmin..."
 cat <<EOCONF | sudo tee /etc/apache2/conf-available/phpmyadmin.conf

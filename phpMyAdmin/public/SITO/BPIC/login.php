@@ -1,106 +1,8 @@
-<?php
-declare(strict_types=1);
-
-require_once __DIR__ . '/database.php';
-require_once __DIR__ . '/api/jwt.php';
-
-/*
- * Se l'utente ha già un JWT valido nel cookie, non ha senso mostrargli
- * il form di login: lo mandiamo direttamente alla sua pagina.
- */
-$_existingPayload = verify_jwt($_COOKIE['jwt'] ?? '', JWT_SECRET);
-if ($_existingPayload && !empty($_existingPayload['user_id'])) {
-    $roleName = (string)($_existingPayload['role_name'] ?? '');
-    if ($roleName === 'admin') {
-        header('Location: /SITO/BPIC/dashboard/admin.php');
-    } elseif ($roleName === 'tenant') {
-        header('Location: /SITO/BPIC/tenant_dashboard.php');
-    } else {
-        header('Location: /SITO/BPIC/home.php');
-    }
-    exit;
-}
-unset($_existingPayload);
-
-$errors = [];
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email    = trim($_POST['email'] ?? '');
-    $password = (string)($_POST['password'] ?? '');
-
-    // Validazione base dell'email
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '') {
-        // Messaggio generico: non diciamo se l'email esiste o no (sicurezza)
-        $errors[] = 'Credenziali non valide.';
-    } else {
-        try {
-            // Cerca l'utente per email
-            $stmt = $pdo->prepare('SELECT ID_utente, Email, Password_hash, ID_ruolo FROM Utenti WHERE Email = ? LIMIT 1');
-            $stmt->execute([$email]);
-            $user = $stmt->fetch();
-        } catch (PDOException $e) {
-            $errors[] = 'Errore interno. Riprova.';
-            $user     = null;
-        }
-
-        // Controlla password — stesso messaggio generico per non rivelare se l'email esiste
-        if (!$user || !password_verify($password, $user['Password_hash'])) {
-            $errors[] = 'Credenziali non valide.';
-        } else {
-            // Recupera il nome del ruolo per sapere dove reindirizzare
-            try {
-                $roleStmt = $pdo->prepare('SELECT Nome_ruolo FROM Ruoli WHERE ID_ruolo = ? LIMIT 1');
-                $roleStmt->execute([$user['ID_ruolo']]);
-                $role     = $roleStmt->fetch();
-                $roleName = $role ? (string)$role['Nome_ruolo'] : '';
-            } catch (PDOException $e) {
-                $roleName = '';
-            }
-
-            /*
-             * Crea il JWT con i dati dell'utente.
-             * Questi dati ("claims") vengono firmati con JWT_SECRET, quindi
-             * nessuno può modificarli senza invalidare il token.
-             */
-            $ttl   = 3600; // durata del token: 1 ora
-            $token = create_jwt((int)$user['ID_utente'], $ttl, JWT_SECRET, [
-                'role_id'   => (int)$user['ID_ruolo'],
-                'role_name' => $roleName,
-            ]);
-
-            /*
-             * Salva il JWT in un cookie HttpOnly.
-             *
-             * httponly = true  → il JavaScript NON può leggere questo cookie (protegge da XSS)
-             * samesite = Strict → il cookie non viene inviato da altri siti (protegge da CSRF)
-             * secure           → decommentare in produzione (richiede HTTPS)
-             */
-            setcookie('jwt', $token, [
-                'expires'  => time() + $ttl,
-                'path'     => '/',
-                'httponly' => true,
-                'samesite' => 'Strict',
-                // 'secure' => true,
-            ]);
-
-            // Reindirizza alla pagina corretta in base al ruolo
-            if ($roleName === 'admin') {
-                header('Location: /SITO/BPIC/dashboard/admin.php');
-            } elseif ($roleName === 'tenant') {
-                header('Location: /SITO/BPIC/tenant_dashboard.php');
-            } else {
-                header('Location: /SITO/BPIC/home.php');
-            }
-            exit;
-        }
-    }
-}
-?>
 <!doctype html>
 <html lang="it">
 <head>
   <meta charset="utf-8">
-  <title>Login</title>
+  <title>Login — BPIC</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body { font-family: Arial, sans-serif; margin: 40px; background: #f4f6f8; }
@@ -130,10 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       color: white; border: none; border-radius: 5px;
       cursor: pointer; font-size: 16px; width: 100%; transition: transform 0.3s;
     }
-    button:hover { transform: translateY(-2px); }
+    button:hover:not(:disabled) { transform: translateY(-2px); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
     .err {
+      display: none;
       background: #ffecec; border: 1px solid #f5a5a5;
-      padding: 10px; border-radius: 8px; margin: 12px 0;
+      padding: 10px; border-radius: 8px; margin: 12px 0; color: #c00;
     }
     a { display: inline-block; margin-top: 15px; color: #667eea; text-decoration: none; }
     a:hover { text-decoration: underline; }
@@ -146,29 +50,85 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="container">
   <h1>Login</h1>
 
-  <?php if ($errors): ?>
-    <div class="err">
-      <ul>
-        <?php foreach ($errors as $e): ?>
-          <li><?= htmlspecialchars($e, ENT_QUOTES, 'UTF-8') ?></li>
-        <?php endforeach; ?>
-      </ul>
-    </div>
-  <?php endif; ?>
+  <div id="error-box" class="err"></div>
 
-  <form method="post" autocomplete="on">
-    <label>Email</label>
-    <input type="email" name="email" required
-           value="<?= htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+  <form id="login-form" autocomplete="on">
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required>
 
-    <label>Password</label>
-    <input type="password" name="password" required>
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
 
-    <button type="submit">Entra</button>
+    <button type="submit" id="submit-btn">Entra</button>
   </form>
 
   <a href="/SITO/BPIC/register.php">Crea un account</a>
 </div>
+
+<script>
+  // ── Redirect in base al ruolo ──────────────────────────────────────────
+  function redirectByRole(roleName) {
+    if (roleName === 'admin')               { window.location.href = '/SITO/BPIC/dashboard/admin.php';                return; }
+    if (roleName === 'utente_abbonato')     { window.location.href = '/SITO/BPIC/dashboard/utente_abbonato.php';     return; }
+    if (roleName === 'utente_non_abbonato') { window.location.href = '/SITO/BPIC/dashboard/utente_non_abbonato.php'; return; }
+    // Ruolo sconosciuto o non gestito
+    window.location.href = '/SITO/BPIC/unknown_role.php';
+  }
+
+  // ── All'avvio: controlla se c'è già una sessione attiva ───────────────
+  // Se /api/auth/me risponde 200 l'utente è già loggato → redirect diretto
+  (async function checkSession() {
+    try {
+      const res = await fetch('/SITO/BPIC/api/auth/me', { credentials: 'same-origin' });
+      if (res.ok) {
+        const user = await res.json();
+        sessionStorage.setItem('user', JSON.stringify(user)); // cache dati utente
+        redirectByRole(user.role_name);
+      }
+      // 401 = nessuna sessione attiva → mostriamo il form (non fare nulla)
+    } catch (_) {
+      // Errore di rete: mostriamo il form comunque
+    }
+  })();
+
+  // ── Submit form: chiama /api/auth/login ───────────────────────────────
+  document.getElementById('login-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const btn    = document.getElementById('submit-btn');
+    const errBox = document.getElementById('error-box');
+    btn.disabled         = true;
+    errBox.style.display = 'none';
+
+    try {
+      const res = await fetch('/SITO/BPIC/api/auth/login', {
+        method:      'POST',
+        headers:     { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          email:    document.getElementById('email').value,
+          password: document.getElementById('password').value,
+        }),
+      });
+
+      const user = await res.json();
+
+      if (res.ok) {
+        // Login ok: salva i dati utente in sessionStorage e redirige
+        sessionStorage.setItem('user', JSON.stringify(user));
+        redirectByRole(user.role_name);
+      } else {
+        errBox.textContent   = user.error || 'Errore durante il login.';
+        errBox.style.display = 'block';
+        btn.disabled         = false;
+      }
+    } catch (_) {
+      errBox.textContent   = 'Errore di rete. Riprova.';
+      errBox.style.display = 'block';
+      btn.disabled         = false;
+    }
+  });
+</script>
 
 </body>
 </html>

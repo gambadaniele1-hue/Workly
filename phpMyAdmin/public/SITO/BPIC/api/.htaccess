@@ -1,0 +1,7 @@
+RewriteEngine On
+
+# Lascia passare le richieste a file reali (es. generate_busta.php, auth.php, jwt.php)
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# Tutto il resto viene gestito dal router
+RewriteRule ^ index.php [QSA,L]
