@@ -21,7 +21,8 @@ declare(strict_types=1);
  */
 
 require_once __DIR__ . '/../database.php'; // crea $pdo
-require_once __DIR__ . '/jwt.php';         // define JWT_SECRET, create_jwt(), verify_jwt()
+require_once __DIR__ . '/jwt.php';         // JWT_SECRET, create_jwt(), verify_jwt()
+require_once __DIR__ . '/helpers.php';     // require_permission()
 
 // Legge il JWT dal cookie HttpOnly inviato automaticamente dal browser
 $_jwtRaw  = $_COOKIE['jwt'] ?? '';
@@ -42,32 +43,4 @@ $currentUser = [
 
 unset($_jwtRaw, $_jwtData);
 
-/*
- * require_permission() — Verifica che il ruolo dell'utente abbia il permesso
- * richiesto controllando la tabella Ruolo_Privilegio nel database.
- *
- * Se il permesso manca risponde con HTTP 403 JSON e termina lo script.
- *
- * Parametri:
- *   $risorsa — colonna Risorsa nella tabella Privilegi  (es. 'utenti', 'ruoli')
- *   $azione  — colonna Azione  nella tabella Privilegi  (es. 'SELECT', 'DELETE', 'ALL')
- *              Un privilegio con Azione='ALL' soddisfa qualsiasi $azione richiesta.
- */
-function require_permission(PDO $pdo, int $roleId, string $risorsa, string $azione): void
-{
-    $stmt = $pdo->prepare(
-        'SELECT COUNT(*)
-         FROM Ruolo_Privilegio rp
-         JOIN Privilegi p ON p.ID_privilegio = rp.ID_privilegio
-         WHERE rp.ID_ruolo = ?
-           AND p.Risorsa = ?
-           AND (p.Azione = "ALL" OR p.Azione = ?)'
-    );
-    $stmt->execute([$roleId, $risorsa, $azione]);
-
-    if ((int)$stmt->fetchColumn() === 0) {
-        http_response_code(403);
-        echo json_encode(['error' => 'Permesso negato.'], JSON_UNESCAPED_UNICODE);
-        exit;
-    }
-}
+// require_permission() è definita in helpers.php (incluso sopra)

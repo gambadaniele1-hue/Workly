@@ -203,9 +203,8 @@ unset($_stmt);
       <button id="btn-gestione-ruoli" onclick="showSection('gestione-ruoli')">Gestione Ruoli</button>
     </nav>
 
-    <div class="menu-title">Navigazione</div>
+    <div class="menu-title">Sessione</div>
     <nav class="menu">
-      <a href="/SITO/BPIC/home.php">Home utente</a>
       <a href="/SITO/BPIC/logout.php">Logout</a>
     </nav>
   </aside>
@@ -320,7 +319,7 @@ unset($_stmt);
     const tbody = document.getElementById('utenti-tbody');
     tbody.innerHTML = '<tr><td colspan="5" style="color:var(--muted)">Caricamento…</td></tr>';
 
-    const { ok, data } = await fetchJson('/SITO/BPIC/api/admin/users.php');
+    const { ok, data } = await fetchJson('/SITO/BPIC/api/users');
 
     if (!ok) {
       tbody.innerHTML = `<tr><td colspan="5" class="msg-err">${data.error || 'Errore.'}</td></tr>`;
@@ -350,10 +349,8 @@ unset($_stmt);
   async function deleteUser(id, email) {
     if (!confirm('Eliminare l\'utente "' + email + '"?\nQuesta operazione non può essere annullata.')) return;
 
-    const { ok, data } = await fetchJson('/SITO/BPIC/api/admin/users.php', {
+    const { ok, data } = await fetchJson(`/SITO/BPIC/api/users/${id}`, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id_utente: id }),
     });
 
     if (ok) {
@@ -369,7 +366,7 @@ unset($_stmt);
     const container = document.getElementById('ruoli-content');
     container.innerHTML = '<p style="color:var(--muted)">Caricamento…</p>';
 
-    const { ok, data } = await fetchJson('/SITO/BPIC/api/admin/roles.php');
+    const { ok, data } = await fetchJson('/SITO/BPIC/api/roles');
 
     if (!ok) {
       container.innerHTML = `<p class="msg-err">${data.error || 'Errore.'}</p>`;
@@ -399,8 +396,8 @@ unset($_stmt);
     tbody.innerHTML = '<tr><td colspan="5" style="color:var(--muted)">Caricamento…</td></tr>';
 
     const [resUsers, resRoles] = await Promise.all([
-      fetchJson('/SITO/BPIC/api/admin/users.php'),
-      fetchJson('/SITO/BPIC/api/admin/roles.php'),
+      fetchJson('/SITO/BPIC/api/users'),
+      fetchJson('/SITO/BPIC/api/roles'),
     ]);
 
     const dataUsers = resUsers.data;
@@ -446,10 +443,8 @@ unset($_stmt);
     const select  = document.getElementById('role-select-' + idUtente);
     const idRuolo = parseInt(select.value);
 
-    const { ok, data } = await fetchJson('/SITO/BPIC/api/admin/roles.php', {
+    const { ok, data } = await fetchJson(`/SITO/BPIC/api/users/${idUtente}/roles/${idRuolo}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id_utente: idUtente, id_ruolo: idRuolo }),
     });
 
     if (ok) {
