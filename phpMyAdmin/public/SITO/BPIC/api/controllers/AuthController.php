@@ -141,7 +141,7 @@ class AuthController
     }
 
     /** Crea JWT e setta il cookie HttpOnly. */
-    private function issueToken(int $userId, int $roleId, string $roleName): void
+    protected function issueToken(int $userId, int $roleId, string $roleName): void
     {
         $token = create_jwt($userId, self::TTL, JWT_SECRET, [
             'role_id'   => $roleId,
@@ -158,7 +158,7 @@ class AuthController
     }
 
     /** Legge il body JSON della richiesta. */
-    private function body(): array
+    protected function body(): array
     {
         $raw = file_get_contents('php://input');
         if ($raw !== false && $raw !== '') {
@@ -171,7 +171,7 @@ class AuthController
     }
 
     /** Risponde con JSON e termina. */
-    private function json(int $status, array $data): never
+    protected function json(int $status, array $data): void
     {
         http_response_code($status);
         echo json_encode($data, JSON_UNESCAPED_UNICODE);

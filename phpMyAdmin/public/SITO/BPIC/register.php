@@ -15,7 +15,15 @@ require_once __DIR__ . '/api/jwt.php';
 $_regPayload = verify_jwt($_COOKIE['jwt'] ?? '', JWT_SECRET);
 if ($_regPayload && !empty($_regPayload['user_id'])) {
     $roleName = (string)($_regPayload['role_name'] ?? '');
-    header('Location: ' . ($roleName === 'tenant' ? '/SITO/BPIC/tenant_dashboard.php' : '/SITO/BPIC/home.php'));
+    if ($roleName === 'admin') {
+        header('Location: /SITO/BPIC/dashboard/admin.php');
+    } elseif ($roleName === 'utente_abbonato') {
+        header('Location: /SITO/BPIC/dashboard/utente_abbonato.php');
+    } elseif ($roleName === 'utente_non_abbonato') {
+        header('Location: /SITO/BPIC/dashboard/utente_non_abbonato.php');
+    } else {
+        header('Location: /SITO/BPIC/unknown_role.php');
+    }
     exit;
 }
 unset($_regPayload);

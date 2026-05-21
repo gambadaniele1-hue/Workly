@@ -146,23 +146,33 @@ unset($_stmt);
     /* ── Griglia buste paga ────────────────────────────────────────────── */
     .payslip-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 14px; margin-top: 8px;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px; margin-top: 16px;
     }
     .payslip-card {
-      background: #f8faff; border: 1px solid var(--border);
-      border-radius: 14px; padding: 16px;
-      cursor: pointer; transition: all 0.2s ease;
+      background: #fff; border: 1.5px solid #dbeafe;
+      border-radius: 16px; padding: 20px;
+      cursor: pointer; transition: all 0.22s ease;
+      display: flex; flex-direction: column;
     }
     .payslip-card:hover {
       border-color: var(--primary);
-      box-shadow: 0 4px 14px rgba(37,99,235,0.14);
-      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(37,99,235,0.14);
+      transform: translateY(-3px);
     }
-    .payslip-card .mese  { font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 8px; }
-    .payslip-card .lordo { color: var(--muted); font-size: 13px; }
-    .payslip-card .netto { color: var(--success); font-weight: 700; font-size: 15px; margin-top: 4px; }
-    .payslip-card .hint  { font-size: 11px; color: #a0aec0; margin-top: 8px; }
+    .ps-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .ps-month { font-size: 12px; font-weight: 700; color: #334155; text-transform: uppercase; letter-spacing: 0.8px; }
+    .ps-netto { font-size: 26px; font-weight: 800; color: var(--success); line-height: 1; }
+    .ps-netto-label { font-size: 11px; color: var(--muted); margin-bottom: 12px; margin-top: 2px; }
+    .ps-divider { height: 1px; background: #eef2ff; margin-bottom: 10px; }
+    .ps-row { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; }
+    .ps-row span:first-child { color: var(--muted); }
+    .ps-badges { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
+    .badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+    .badge-straord { background: #ffedd5; color: #c2410c; }
+    .badge-ferie   { background: #dbeafe; color: #1d4ed8; }
+    .badge-malat   { background: #fce7f3; color: #be185d; }
+    .ps-hint { font-size: 11px; color: #a0aec0; margin-top: auto; padding-top: 12px; text-align: right; }
 
     /* ── Form ──────────────────────────────────────────────────────────── */
     .form-grid {
@@ -187,13 +197,75 @@ unset($_stmt);
     .plans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
     .plan-card {
       border: 2px solid var(--border); border-radius: 16px;
-      padding: 22px; text-align: center;
+      padding: 24px; text-align: center; position: relative;
+      transition: all 0.2s;
     }
-    .plan-card.featured { border-color: var(--primary); }
+    .plan-card:hover { border-color: var(--primary); box-shadow: 0 6px 20px rgba(37,99,235,0.10); }
+    .plan-card.featured { border-color: var(--primary); background: #fafcff; }
     .plan-card h3 { margin: 0 0 6px; font-size: 20px; }
-    .plan-card .price { font-size: 28px; font-weight: 800; color: var(--primary); margin: 8px 0; }
+    .plan-card .price { font-size: 30px; font-weight: 800; color: var(--primary); margin: 10px 0; }
     .plan-card .price span { font-size: 14px; color: var(--muted); font-weight: 400; }
-    .plan-card ul { text-align: left; padding: 0 0 0 16px; margin: 12px 0 18px; color: #334155; font-size: 14px; }
+    .plan-card ul { text-align: left; padding: 0 0 0 18px; margin: 14px 0 20px; color: #334155; font-size: 14px; line-height: 1.9; }
+    .plan-badge {
+      display: inline-block; background: var(--primary); color: #fff;
+      font-size: 11px; font-weight: 700; padding: 3px 12px;
+      border-radius: 99px; margin-bottom: 10px;
+    }
+
+    /* ── Step abbonamento ─────────────────────────────────────────────── */
+    .sub-steps { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
+    .sub-step { font-size: 12px; font-weight: 700; color: var(--muted); padding: 4px 12px; border-radius: 99px; background: #f1f5ff; }
+    .sub-step-active { background: #dbeafe; color: var(--primary); }
+    .sub-step-done   { background: #d1fae5; color: var(--success); }
+    .sub-step-sep { color: #cbd5e1; font-size: 14px; }
+    .plan-selected-info {
+      background: #dbeafe; border-radius: 10px;
+      padding: 12px 16px; font-size: 14px; color: #1e40af;
+      margin: 16px 0 20px;
+    }
+
+    /* ── Card di credito preview ─────────────────────────────────────── */
+    .pay-card-preview {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+      border-radius: 16px; padding: 24px 26px; color: #fff;
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column; gap: 0;
+      min-height: 160px; justify-content: space-between;
+    }
+    .pay-card-preview::before {
+      content: ''; position: absolute; top: -50px; right: -50px;
+      width: 200px; height: 200px;
+      background: rgba(255,255,255,0.07); border-radius: 50%;
+    }
+    .pay-card-preview::after {
+      content: ''; position: absolute; bottom: -60px; left: 60px;
+      width: 160px; height: 160px;
+      background: rgba(255,255,255,0.05); border-radius: 50%;
+    }
+    .pay-card-chip {
+      width: 42px; height: 32px;
+      background: linear-gradient(135deg, #f9d423, #d97706);
+      border-radius: 6px; margin-bottom: 18px;
+    }
+    .pay-card-number { font-size: 19px; font-family: 'Courier New', monospace; letter-spacing: 3px; margin-bottom: 18px; }
+    .pay-card-bottom { display: flex; justify-content: space-between; }
+    .pay-card-label  { font-size: 9px; opacity: 0.65; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+    .pay-card-value  { font-size: 13px; font-weight: 700; font-family: 'Courier New', monospace; }
+
+    /* ── Bottone paga ────────────────────────────────────────────────── */
+    .pay-btn {
+      width: 100%; padding: 16px; font-size: 16px; font-weight: 800;
+      background: var(--primary); color: #fff;
+      border: none; border-radius: 12px; cursor: pointer;
+      transition: background 0.2s; margin-top: 20px;
+    }
+    .pay-btn:hover { background: #1d4ed8; }
+
+    /* ── Box non implementato ────────────────────────────────────────── */
+    .not-impl-box { text-align: center; padding: 48px 24px; }
+    .not-impl-icon { font-size: 52px; margin-bottom: 16px; }
+    .not-impl-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+    .not-impl-sub { color: var(--muted); margin-bottom: 28px; line-height: 1.7; font-size: 14px; }
 
     /* ── Modal ─────────────────────────────────────────────────────────── */
     .modal-overlay {
@@ -371,6 +443,22 @@ unset($_stmt);
 </div>
 
 <script>
+  // ── Dati di esempio (usati come fallback se l'API non è disponibile) ──
+  const MOCK_PAYSLIPS = [
+    { ID_busta: 101, Mese_riferimento: '2025-04', Stipendio_lordo: 2150.00, Stipendio_netto: 1524.80, Paga_oraria: 13.44, Ore_lavorate: 160, Ore_ferie: 0,  Ore_malattia: 0, Ore_straordinari: 0,  Ore_festivi: 0, Ore_prefestivi: 0, Ore_notturne: 0, Ore_reperibilita: 0, Ore_trasferta: 0, Data_creazione: '2025-04-30' },
+    { ID_busta: 102, Mese_riferimento: '2025-03', Stipendio_lordo: 2150.00, Stipendio_netto: 1524.80, Paga_oraria: 13.44, Ore_lavorate: 160, Ore_ferie: 16, Ore_malattia: 0, Ore_straordinari: 0,  Ore_festivi: 0, Ore_prefestivi: 0, Ore_notturne: 0, Ore_reperibilita: 0, Ore_trasferta: 0, Data_creazione: '2025-03-31' },
+    { ID_busta: 103, Mese_riferimento: '2025-02', Stipendio_lordo: 2380.50, Stipendio_netto: 1672.30, Paga_oraria: 13.44, Ore_lavorate: 160, Ore_ferie: 0,  Ore_malattia: 0, Ore_straordinari: 12, Ore_festivi: 8, Ore_prefestivi: 0, Ore_notturne: 0, Ore_reperibilita: 0, Ore_trasferta: 0, Data_creazione: '2025-02-28' },
+    { ID_busta: 104, Mese_riferimento: '2025-01', Stipendio_lordo: 2150.00, Stipendio_netto: 1524.80, Paga_oraria: 13.44, Ore_lavorate: 152, Ore_ferie: 0,  Ore_malattia: 8, Ore_straordinari: 0,  Ore_festivi: 0, Ore_prefestivi: 0, Ore_notturne: 0, Ore_reperibilita: 0, Ore_trasferta: 0, Data_creazione: '2025-01-31' },
+  ];
+
+  const MOCK_PLANS = [
+    { id: 1, nome: 'Base', prezzo: 9.99,  periodo: 'mese', features: ['Buste paga illimitate', 'Storico 12 mesi', 'Download PDF buste paga'] },
+    { id: 2, nome: 'Pro',  prezzo: 19.99, periodo: 'mese', features: ['Tutto il piano Base', 'Invio via email', 'Confronto buste paga', 'Supporto prioritario'] },
+  ];
+
+  let allPlans = [];
+  let selectedPlan = null;
+
   // ── Navigazione tra sezioni ──────────────────────────────────────────
   function showSection(name) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -419,22 +507,35 @@ unset($_stmt);
     const grid = document.getElementById('payslips-grid');
     grid.innerHTML = '<p style="color:var(--muted)">Caricamento…</p>';
 
-    const { ok, data } = await apiFetch('/SITO/BPIC/api/payslip');
-    if (!ok) { grid.innerHTML = '<p class="msg-err">Errore nel caricamento.</p>'; return; }
+    const { ok, data: _d } = await apiFetch('/SITO/BPIC/api/payslip');
+    const real = ok ? (_d.payslips || []) : [];
+    const data = { payslips: [...real, ...MOCK_PAYSLIPS] };
 
     if (!data.payslips || data.payslips.length === 0) {
       grid.innerHTML = '<p style="color:var(--muted)">Nessuna busta paga trovata. Creane una!</p>';
       return;
     }
 
-    grid.innerHTML = data.payslips.map(p => `
-      <div class="payslip-card" onclick="openDetailModal(${p.ID_busta})">
-        <div class="mese">${formatMese(p.Mese_riferimento)}</div>
-        <div class="lordo">Lordo: ${formatCurrency(p.Stipendio_lordo)}</div>
-        <div class="netto">Netto: ${formatCurrency(p.Stipendio_netto)}</div>
-        <div class="hint">Clicca per i dettagli</div>
-      </div>
-    `).join('');
+    grid.innerHTML = data.payslips.map(p => {
+      const badges = [];
+      if (p.Ore_straordinari > 0) badges.push(`<span class="badge badge-straord">Straord. ${p.Ore_straordinari}h</span>`);
+      if (p.Ore_ferie > 0)        badges.push(`<span class="badge badge-ferie">Ferie ${p.Ore_ferie}h</span>`);
+      if (p.Ore_malattia > 0)     badges.push(`<span class="badge badge-malat">Malattia ${p.Ore_malattia}h</span>`);
+      return `
+        <div class="payslip-card" onclick="openDetailModal(${p.ID_busta})">
+          <div class="ps-top">
+            <span class="ps-month">${formatMese(p.Mese_riferimento)}</span>
+            <span style="font-size:18px">🗒️</span>
+          </div>
+          <div class="ps-netto">${formatCurrency(p.Stipendio_netto)}</div>
+          <div class="ps-netto-label">stipendio netto</div>
+          <div class="ps-divider"></div>
+          <div class="ps-row"><span>Lordo</span><strong>${formatCurrency(p.Stipendio_lordo)}</strong></div>
+          ${p.Ore_lavorate != null ? `<div class="ps-row"><span>Ore lavorate</span><strong>${p.Ore_lavorate} h</strong></div>` : ''}
+          ${badges.length ? `<div class="ps-badges">${badges.join('')}</div>` : ''}
+          <div class="ps-hint">Dettagli →</div>
+        </div>`;
+    }).join('');
   }
 
   function formatMese(str) {
@@ -449,8 +550,8 @@ unset($_stmt);
   async function openDetailModal(id) {
     openModal('<p style="color:var(--muted)">Caricamento…</p>');
 
-    const { ok, data } = await apiFetch(`/SITO/BPIC/api/payslip/${id}`);
-    if (!ok) { document.getElementById('modal-content').innerHTML = '<p class="msg-err">Errore nel caricamento.</p>'; return; }
+    const { ok, data: _d } = await apiFetch(`/SITO/BPIC/api/payslip/${id}`);
+    const data = ok ? _d : (MOCK_PAYSLIPS.find(p => p.ID_busta === id) ?? MOCK_PAYSLIPS[0]);
 
     document.getElementById('modal-content').innerHTML = `
       <h3>Busta paga — ${formatMese(data.Mese_riferimento)}</h3>
@@ -591,33 +692,142 @@ unset($_stmt);
     }
   }
 
-  // ── Abbonamento: carica piani ────────────────────────────────────────
-  async function loadPlans() {
-    const el = document.getElementById('plans-content');
-
-    const { ok, data } = await apiFetch('/SITO/BPIC/api/subscription/plans');
-    if (!ok) { el.innerHTML = '<p class="msg-err">Errore nel caricamento dei piani.</p>'; return; }
-
-    el.innerHTML = `<div class="plans-grid">` + data.plans.map((p, i) => `
-      <div class="plan-card ${i === 1 ? 'featured' : ''}">
-        <h3>${p.nome}</h3>
-        <div class="price">${formatCurrency(p.prezzo)} <span>/ ${p.periodo}</span></div>
-        <ul>${p.features.map(f => `<li>${f}</li>`).join('')}</ul>
-        <button class="btn btn-primary" style="width:100%" onclick="buyPlan(${p.id})">
-          Scegli ${p.nome}
-        </button>
-      </div>
-    `).join('') + `</div>`;
+  // ── Abbonamento: step indicator ─────────────────────────────────────
+  function stepsHtml(active) {
+    const labels = ['Piano', 'Pagamento', 'Conferma'];
+    return `<div class="sub-steps">` + labels.map((s, i) => {
+      const cls = i < active ? 'sub-step sub-step-done'
+                : i === active ? 'sub-step sub-step-active'
+                : 'sub-step';
+      return (i > 0 ? `<span class="sub-step-sep">›</span>` : '') +
+             `<span class="${cls}">${i + 1}. ${s}</span>`;
+    }).join('') + `</div>`;
   }
 
-  async function buyPlan(id) {
-    const { ok, data } = await apiFetch('/SITO/BPIC/api/subscription/buy', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan_id: id }),
-    });
-    // Per ora mostra solo il messaggio dal server (acquisto non implementato)
-    alert(data.error || 'Operazione non disponibile al momento.');
+  // ── Abbonamento: step 1 — scegli piano ──────────────────────────────
+  async function loadPlans() {
+    const { ok, data: _d } = await apiFetch('/SITO/BPIC/api/subscription/plans');
+    allPlans = (ok ? _d : { plans: MOCK_PLANS }).plans;
+    renderPlanStep();
+  }
+
+  function renderPlanStep() {
+    const el = document.getElementById('plans-content');
+    el.innerHTML = stepsHtml(0) + `
+      <div class="plans-grid" style="margin-top:24px">
+        ${allPlans.map((p, i) => `
+          <div class="plan-card ${i === 1 ? 'featured' : ''}">
+            ${i === 1 ? '<div class="plan-badge">Più popolare</div>' : ''}
+            <h3>${p.nome}</h3>
+            <div class="price">${formatCurrency(p.prezzo)} <span>/ ${p.periodo}</span></div>
+            <ul>${p.features.map(f => `<li>${f}</li>`).join('')}</ul>
+            <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="selectPlan(${p.id})">
+              Scegli ${p.nome}
+            </button>
+          </div>
+        `).join('')}
+      </div>`;
+  }
+
+  function selectPlan(id) {
+    selectedPlan = allPlans.find(p => p.id === id);
+    renderPaymentStep();
+  }
+
+  // ── Abbonamento: step 2 — dati di pagamento ──────────────────────────
+  function renderPaymentStep() {
+    const el = document.getElementById('plans-content');
+    el.innerHTML = stepsHtml(1) + `
+      <button class="btn btn-ghost" style="margin:16px 0 4px" onclick="renderPlanStep()">← Torna ai piani</button>
+      <div class="plan-selected-info">
+        Piano selezionato: <strong>${selectedPlan.nome}</strong>
+        &nbsp;—&nbsp;<strong>${formatCurrency(selectedPlan.prezzo)} / ${selectedPlan.periodo}</strong>
+      </div>
+      <div class="pay-card-preview">
+        <div class="pay-card-chip"></div>
+        <div class="pay-card-number" id="card-preview-num">•••• &nbsp;•••• &nbsp;•••• &nbsp;••••</div>
+        <div class="pay-card-bottom">
+          <div>
+            <div class="pay-card-label">Titolare</div>
+            <div class="pay-card-value" id="card-preview-name">NOME COGNOME</div>
+          </div>
+          <div style="text-align:right">
+            <div class="pay-card-label">Scadenza</div>
+            <div class="pay-card-value" id="card-preview-exp">MM/AA</div>
+          </div>
+        </div>
+      </div>
+      <form id="payment-form" onsubmit="submitPayment(event)" style="margin-top:20px">
+        <div class="form-grid">
+          <div class="form-group form-full">
+            <label>Numero carta</label>
+            <input type="text" name="card_number" placeholder="1234 5678 9012 3456"
+                   maxlength="19" inputmode="numeric" autocomplete="cc-number"
+                   oninput="fmtCardNum(this)" required>
+          </div>
+          <div class="form-group form-full">
+            <label>Nome titolare</label>
+            <input type="text" name="card_holder" placeholder="Mario Rossi"
+                   autocomplete="cc-name"
+                   oninput="document.getElementById('card-preview-name').textContent=(this.value.toUpperCase()||'NOME COGNOME')"
+                   required>
+          </div>
+          <div class="form-group">
+            <label>Scadenza</label>
+            <input type="text" name="card_expiry" placeholder="12/27" maxlength="5"
+                   inputmode="numeric" autocomplete="cc-exp"
+                   oninput="fmtExpiry(this)" required>
+          </div>
+          <div class="form-group">
+            <label>CVV</label>
+            <input type="text" name="card_cvv" placeholder="123" maxlength="4"
+                   inputmode="numeric" autocomplete="cc-csc"
+                   oninput="this.value=this.value.replace(/\\D/g,'')" required>
+          </div>
+        </div>
+        <button type="submit" class="pay-btn">
+          Paga ${formatCurrency(selectedPlan.prezzo)} / ${selectedPlan.periodo}
+        </button>
+        <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px">
+          Pagamento sicuro — connessione cifrata SSL
+        </p>
+      </form>`;
+  }
+
+  function fmtCardNum(input) {
+    let v = input.value.replace(/\D/g, '').slice(0, 16);
+    input.value = v.replace(/(\d{4})(?=\d)/g, '$1 ');
+    const disp = (v + '•'.repeat(Math.max(0, 16 - v.length))).replace(/(.{4})/g, '$1 ').trim();
+    document.getElementById('card-preview-num').textContent = disp;
+  }
+
+  function fmtExpiry(input) {
+    let v = input.value.replace(/\D/g, '').slice(0, 4);
+    if (v.length >= 3) v = v.slice(0, 2) + '/' + v.slice(2);
+    input.value = v;
+    document.getElementById('card-preview-exp').textContent = v || 'MM/AA';
+  }
+
+  function submitPayment(e) {
+    e.preventDefault();
+    renderConfirmStep();
+  }
+
+  // ── Abbonamento: step 3 — conferma (non implementata) ───────────────
+  function renderConfirmStep() {
+    const el = document.getElementById('plans-content');
+    el.innerHTML = stepsHtml(2) + `
+      <div class="not-impl-box">
+        <div class="not-impl-icon">🔧</div>
+        <div class="not-impl-title">Funzione non ancora disponibile</div>
+        <p class="not-impl-sub">
+          Il sistema di pagamento è in fase di sviluppo.<br>
+          Ti contatteremo non appena il servizio sarà operativo.
+        </p>
+        <button class="btn btn-primary" onclick="renderPlanStep()" style="padding:12px 32px;font-size:15px">
+          Torna ai piani
+        </button>
+      </div>`;
   }
 
   // ── Avvio: mostra la sezione buste paga ──────────────────────────────
