@@ -193,7 +193,6 @@ $isAbbonato = in_array($currentUser['role_id'], [1, 2], true);
       <nav class="menu">
         <a href="/SITO/BPIC/home.php">Home</a>
         <a href="/SITO/BPIC/mockup_viste.php">Nuova busta paga</a>
-        <a href="/SITO/BPIC/mockup_viste.php">Mockup viste</a>
         <a href="/SITO/BPIC/user_manual.php">📖 Manuale Utente</a>
       </nav>
 

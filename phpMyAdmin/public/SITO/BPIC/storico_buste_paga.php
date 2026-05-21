@@ -360,7 +360,7 @@ function eur(float $value): string {
         <a href="/SITO/BPIC/mockup_viste.php">Mockup viste</a>
         <a href="/SITO/BPIC/Impostazioni_contratto.php">Impostazioni contratto</a>
 
-// ===== SEZIONE 17: LOGICA DI PROCESSO =====
+<?php// ===== SEZIONE 17: LOGICA DI PROCESSO =====?>
         <a href="/SITO/BPIC/logout.php">Logout</a>
       </nav>
     </aside>
@@ -382,10 +382,10 @@ function eur(float $value): string {
         <div class="empty">Nessuna busta paga presente nello storico.</div>
       <?php else: ?>
 
-// ===== SEZIONE 18: LOGICA DI PROCESSO =====
+<?php// ===== SEZIONE 18: LOGICA DI PROCESSO =====?>
         <section class="stack">
 
-/* ===== TODO: CASO D'USO NON IMPLEMENTATO =====
+<?php/* ===== TODO: CASO D'USO NON IMPLEMENTATO =====
  * Use Case: "Archivio buste paga"
  * Description: Archiviazione e gestione dei cedolini storici con esportazione e ricerca avanzata
  * Implementation Note: Aggiungere funzionalità di archivio con ricerca, filtri avanzati, esportazione
@@ -398,7 +398,7 @@ function eur(float $value): string {
  * Current State: Solo visualizzazione con paginazione e filtri base
  * Database: Potrebbe usare tabella separata Storico_buste_paga_archivio
  * Status: PENDING - Solo visualizzazione implementata
- */
+ */?>
           <?php foreach ($rows as $row): ?>
             <?php
               $lordo = (float)($row['Stipendio_lordo'] ?? 0);
