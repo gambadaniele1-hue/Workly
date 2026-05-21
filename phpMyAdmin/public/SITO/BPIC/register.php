@@ -9,18 +9,24 @@
 // ===== SEZIONE 1: LOGICA DI PROCESSO =====
 declare(strict_types=1);
 require_once __DIR__ . "/database.php";
+require_once __DIR__ . '/api/jwt.php';
 
-session_start();
-
-if (!empty($_SESSION['user_id'])) {
-  $roleNames = array_map(static fn(array $r): string => (string)($r['name'] ?? ''), $_SESSION['roles'] ?? []);
-  if (in_array('tenant', $roleNames, true)) {
-    header('Location: /SITO/BPIC/tenant_dashboard.php');
+// Se l'utente ha già un JWT valido, mandalo alla sua pagina (non ha senso registrarsi di nuovo)
+$_regPayload = verify_jwt($_COOKIE['jwt'] ?? '', JWT_SECRET);
+if ($_regPayload && !empty($_regPayload['user_id'])) {
+    $roleName = (string)($_regPayload['role_name'] ?? '');
+    if ($roleName === 'admin') {
+        header('Location: /SITO/BPIC/dashboard/admin.php');
+    } elseif ($roleName === 'utente_abbonato') {
+        header('Location: /SITO/BPIC/dashboard/utente_abbonato.php');
+    } elseif ($roleName === 'utente_non_abbonato') {
+        header('Location: /SITO/BPIC/dashboard/utente_non_abbonato.php');
+    } else {
+        header('Location: /SITO/BPIC/unknown_role.php');
+    }
     exit;
-  }
-  header('Location: /SITO/BPIC/home.php');
-  exit;
 }
+unset($_regPayload);
 
 $errors = [];
 $ok = false;
@@ -57,15 +63,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
           $pdo->beginTransaction();
 
-
 /* BLOCK COMMENT: SQL Query execution to interact with database records */
-          $stmt = $pdo->prepare("INSERT INTO Utenti (N_Telefono, Email, ID_busta, Password_hash) VALUES (?, ?, ?, ?)");
-          $stmt->execute([$telefonoParam, $email, null, $passwordHash]);
-
-
-/* BLOCK COMMENT: SQL Query execution to interact with database records */
-          $stmt2 = $pdo->prepare("INSERT INTO Utente_Ruolo (email_utente, ID_ruolo) VALUES (?, 3)");
-          $stmt2->execute([$email]);
+          $stmt = $pdo->prepare("INSERT INTO Utenti (N_Telefono, Email, ID_busta, Password_hash, ID_ruolo) VALUES (?, ?, ?, ?, ?)");
+          $defaultRole = 3;
+          $stmt->execute([$telefonoParam, $email, null, $passwordHash, $defaultRole]);
 
           $pdo->commit();
           $ok = true;

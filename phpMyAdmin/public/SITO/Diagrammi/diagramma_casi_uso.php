@@ -72,6 +72,9 @@
       max-width: 100%;
       max-height: 600px;
       object-fit: contain;
+      cursor: zoom-in;
+      transition: transform 0.15s ease;
+      transform-origin: center center;
     }
     .placeholder {
       color: #999;
@@ -111,37 +114,80 @@
   <p class="description">Diagramma UML che mostra i casi d'uso e gli attori del sistema</p>
   
   <div class="diagram-container">
-    <img src="DiagrammaCasiDuso.png" alt="Diagramma dei Casi d'Uso">
+    <img src="UseCaseDiagram.png" alt="Diagramma dei Casi d'Uso" data-zoom="1">
   </div>
   
   <section class="usecase-details">
-    <h2>Generazione busta paga senza PDF</h2>
+    <h2>Login</h2>
 
     <h3>Precondizioni</h3>
     <ul>
-      <li>L'utente è autenticato e ha i permessi per generare buste paga.</li>
-      <li>I dati anagrafici e retributivi del dipendente sono presenti nel database.</li>
-      <li>È definito il periodo di competenza e la configurazione delle voci retributive.</li>
-      <li>Il servizio di generazione PDF è disabilitato o non richiesto per questo caso.</li>
+      <li>L'utente ha già un account registrato nel sistema.</li>
+      <li>Le credenziali dell'utente sono presenti nel database.</li>
+      <li>La pagina di login è raggiungibile dal browser.</li>
+      <li>Non è già presente un token JWT valido nel cookie, altrimenti l'utente viene reindirizzato automaticamente.</li>
     </ul>
 
     <h3>Scenario</h3>
     <ol>
-      <li>L'utente seleziona il dipendente e il periodo di competenza dalla UI.</li>
-      <li>Il sistema calcola imponibili, trattenute, contributi e netto a pagare.</li>
-      <li>Il sistema salva la busta paga nel database senza avviare la creazione del PDF.</li>
-      <li>Il sistema aggiorna lo stato della busta (es. "generata - senza PDF") e notifica l'utente.</li>
+      <li>L'utente apre la pagina di login.</li>
+      <li>Il sistema controlla se nel browser è presente un token JWT valido.</li>
+      <li>Se il token è valido, l'utente viene portato direttamente alla propria area personale.</li>
+      <li>Se il token non è valido, il sistema mostra il form di accesso.</li>
+      <li>L'utente inserisce email e password.</li>
+      <li>Il sistema verifica le credenziali nel database.</li>
+      <li>Se i dati sono corretti, il sistema genera un nuovo JWT e lo salva in un cookie sicuro.</li>
+      <li>Infine l'utente viene reindirizzato alla pagina corretta in base al proprio ruolo.</li>
     </ol>
 
     <h3>Postcondizioni</h3>
     <ul>
-      <li>La busta paga è registrata nel database con stato che indica l'assenza del PDF.</li>
-      <li>I risultati dei calcoli sono disponibili per consultazione e verifica nello storico.</li>
-      <li>La generazione del PDF può essere eseguita in un secondo momento come job separato.</li>
-      <li>Viene creato un log dell'operazione per scopi di audit e tracciamento.</li>
+      <li>L'utente risulta autenticato nel sistema.</li>
+      <li>Il browser contiene un cookie con il token JWT.</li>
+      <li>L'utente può accedere alle pagine riservate in base al proprio ruolo.</li>
+      <li>In caso di errore, viene mostrato un messaggio generico di credenziali non valide.</li>
     </ul>
   </section>
 </div>
+
+<script>
+  (function () {
+    const image = document.querySelector('.diagram-container img');
+    if (!image) return;
+    const minZoom = 1;
+    const maxZoom = 4;
+    const step = 0.15;
+    image.dataset.zoom = image.dataset.zoom || '1';
+
+    function applyZoom(scale) {
+      const next = Math.min(maxZoom, Math.max(minZoom, scale));
+      image.dataset.zoom = String(next);
+      image.style.transform = `scale(${next})`;
+      image.style.cursor = next > 1 ? 'zoom-out' : 'zoom-in';
+    }
+
+    image.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      const cur = Number(image.dataset.zoom || '1');
+      const dir = e.deltaY < 0 ? 1 : -1;
+      applyZoom(cur + dir * step);
+    }, { passive: false });
+
+    image.addEventListener('dblclick', function () {
+      const cur = Number(image.dataset.zoom || '1');
+      applyZoom(cur > 1 ? 1 : 2);
+    });
+
+    image.addEventListener('click', function () {
+      const cur = Number(image.dataset.zoom || '1');
+      if (cur > 1) applyZoom(1);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') applyZoom(1);
+    });
+  })();
+</script>
 
 </body>
 </html>

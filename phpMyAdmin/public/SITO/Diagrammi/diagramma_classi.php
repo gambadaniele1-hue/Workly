@@ -47,6 +47,23 @@
       border-radius: 15px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
+    .diagram-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 0 30px 0;
+    }
+    .diagram-container img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      cursor: zoom-in;
+      transition: transform 0.15s ease;
+      transform-origin: center center;
+    }
   </style>
 </head>
 <body>
@@ -58,9 +75,47 @@
   <p class="description">Diagramma UML che mostra la struttura e le relazioni tra le classi del progetto</p>
   
   <div class="diagram-container">
-    <img src="DiagrammaClassi.png" alt="Diagramma delle Classi">
+    <img src="Diagramma_Classi.png" alt="Diagramma delle Classi" data-zoom="1">
   </div>
 </div>
+<script>
+  (function () {
+    const image = document.querySelector('.diagram-container img');
+    if (!image) return;
+    const minZoom = 1;
+    const maxZoom = 4;
+    const step = 0.15;
+    image.dataset.zoom = image.dataset.zoom || '1';
+
+    function applyZoom(scale) {
+      const next = Math.min(maxZoom, Math.max(minZoom, scale));
+      image.dataset.zoom = String(next);
+      image.style.transform = `scale(${next})`;
+      image.style.cursor = next > 1 ? 'zoom-out' : 'zoom-in';
+    }
+
+    image.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      const cur = Number(image.dataset.zoom || '1');
+      const dir = e.deltaY < 0 ? 1 : -1;
+      applyZoom(cur + dir * step);
+    }, { passive: false });
+
+    image.addEventListener('dblclick', function () {
+      const cur = Number(image.dataset.zoom || '1');
+      applyZoom(cur > 1 ? 1 : 2);
+    });
+
+    image.addEventListener('click', function () {
+      const cur = Number(image.dataset.zoom || '1');
+      if (cur > 1) applyZoom(1);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') applyZoom(1);
+    });
+  })();
+</script>
 
 </body>
 </html>
